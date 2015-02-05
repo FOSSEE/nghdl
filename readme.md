@@ -36,7 +36,7 @@ for that model it will actually call the ghdl to get the result.
 ##How to use?
 1. Run nghdl in command terminal.
 2. Upload your vhdl file.
-3. Model will be created with your name of your vhdl file.
+3. Model will be created with name of your vhdl file. It can be seen under (~ngspice-26/src/xspice/icm/ghdl/)
 4. You can use this model in your netlist.
 
 ##LIMITATION:
