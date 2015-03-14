@@ -667,7 +667,9 @@ map.append("\t\t\t);")
 
 #testbench Clock
 tb_clk= "clk_s <= not clk_s after 5 us;\n\n"
-
+#Adding Process block for Vhpi
+process_Vhpi=[]
+process_Vhpi.append("\tprocess\n\n\t\tbegin\n\n\t\tVhpi_Initialize;\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
 #Adding process block 
 process=[]
 process.append("\tprocess\n\n")
@@ -679,28 +681,25 @@ for item in output_port:
     process.append("\t\tvariable "+item.split(':')[0]+"_v : VhpiString;\n")
 
 process.append("\t\tvariable obj_ref : VhpiString;\n")
-process.append("\tbegin\n\n\t\tVhpi_Initialize;\n\t\twait until clk_s = '1';\n\n")
+process.append("\tbegin\n")
 process.append("\t\twhile true loop\n")
-process.append("\t\t\twait until clk_s = '0';\n\t\t\twait for 5 ns;\n\t\t\tVhpi_Listen;\n\n")
+process.append("\t\t\twait until clk_s = '0';\n\n")
 
 for item in input_port:
     process.append('\t\t\tobj_ref := Pack_String_To_Vhpi_String("'+item.split(':')[0]+'");\n')
     process.append('\t\t\tVhpi_Get_Port_Value(obj_ref,'+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
     process.append('\t\t\tassert false report "Get port value '+item.split(':')[0]+' returns " &'+item.split(':')[0]+'_v severity note;\n')
     process.append('\t\t\t'+item.split(':')[0]+' <= Unpack_String('+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
-    process.append('\t\t\twait for 1 ns;\n')
     process.append("\n")
+
+process.append('\t\t\twait for 1 us;\n')
 
 for item in output_port:
     process.append('\t\t\t'+item.split(':')[0]+'_v := Pack_String_To_Vhpi_String(Convert_SLV_To_String('+item.split(':')[0]+'));\n')
     process.append('\t\t\tobj_ref := Pack_String_To_Vhpi_String("'+item.split(':')[0]+'");\n')
     process.append('\t\t\tVhpi_Set_Port_Value(obj_ref,'+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
     process.append('\t\t\tassert false report "Set port value '+item.split(':')[0]+' returns " &'+item.split(':')[0]+'_v severity note;\n')
-    process.append('\t\t\twait for 1 ns;\n')
     process.append("\n")
-                                                                                                                              
-                                                                                                                                                                 
-process.append("\t\t\tVhpi_Send;\n\n")
 process.append("\t\tend loop;\n")
 process.append("\tend process;\n\n")
 process.append("end architecture;")
@@ -727,8 +726,12 @@ for item in map:
 
 testbench.write("\n\t"+tb_clk)
 
+for item in process_Vhpi:
+    testbench.write(item)
+
 for item in process:
     testbench.write(item)
+
 
 testbench.close()
 
