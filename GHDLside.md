@@ -11,6 +11,9 @@ This documentation will help you to know about the code written for communicatio
 
 * This is a testbench created to send and receive values from server and gives the input values to the digital design.
 * It uses VHPI library of VHDL, by including this library we can use functions written in C program, in VHDL.
+* In this test bench there are two processes used.
+* First process is used to initialize, listen server and sending the output to server.
+* Second process is used to giving inputs from server to digital design and taking the values to send through the server.
 
 ### Functions used in modelname_tb.vhdl
 #### Vhpi_Initialize
