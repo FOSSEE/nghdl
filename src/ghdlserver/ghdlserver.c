@@ -36,6 +36,8 @@ struct my_struct {
 
 struct my_struct *s, *users ,*tmp = NULL;
 
+
+//This function is used to parse the received buffer and store the variable name and its value to HASH table.
 void parse_buffer(int sock_id,char* receive_buffer)
 {
     /*Taking time information for log*/
@@ -88,6 +90,7 @@ void parse_buffer(int sock_id,char* receive_buffer)
 }
 
 
+//This function is used in VHDL code, which takes output values from digital design to send to client
 void Vhpi_Set_Port_Value(char *port_name,char *port_value,int port_width)
 {
   //char *lb; // you need to know maximum size of lb.
@@ -117,6 +120,7 @@ void Vhpi_Set_Port_Value(char *port_name,char *port_value,int port_width)
 
 }
 
+//This function used in VHDL code, which get input values from client and give it to the digital design
 void Vhpi_Get_Port_Value(char* port_name,char* port_value,int port_width)
 
 {
@@ -147,69 +151,7 @@ void Vhpi_Get_Port_Value(char* port_name,char* port_value,int port_width)
   fflush(log_server);
   fclose(log_server);
 }
-/*
-int Copy_Value(char* dest, char* src, int width)                                
-{                                                                               
-  int ret_val = 0;                                                              
-  char src_buf[4096];                                                           
-  int src_width = 0;      
   
-  // skip spaces                                                                
-  while(*src == ' ')                                                            
-    src++;                                                                                                                                                                                 
-  while(1)                                                                      
-  {                                                                           
-    if(src[src_width] == '1' || src[src_width] == '0')                        
-    {                                                                             
-      src_buf[src_width] = src[src_width];                                        
-      src_width++;                                                                
-    }                                                                             
-    else                                                                      
-    break;                                                                        
-  }                                                                           
-  src_buf[src_width] = 0; // null-terminate                                                                                                                                                                              
-  ret_val = src_width - width;                                                  
-  dest[width] = 0;                                                              
-  int i;                                                                        
-  for(i = 1; i <= width; i++)                                                   
-  {                                                                           
-    if(i <= src_width)                                                        
-      dest[width-i] = src[src_width-i];                                             
-    else                                                                      
-      dest[width-i] = '0'; // pad with 0.                                           
-  }                                                                           
-  
-    return(ret_val);                                                                                                                                                  
-}
-
-*/
-/*
-int extract_payload(char* receive_buffer,char* payload, int max_n)
-{ 
-    int hash_pos = 0;
-    int ret_val = 0;
-    while(receive_buffer[hash_pos] != '#')
-    {
-        printf("Buffer is %c \n",receive_buffer[hash_pos]);
-        if(receive_buffer[hash_pos] == 0) // end of string
-        {
-            hash_pos = -1;
-            break;
-        }
-            hash_pos++;
-    }
-                                                     
-    if(hash_pos >= 0)
-    {
-        receive_buffer[hash_pos] = 0;
-        ret_val = max_n - (hash_pos+1);
-        bcopy(receive_buffer+(hash_pos+1),payload,ret_val);
-    }
-    
-    return(ret_val);
-} 
-*/
-
 
 //
 //Create Server to listen for message
@@ -367,7 +309,7 @@ void set_non_blocking(int sock_id)
     fprintf(stderr,"Server- Setting server to non blocking state");                                       
 } 
 
-
+//This function creates the server for communication between Ngspice and GHDL
 void Vhpi_Initialize()
 {
    
@@ -440,6 +382,8 @@ void Vhpi_Initialize()
   fclose(fp);
 }
 
+
+//This function creates socket to send and recieve values 
 void Vhpi_Listen()
 {
     char payload[4096];
@@ -552,71 +496,12 @@ void  Vhpi_Send()
       fprintf(log_server,"The data is sending for output  %s \n",Out_Port_Array[i]);                       
       Data_Send(sockid,Out_Port_Array[i]);                                      
     }          
-    
-    /*
-    HASH_FIND_STR(users,"o",s);
-    if(s)
-    {
-      printf("Server- The key is %s and value is  %s \n",s->key,s->val);  
-      printf("Server- s-val %s \n",s->val);
-      
-      //Count Digits in number                                                    
-      while(cpy>0)                                                                
-      {                                                                           
-        rem[count_digits]=cpy%10;                                                 
-        count_digits++;                                                           
-        cpy=cpy/10;                                                               
-      }                                                                           
-      
-      int c=0;                                                                    
-      
-      //adds the difference of length as 0's                                                                    
-      for(i=0;i<2-count_digits;i++)                                      
-        new_str[c++]='0';                                                         
-      
-      //appends rest of the string                                                          
-      for(i=count_digits-1;i>=0;i--)                                              
-        new_str[c++]=rem[i]+48;                                                   
-      new_str[c++]='\0';       
-
-      out=(char *)malloc(sizeof(char)); 
-      snprintf(out,sizeof(out),"%s",s->val);
-      //HASH_DEL(users, s);
-      //free(s);
-      
-      while(1)
-      { 
-        if(can_write_to_socket(sockid))                                             
-          break;                                                                    
-        usleep(1000);  
-      
-      }
-
-      if ((send(sockid,out,sizeof(out),0))== -1)                   
-      {                                                               
-        perror("Server- Failure Sending Message\n");                        
-        //exit(1);
-      }       
-    
-    }
-    else
-    {
-      printf("Server- The key %s Not found \n",s->key);  
-    }
-    
-    */
-      
-    
-    //#ifdef DEBUG                                                                    
-    //fprintf(log_file,"Server- Info: trying to send message %s in  %d\n", send_buffer, vhpi_cycle_count);
-    //fflush(log_file);                                                         
-    //#endif
-
     fflush(log_server);
     fclose(log_server);
  
 }
 
+//This function is used in Vhpi_Send, It sets the value in output buffer "out" 
 void Data_Send(int sockid,char* out_port)                                       
 {                                                                               
   char* out;                                                                  
@@ -648,6 +533,7 @@ void Data_Send(int sockid,char* out_port)
     fprintf(log_server,"The %s's value not found in the table \n",out_port);                         
   }                                                                           
 } 
+
 
 void  Vhpi_Close()                                                         
 {  
