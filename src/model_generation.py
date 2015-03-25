@@ -623,8 +623,9 @@ for item in input_port:
     #else:
     #    components.append(item.split(':')[0]+": in std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
 
-for item in output_port:
-    components.append(item.split(':')[0]+": out std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0)\n\t\t\t\t")
+for item in output_port[:-1]:
+    components.append(item.split(':')[0]+": out std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
+components.append(output_port[-1].split(':')[0]+": out std_logic_vector("+str(int(output_port[-1].split(':')[1])-int(1))+" downto 0)\n\t\t\t\t")
     #if item.split(":")[1] != '1':                                                                                                               
     #    components.append(item.split(':')[0]+": out std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0)\n\t\t\t\t")                
     #else:                                                                                                                                       
