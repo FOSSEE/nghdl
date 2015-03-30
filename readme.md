@@ -42,10 +42,10 @@ for that model it will actually call the ghdl to get the result.
 ##LIMITATION:
 1. You can use only one output port in your file.
 2. All the port should be std_logic_vector only.
-3. We can use only one code model of such type in our netlist.
+3. We can use only one instance of code model in netlist.
 
 ##FUTURE WORK
 1. Make changes to have more than one output.
-2. Making changes to include use of more than one code models.
-3. Interfacing it with FreeEDA formely known as Oscad so that we can use it in our schematic.
+2. Making changes to include use of more than one instance of code models.
+3. Interfacing it with eSim formely known as Oscad so that we can use it in our schematic.
 
