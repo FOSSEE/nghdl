@@ -151,6 +151,19 @@ header='''
 #include <unistd.h>                                                                                                                            
 #include <errno.h> 
 '''
+get_fun = '''void get_data(char *, char *, char []);
+             void get_data(char *token, char *data, char buf[])
+             {
+             int i;
+             char *pos;
+             pos = strstr(data, token);
+             while (*pos != ':')
+                 pos++;
+             for (i = 0; *pos != ';'; i++)
+                 buf[i] = *++pos;
+             buf[--i] = '\\0';
+             }
+'''
 
 function_open='''void cm_'''+fname.split('.')[0]+'''(ARGS) \n{'''
 
@@ -174,6 +187,8 @@ var_section='''
 temp_input_var=[]
 for item in input_port:
     temp_input_var.append("char temp_"+item.split(':')[0]+"[1024];")
+
+
 
 #Start of INIT function 
 init_start_function='''
@@ -349,8 +364,12 @@ recv_data='''
                 printf("Client-Either Connection Closed or Error \\n");                                                                          
                 exit(1);                                                                                                                       
             }                                                                                                                                  
-            //recv_data[bytes_recieved] = '\\0';                                                                                                
-            
+            //recv_data[bytes_recieved] = '\\0';
+'''
+recv_data1=[]
+for item in output_port:
+        recv_data1.append("\t\tchar recv_"+item.split(':')[0]+" [1024];\n\t\tget_data(\""+item.split(':')[0]+"\",recv_data,recv_"+item.split(':')[0]+");\n")
+recv_data2='''            
             printf("Client-Message Received From Server -  %s\\n",recv_data);                                                                   
             fprintf(log_client,"Message Received From Server- %s\\n",recv_data);   
 
@@ -364,12 +383,12 @@ for item in output_port:
     sch_output_event.append("\t\t\t/* Scheduling event and processing them */\n\
 \t\t\tfor(Ii=0;Ii<PORT_SIZE("+item.split(':')[0]+");Ii++)\n\
 \t\t\t{\n\
-\t\t\t\tprintf(\"Client- Bit val is %c \\n\",recv_data[Ii]);\n\
-\t\t\t\tfprintf(log_client,\"Client-Bit val is %c \\n\",recv_data[Ii]);\n\
-\t\t\t\tif(recv_data[Ii]=='0')\n\t\t\t\t{\n\
+\t\t\t\tprintf(\"Client- Bit val is %c \\n\",recv_"+item.split(':')[0]+"[Ii]);\n\
+\t\t\t\tfprintf(log_client,\"Client-Bit val is %c \\n\",recv_"+item.split(':')[0]+"[Ii]);\n\
+\t\t\t\tif(recv_"+item.split(':')[0]+"[Ii]=='0')\n\t\t\t\t{\n\
 \t\t\t\t\tprintf(\"Client-Zero Received \");\n\
 \t\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ZERO;\n\t\t\t\t}\n\
-\t\t\t\telse if(recv_data[Ii]=='1')\n\t\t\t\t{\n\
+\t\t\t\telse if(recv_"+item.split(':')[0]+"[Ii]=='1')\n\t\t\t\t{\n\
 \t\t\t\t\tprintf(\"Client-One Received \\n\");\n\
 \t\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ONE;\n\
 \t\t\t\t}\n\t\t\t\telse\t\t\t\t{\n\
@@ -421,6 +440,8 @@ els_time_limit='''
 #Writing content in cfunc.mod file 
 cfunc.write(comment)
 cfunc.write(header)
+cfunc.write("\n")
+cfunc.write(get_fun)
 cfunc.write("\n")
 cfunc.write(function_open)
 cfunc.write("\n")
@@ -481,6 +502,9 @@ for item in snprintf_stmt:
 
 cfunc.write(send_data)
 cfunc.write(recv_data)
+for item in recv_data1:
+    cfunc.write(item)
+cfunc.write(recv_data2)
 
 for item in sch_output_event:
     cfunc.write(item)
