@@ -166,7 +166,8 @@ var_section='''
     log_client=fopen("client.log","a");                                                                                                        
     int socket_fd, bytes_recieved;                                                                                                             
     char send_data[1024];                                                                                                                      
-    char recv_data[1024];                                                                                                                      
+    char recv_data[1024];
+    char *key_iter;
     struct hostent *host;                                                                                                                      
     struct sockaddr_in server_addr;                                                                                                            
     double time_limit = PARAM(stop_time);   
@@ -349,7 +350,7 @@ recv_data='''
                 printf("Client-Either Connection Closed or Error \\n");                                                                          
                 exit(1);                                                                                                                       
             }                                                                                                                                  
-            //recv_data[bytes_recieved] = '\\0';                                                                                                
+            recv_data[bytes_recieved] = '\\0';                                                                                                
             
             printf("Client-Message Received From Server -  %s\\n",recv_data);                                                                   
             fprintf(log_client,"Message Received From Server- %s\\n",recv_data);   
@@ -362,14 +363,17 @@ sch_output_event=[]
 
 for item in output_port:
     sch_output_event.append("\t\t\t/* Scheduling event and processing them */\n\
-\t\t\tfor(Ii=0;Ii<PORT_SIZE("+item.split(':')[0]+");Ii++)\n\
+\t\t\tif((key_iter=strstr(recv_data, "+'"'+item.split(':')[0]+':"'")) != NULL)\n\
 \t\t\t{\n\
-\t\t\t\tprintf(\"Client- Bit val is %c \\n\",recv_data[Ii]);\n\
-\t\t\t\tfprintf(log_client,\"Client-Bit val is %c \\n\",recv_data[Ii]);\n\
-\t\t\t\tif(recv_data[Ii]=='0')\n\t\t\t\t{\n\
+\t\t\twhile(*key_iter++ != ':');\n\
+\t\t\tfor(Ii=0;*key_iter != ';';Ii++,key_iter++)\n\
+\t\t\t{\n\
+\t\t\t\tprintf(\"Client- Bit val is %c \\n\",*key_iter);\n\
+\t\t\t\tfprintf(log_client,\"Client-Bit val is %c \\n\",*key_iter);\n\
+\t\t\t\tif(*key_iter=='0')\n\t\t\t\t{\n\
 \t\t\t\t\tprintf(\"Client-Zero Received \");\n\
 \t\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ZERO;\n\t\t\t\t}\n\
-\t\t\t\telse if(recv_data[Ii]=='1')\n\t\t\t\t{\n\
+\t\t\t\telse if(*key_iter=='1')\n\t\t\t\t{\n\
 \t\t\t\t\tprintf(\"Client-One Received \\n\");\n\
 \t\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ONE;\n\
 \t\t\t\t}\n\t\t\t\telse\t\t\t\t{\n\
@@ -385,6 +389,7 @@ for item in output_port:
 \t\t\t\t\t}\n\t\t\t\t\telse\n\t\t\t\t\t{\n\
 \t\t\t\t\t\tOUTPUT_CHANGED("+item.split(':')[0]+"[Ii]) = FALSE;\n\t\t\t\t\t}\n\
 \t\t\t\t}\n\t\t\t\tOUTPUT_STRENGTH("+item.split(':')[0]+"[Ii]) = STRONG;\n\
+\t\t\t}\n\
 \t\t\t}\n")
 
 

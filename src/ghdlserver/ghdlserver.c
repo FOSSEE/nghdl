@@ -19,6 +19,7 @@
 //FILE *log_file = NULL;    
 //FILE *log_sock_id = NULL;  
 FILE *log_server = NULL;
+FILE *log_server1 = NULL;
 #define z32__ "00000000000000000000000000000000"     
 
 char* Out_Port_Array[MAX_NUMBER_PORT];                                          
@@ -545,88 +546,36 @@ void  Vhpi_Send()
     
     //snprintf(sockid,sizeof(sockid),"%d",s->val);
   
-    int i=0;                                                                    
-    for (i=0;i<out_port_num;i++)                                                
-    {                                                                           
-      printf("The array out is %s \n",Out_Port_Array[i]);
-      fprintf(log_server,"The data is sending for output  %s \n",Out_Port_Array[i]);                       
-      Data_Send(sockid,Out_Port_Array[i]);                                      
-    }          
-    
-    /*
-    HASH_FIND_STR(users,"o",s);
-    if(s)
-    {
-      printf("Server- The key is %s and value is  %s \n",s->key,s->val);  
-      printf("Server- s-val %s \n",s->val);
-      
-      //Count Digits in number                                                    
-      while(cpy>0)                                                                
-      {                                                                           
-        rem[count_digits]=cpy%10;                                                 
-        count_digits++;                                                           
-        cpy=cpy/10;                                                               
-      }                                                                           
-      
-      int c=0;                                                                    
-      
-      //adds the difference of length as 0's                                                                    
-      for(i=0;i<2-count_digits;i++)                                      
-        new_str[c++]='0';                                                         
-      
-      //appends rest of the string                                                          
-      for(i=count_digits-1;i>=0;i--)                                              
-        new_str[c++]=rem[i]+48;                                                   
-      new_str[c++]='\0';       
-
-      out=(char *)malloc(sizeof(char)); 
-      snprintf(out,sizeof(out),"%s",s->val);
-      //HASH_DEL(users, s);
-      //free(s);
-      
-      while(1)
-      { 
-        if(can_write_to_socket(sockid))                                             
-          break;                                                                    
-        usleep(1000);  
-      
-      }
-
-      if ((send(sockid,out,sizeof(out),0))== -1)                   
-      {                                                               
-        perror("Server- Failure Sending Message\n");                        
-        //exit(1);
-      }       
-    
-    }
-    else
-    {
-      printf("Server- The key %s Not found \n",s->key);  
-    }
-    
-    */
-      
-    
-    //#ifdef DEBUG                                                                    
-    //fprintf(log_file,"Server- Info: trying to send message %s in  %d\n", send_buffer, vhpi_cycle_count);
-    //fflush(log_file);                                                         
-    //#endif
+      Data_Send(sockid);                                      
 
     fflush(log_server);
     fclose(log_server);
  
 }
 
-void Data_Send(int sockid,char* out_port)                                       
+void Data_Send(int sockid)                                       
 {                                                                               
-  char* out;                                                                  
-  HASH_FIND_STR(users,out_port,s);                                            
+  char* out;
+  out = (char *) malloc(sizeof(char));
+  *out = '\0';
+  char send_data_buf[BUFSIZ];
+  int i;
+  char colon = ':';
+  char semicolon = ';'; 
+  for (i=0;i<out_port_num;i++)
+  {  
+  HASH_FIND_STR(users,Out_Port_Array[i],s);                                            
   if(s)                                                                       
   {                                                                           
     printf("Server-Sending data has key:%s and value:%s \n",s->key,s->val);        
-    fprintf(log_server,"Sending data has key:%s and value:%s \n",s->key,s->val);                                     
-    out=(char *)malloc(sizeof(char));                                         
-    snprintf(out,sizeof(out),"%s",s->val);                                    
+    fprintf(log_server,"Sending data has key:%s and value:%s \n",s->key,s->val);
+    
+    strncat(out, s->key, strlen(s->key));
+    strncat(out, &colon, 1);
+    strncat(out, s->val, strlen(s->val));
+    strncat(out, &semicolon, 1);
+
+    
     //HASH_DEL(users, s);                                                     
     //free(s);                                                                
     while(1)                                                                  
@@ -636,17 +585,22 @@ void Data_Send(int sockid,char* out_port)
     usleep(1000);                                                           
     }                                                                         
   
-    if ((send(sockid,out,sizeof(out),0))== -1)                                
-    {                                                                         
-      perror("Server- Failure Sending Message\n");                            
-      exit(1);                                                                
-    }                                                                         
   }                                                                           
   else                                                                        
   {                                                                           
-    printf("Server- The output port's %s value Not found \n",out_port);
-    fprintf(log_server,"The %s's value not found in the table \n",out_port);                         
-  }                                                                           
+    printf("Server- The output port's %s value Not found \n",Out_Port_Array[i]);
+    fprintf(log_server,"The %s's value not found in the table \n",Out_Port_Array[i]);                         
+  }
+  }
+
+        strcpy(send_data_buf, out);
+
+        if ((send(sockid, send_data_buf, sizeof(send_data_buf), 0)) == -1)
+        {
+                perror("Server- Failure Sending Message\n");
+                exit(1);
+        }
+        fprintf(log_server,"Val of output buffer %s\n",send_data_buf);  
 } 
 
 void  Vhpi_Close()                                                         

@@ -44,7 +44,7 @@ int receive_string(int n, char* buffer);
 void  send_packet_and_wait_for_response(char* buffer, int send_length, char* server_host_name, int server_port_number);
 
 void set_non_blocking(int sock_id);
-void Data_Send(int sockid,char* out_port);
+void Data_Send(int sockid);
 
 //Vhpi Function
 void   Vhpi_Initialize();                                                     
