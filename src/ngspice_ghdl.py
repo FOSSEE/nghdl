@@ -16,11 +16,13 @@ from ConfigParser import SafeConfigParser
 
 class Mainwindow(QtGui.QWidget):
     def __init__(self):
-        super(Mainwindow, self).__init__()
+        #super(Mainwindow, self).__init__()
+        QtGui.QMainWindow.__init__(self)
         print "Initializing.........."
         self.home = os.path.expanduser("~")
         self.parser = SafeConfigParser()
         self.parser.read(self.home+'/.FreeEDA/config.ini')
+        self.file_list = []             #to keep the supporting files
         self.initUI()
 
     def initUI(self):
@@ -30,7 +32,12 @@ class Mainwindow(QtGui.QWidget):
         self.exitbtn.clicked.connect(self.closeWindow)
         self.browsebtn = QtGui.QPushButton('Browse')
         self.browsebtn.clicked.connect(self.browseFile)
+        self.addbtn = QtGui.QPushButton('Add Files')
+        self.addbtn.clicked.connect(self.addFiles)
+        self.removebtn = QtGui.QPushButton('Remove Files')
+        self.removebtn.clicked.connect(self.removeFiles)
         self.ledit = QtGui.QLineEdit(self)
+        self.sedit = QtGui.QTextEdit(self)
         self.tedit = QtGui.QTextEdit(self)
 	
 	 	
@@ -40,9 +47,12 @@ class Mainwindow(QtGui.QWidget):
         grid.setSpacing(5)
         grid.addWidget(self.ledit, 1, 0)
         grid.addWidget(self.browsebtn, 1, 1)
-        grid.addWidget(self.uploadbtn,2,0)
-        grid.addWidget(self.exitbtn,2,1)
-        grid.addWidget(self.tedit,3,0)
+        grid.addWidget(self.sedit, 2, 0, 4, 1)
+        grid.addWidget(self.addbtn, 2, 1)
+        grid.addWidget(self.removebtn, 3, 1)
+        grid.addWidget(self.tedit, 6, 0)
+        grid.addWidget(self.uploadbtn, 7, 0)
+        grid.addWidget(self.exitbtn,7, 1)
 
         self.setLayout(grid)
         self.setGeometry(300, 300, 600,600)
@@ -62,6 +72,32 @@ class Mainwindow(QtGui.QWidget):
         self.filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
         print "Path file :", self.filename
         self.ledit.setText(self.filename)
+
+    def addFiles(self):
+        print "Add Files button clicked"
+        title = self.addbtn.text()
+        for file in QtGui.QFileDialog.getOpenFileNames(self, title):
+                print "Supporting file :", file
+                self.sedit.append(str(file))
+                self.file_list.append(file)
+
+
+    def removeFiles(self):
+            self.fileRemover = FileRemover(self)
+
+
+    #check extensions of all supporting files
+    def checkSupportFiles(self):
+        nonvhdl_count = 0
+        for file in self.file_list:
+            extension = os.path.splitext(str(file))[1]
+            if extension != ".vhdl":
+                nonvhdl_count += 1
+                self.file_list.remove(file)
+
+        if nonvhdl_count > 0:
+             QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
+
 
     def createModelDirectory(self):
         print "Create Model Directory Called"
@@ -138,6 +174,9 @@ class Mainwindow(QtGui.QWidget):
         shutil.copy(self.home+"/.FreeEDA/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
         shutil.copy(self.home+"/.FreeEDA/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
         shutil.copy(self.home+"/.FreeEDA/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
+
+        for file in self.file_list:
+                shutil.copy(str(file), path+"/DUTghdl/")
         
         os.chdir(path+"/DUTghdl")
         subprocess.call("bash "+path+"/DUTghdl/compile.sh", shell=True)
@@ -187,6 +226,7 @@ class Mainwindow(QtGui.QWidget):
         print "Parser Content:",self.parser.get('NGSPICE', 'NGSPICE_HOME')
         self.cur_dir = os.getcwd()
         print "My Current Working Directory",self.cur_dir
+        self.checkSupportFiles()
         if self.file_extension == ".vhdl":
             self.createModelDirectory()
             self.addingModelInModpath()
@@ -196,8 +236,79 @@ class Mainwindow(QtGui.QWidget):
         else:
             QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
 
+class FileRemover(QtGui.QWidget):
 
-    	
+        def __init__(self, main_obj):
+                super(FileRemover, self).__init__()
+                self.row = 0
+                self.col = 0
+                self.cb_dict = {}
+                self.marked_list = []
+                self.files = main_obj.file_list
+                self.sedit = main_obj.sedit
+
+                print self.files
+
+                self.grid = QtGui.QGridLayout()
+                removebtn = QtGui.QPushButton('Remove', self)
+                removebtn.clicked.connect(self.removeFiles)
+
+                self.grid.addWidget(self.createCheckBox(), 0, 0)
+                self.grid.addWidget(removebtn, 1, 1)
+
+                self.setLayout(self.grid)
+                self.show()
+
+        def createCheckBox(self):
+
+                self.checkbox = QtGui.QGroupBox()
+                self.checkbox.setTitle('Remove Files')
+                self.checkgrid = QtGui.QGridLayout()
+
+                self.checkgroupbtn = QtGui.QButtonGroup()
+
+                for path in self.files:
+
+                        print path
+
+                        self.cb_dict[path] = QtGui.QCheckBox(path)
+                        self.checkgroupbtn.addButton(self.cb_dict[path])
+                        self.checkgrid.addWidget(self.cb_dict[path], self.row, self.col)
+                        self.row += 1
+
+                self.checkgroupbtn.setExclusive(False)
+                self.checkgroupbtn.buttonClicked.connect(self.mark_file)
+                self.checkbox.setLayout(self.checkgrid)
+
+                return self.checkbox
+
+        def mark_file(self):
+
+                for path in self.cb_dict:
+                        if self.cb_dict[path].isChecked():
+                                if path not in self.marked_list:
+                                        self.marked_list.append(path)
+
+                        else:
+                                if path in self.marked_list:
+                                        self.marked_list.remove(path)
+
+        def removeFiles(self):
+
+                for path in self.marked_list:
+                        print path, "is removed"
+                        self.sedit.append(path + " removed")
+                        self.files.remove(path)
+
+                self.sedit.clear()
+                for path in self.files:
+                        self.sedit.append(path)
+
+                self.marked_list[:] = []
+                self.files[:] = []
+                self.close()
+
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
