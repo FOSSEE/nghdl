@@ -72,18 +72,24 @@ class Mainwindow(QtGui.QWidget):
         self.filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
         print "Path file :", self.filename
         self.ledit.setText(self.filename)
+        self.file_list[:] = []
+        self.sedit.clear()
 
     def addFiles(self):
         print "Add Files button clicked"
         title = self.addbtn.text()
         for file in QtGui.QFileDialog.getOpenFileNames(self, title):
-                print "Supporting file :", file
-                self.sedit.append(str(file))
-                self.file_list.append(file)
+            print "Supporting file :", file
+            self.sedit.append(str(file))
+            self.file_list.append(file)
 
 
     def removeFiles(self):
+        if len(self.file_list) > 0:
             self.fileRemover = FileRemover(self)
+        else:
+            QtGui.QMessageBox.about(self, 'Message', '''<b>Error</b><br/><br/>Select supporting files''')
+
 
 
     #check extensions of all supporting files
@@ -221,20 +227,25 @@ class Mainwindow(QtGui.QWidget):
     
     def uploadModle(self):
         print "Upload button clicked"
-        self.file_extension = os.path.splitext(str(self.filename))[1]
-        print "File extension",self.file_extension
-        print "Parser Content:",self.parser.get('NGSPICE', 'NGSPICE_HOME')
-        self.cur_dir = os.getcwd()
-        print "My Current Working Directory",self.cur_dir
-        self.checkSupportFiles()
-        if self.file_extension == ".vhdl":
-            self.createModelDirectory()
-            self.addingModelInModpath()
-            self.createModelFiles()
-            self.runMake()
-            self.runMakeInstall()
-        else:
-            QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
+        #self.file_list[:] = []
+        try:
+            self.file_extension = os.path.splitext(str(self.filename))[1]
+            print "File extension",self.file_extension
+            print "Parser Content:",self.parser.get('NGSPICE', 'NGSPICE_HOME')
+            self.cur_dir = os.getcwd()
+            print "My Current Working Directory",self.cur_dir
+            self.checkSupportFiles()
+            if self.file_extension == ".vhdl":
+                self.createModelDirectory()
+                self.addingModelInModpath()
+                self.createModelFiles()
+                self.runMake()
+                self.runMakeInstall()
+            else:
+                QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
+
+        except:
+                QtGui.QMessageBox.about(self,'Message','''<b>Error.</b><br/><br/>Select a .vhdl file''')
 
 class FileRemover(QtGui.QWidget):
 
@@ -305,7 +316,6 @@ class FileRemover(QtGui.QWidget):
                         self.sedit.append(path)
 
                 self.marked_list[:] = []
-                self.files[:] = []
                 self.close()
 
 
