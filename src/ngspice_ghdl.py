@@ -19,6 +19,12 @@ class Mainwindow(QtGui.QWidget):
         #super(Mainwindow, self).__init__()
         QtGui.QMainWindow.__init__(self)
         print "Initializing.........."
+        cwd = os.getcwd()
+        path, file = os.path.split(cwd)
+        print "cwd n path------ >", cwd, path
+        licensefile = os.path.join(path, "LICENSE")
+        fileopen = open(licensefile, 'r')
+        print fileopen.read()
         self.home = os.path.expanduser("~")
         self.parser = SafeConfigParser()
         self.parser.read(self.home+'/.FreeEDA/config.ini')
@@ -38,9 +44,10 @@ class Mainwindow(QtGui.QWidget):
         self.removebtn.clicked.connect(self.removeFiles)
         self.ledit = QtGui.QLineEdit(self)
         self.sedit = QtGui.QTextEdit(self)
-        self.tedit = QtGui.QTextEdit(self)
-	
-	 	
+        self.process = QtCore.QProcess(self)
+        self.terminal = QtGui.QWidget(self)
+
+        self.process.start('xterm',['-into', str(self.terminal.winId())])
 
         #Creating gridlayout
         grid = QtGui.QGridLayout()
@@ -50,20 +57,23 @@ class Mainwindow(QtGui.QWidget):
         grid.addWidget(self.sedit, 2, 0, 4, 1)
         grid.addWidget(self.addbtn, 2, 1)
         grid.addWidget(self.removebtn, 3, 1)
-        grid.addWidget(self.tedit, 6, 0)
-        grid.addWidget(self.uploadbtn, 7, 0)
-        grid.addWidget(self.exitbtn,7, 1)
+        grid.addWidget(self.terminal, 6, 0,10,1)
+        grid.addWidget(self.uploadbtn, 17, 0)
+        grid.addWidget(self.exitbtn,17, 1)
 
         self.setLayout(grid)
         self.setGeometry(300, 300, 600,600)
         self.setWindowTitle("Ngspice Digital Model Creator")
         #self.setWindowIcon(QtGui.QIcon('logo.png'))
-        self.tedit.setReadOnly(True)
         self.show()
 	
 
 
     def closeWindow(self):
+        try:
+            self.process.kill()
+        except:
+                pass
         print "Close button clicked"
         quit()
 
@@ -72,24 +82,18 @@ class Mainwindow(QtGui.QWidget):
         self.filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
         print "Path file :", self.filename
         self.ledit.setText(self.filename)
-        self.file_list[:] = []
-        self.sedit.clear()
 
     def addFiles(self):
         print "Add Files button clicked"
         title = self.addbtn.text()
         for file in QtGui.QFileDialog.getOpenFileNames(self, title):
-            print "Supporting file :", file
-            self.sedit.append(str(file))
-            self.file_list.append(file)
+                print "Supporting file :", file
+                self.sedit.append(str(file))
+                self.file_list.append(file)
 
 
     def removeFiles(self):
-        if len(self.file_list) > 0:
             self.fileRemover = FileRemover(self)
-        else:
-            QtGui.QMessageBox.about(self, 'Message', '''<b>Error</b><br/><br/>Select supporting files''')
-
 
 
     #check extensions of all supporting files
@@ -161,7 +165,7 @@ class Mainwindow(QtGui.QWidget):
         print "Current Working directory changed to ",self.cur_dir
         cmd = "python ~/.FreeEDA/model_generation.py "+str(self.ledit.text())
         stdouterr = os.popen4(cmd)[1].read()
-        self.tedit.append(stdouterr)
+        print stdouterr
         #Moving file to model directory
         path=self.digital_home+"/"+self.modelname
         shutil.move("cfunc.mod",path)
@@ -204,9 +208,15 @@ class Mainwindow(QtGui.QWidget):
         self.release_home=self.parser.get('NGSPICE','RELEASE')
         os.chdir(self.release_home)
         try:
-            cmd = "make"
-            self.tedit.append("Running Make")
-            subprocess.call(cmd,shell=True)
+            cmd = " make"
+            print "Running Make"
+            path = os.getcwd()
+            #subprocess.call(cmd,shell=True)
+            command = "cd "+path +";"+cmd +";"+"make install"
+            self.args = ['-into', str(self.terminal.winId()),'-hold','+s','-e', command]
+            self.process.start('xterm', self.args)
+            print "pid ------ >",self.process.pid()
+            
             #stdouterr = os.popen4(cmd)[1].read()
             #self.tedit.append(stdouterr)
         except:
@@ -216,9 +226,15 @@ class Mainwindow(QtGui.QWidget):
     def runMakeInstall(self):
         print "run Make Install Called"
         try:
-            cmd = "make install"
-            self.tedit.append("Running Make Install")
-            subprocess.call(cmd,shell=True)
+            cmd = " make install"
+            print "Running Make Install"
+            path = os.getcwd()
+            print "cwd------------>", path
+            #subprocess.call(cmd,shell=True)
+            command = "cd "+path+ ";"+cmd
+            self.args = ['-into', str(self.terminal.winId()),'-hold','-e', command]
+            #self.process.start('xterm', self.args)
+            #self.process.waitForFinished(-1)
             #stdouterr = os.popen4(cmd)[1].read()
             #self.tedit.append(stdouterr)
         except:
@@ -227,7 +243,10 @@ class Mainwindow(QtGui.QWidget):
     
     def uploadModle(self):
         print "Upload button clicked"
-        #self.file_list[:] = []
+        try:
+            self.process.kill()
+        except:
+                pass
         try:
             self.file_extension = os.path.splitext(str(self.filename))[1]
             print "File extension",self.file_extension
@@ -243,9 +262,8 @@ class Mainwindow(QtGui.QWidget):
                 self.runMakeInstall()
             else:
                 QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
-
         except:
-                QtGui.QMessageBox.about(self,'Message','''<b>Error.</b><br/><br/>Select a .vhdl file''')
+            QtGui.QMessageBox.about(self, 'Message','''<b>Error</b><br/><br/> select a <b>.vhdl</b> file ''')
 
 class FileRemover(QtGui.QWidget):
 
@@ -316,6 +334,7 @@ class FileRemover(QtGui.QWidget):
                         self.sedit.append(path)
 
                 self.marked_list[:] = []
+                self.files[:] = []
                 self.close()
 
 
