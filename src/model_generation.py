@@ -621,6 +621,7 @@ use ieee.numeric_std.all;
 library work;                                                                                                                                   
 use work.Vhpi_Foreign.all;                                                                                                                      
 use work.Utility_Package.all;
+use work.sock_pkg.all;
 
 
 '''
@@ -690,7 +691,7 @@ map.append("\t\t\t);")
 tb_clk= "clk_s <= not clk_s after 5 us;\n\n"
 #Adding Process block for Vhpi
 process_Vhpi=[]
-process_Vhpi.append("\tprocess\n\n\t\tbegin\n\n\t\tVhpi_Initialize;\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
+process_Vhpi.append("\tprocess\n\t\tvariable sock_port : integer;\n\t\tbegin\n\t\tsock_port := sock_pkg_fun;\n\t\tVhpi_Initialize(sock_port);\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
 #Adding process block 
 process=[]
 process.append("\tprocess\n\n")
