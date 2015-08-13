@@ -248,7 +248,7 @@ create_socket='''
 
         // memset(&server_addr, 0, sizeof(server_addr));                                                                                       
         server_addr.sin_family = AF_INET;                                                                                                      
-        server_addr.sin_port = htons(5000);                                                                                                    
+        server_addr.sin_port = htons(sock_port);                                                                                                    
         server_addr.sin_addr = *((struct in_addr *)host->h_addr);                                                                              
         bzero(&(server_addr.sin_zero),8);                                                                                                      
 
@@ -463,7 +463,8 @@ for item in cm_event_get_ptr:
     cfunc.write("\n")
 cfunc.write(systime_info)
 cfunc.write("\n")
-cfunc.write('\t\tsystem("'+home+'/ngspice-26/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/start_server.sh &");\n')
+cfunc.write('\t\tsnprintf(command,1024,"'+home+'/ngspice-26/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/start_server.sh %d &",sock_port);\n')
+cfunc.write('\t\tsystem(command)')
 cfunc.write("\t}")
 cfunc.write("\n")
 cfunc.write("\telse\n\t{\n")
