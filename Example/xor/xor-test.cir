@@ -24,7 +24,7 @@ axor [1] [2]  [12] axors
 adac1 [12] [34]  dac
 *************model***********
 
-.model axors myxor(rise_delay = 1.0e-10 fall_delay = 1.0e-10 stop_time=90n)
+.model axors myxor(instance_id = 112 rise_delay = 1.0e-10 fall_delay = 1.0e-10 stop_time=90n)
 
 .model adc adc_bridge ( in_low =0.5 in_high =1.0
 +                   rise_delay =1.0e-10 fall_delay =1.0e-10)
