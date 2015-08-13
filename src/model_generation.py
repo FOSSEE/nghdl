@@ -170,7 +170,8 @@ var_section='''
     char *key_iter;
     struct hostent *host;                                                                                                                      
     struct sockaddr_in server_addr;                                                                                                            
-    double time_limit = PARAM(stop_time);   
+    double time_limit = PARAM(stop_time);
+    int sock_port = 5000+PARAM(instance_id);
 '''
 temp_input_var=[]
 for item in input_port:
