@@ -556,6 +556,17 @@ for item in output_port:
     in_port_table.append(port_table+port_name+description+direction+default_type+allowed_type+vector+vector_bounds+null_allowed)
 
 parameter_table='''
+
+PARAMETER_TABLE:
+Parameter_Name:     instance_id
+Description:        "instance_id"
+Data_Type:          real
+Default_Value:      0
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
 PARAMETER_TABLE:                                                                                                                               
 Parameter_Name:     rise_delay                  fall_delay                                                                                     
 Description:        "rise delay"                "fall delay"                                                                                   
