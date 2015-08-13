@@ -756,7 +756,7 @@ for item in process:
 
 testbench.close()
 
-#####################################Creating and writing components in start_server.sh ################################
+##################################### Creating and writing components in start_server.sh ################################
 
 start_server = open('start_server.sh','w')
 
@@ -772,3 +772,26 @@ start_server.write("ghdl -e -Wl,ghdlserver.o "+fname.split('.')[0]+"_tb &&\n")
 start_server.write("./"+fname.split('.')[0]+"_tb")
 
 start_server.close()
+
+##################################### Creating and writing in sock_pkg_create.sh ########################################
+
+sock_pkg_create = open('sock_pkg_create.sh','w')
+
+sock_pkg_create.write("echo \"#!/bin/bash\n\n")
+sock_pkg_create.write("###This file create sock_pkg_create.vhdl file and set the instance id from parameter based on parameter\n\n")
+sock_pkg_create.write("library ieee;\n")
+sock_pkg_create.write("package sock_pkg is\n")
+sock_pkg_create.write("\tfunction sock_pkg_fun return integer;\n")
+sock_pkg_create.write("end;\n\n")
+sock_pkg_create.write("\tpackage body sock_pkg is\n")
+sock_pkg_create.write("\t\tvariable sock_id : integer;\n")
+sock_pkg_create.write("\t\t\tbegin\n")
+sock_pkg_create.write("\t\t\t\tsock_id := $1;\n")
+sock_pkg_create.write("\t\t\t\treturn sock_id;\n")
+sock_pkg_create.write("\t\t\tend function;\n")
+sock_pkg_create.write("\t\tend package body;\" > sock_pkg.vhdl")
+
+
+
+
+
