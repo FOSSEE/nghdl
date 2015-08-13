@@ -23,7 +23,7 @@ aconverter1 [100 200]  [1 2] adc_bridge1
 
 ainverter [1 2] [10 20]  inv1
 
-.model inv1 inverter(rise_delay = 1.0e-12 fall_delay = 1.0e-12 stop_time=90e-9)
+.model inv1 inverter(instance_id = 101 rise_delay = 1.0e-12 fall_delay = 1.0e-12 stop_time=90e-9)
 
 
 aconverter2 [10 20] [30 40] dac_bridge1
