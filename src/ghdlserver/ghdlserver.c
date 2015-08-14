@@ -369,9 +369,9 @@ void set_non_blocking(int sock_id)
 } 
 
 
-void Vhpi_Initialize()
+void Vhpi_Initialize(int sock_port)
 {
-   
+    DEFAULT_SERVER_PORT = sock_port;
     /*Taking time info for log*/ 
     time_t systime;                                                             
     systime = time(NULL);  

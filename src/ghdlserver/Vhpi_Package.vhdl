@@ -8,7 +8,7 @@ package Vhpi_Foreign is
   -----------------------------------------------------------------------------
   -- foreign Vhpi function
   -----------------------------------------------------------------------------
-  procedure  Vhpi_Initialize;
+  procedure  Vhpi_Initialize(sock_port : in integer);
   attribute foreign of Vhpi_Initialize : procedure is "VHPIDIRECT Vhpi_Initialize";
   
   procedure Vhpi_Close; -- close .
@@ -36,7 +36,7 @@ package body Vhpi_Foreign is
   -----------------------------------------------------------------------------
   -- subprogram bodies for foreign vhpi routines.  will never be called
   -----------------------------------------------------------------------------
-  procedure  Vhpi_Initialize is
+  procedure  Vhpi_Initialize(sock_port: in integer) is
   begin
     assert false  report "fatal: this should never be called" severity failure;
   end Vhpi_Initialize;

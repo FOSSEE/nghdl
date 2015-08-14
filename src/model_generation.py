@@ -170,7 +170,8 @@ var_section='''
     char *key_iter;
     struct hostent *host;                                                                                                                      
     struct sockaddr_in server_addr;                                                                                                            
-    double time_limit = PARAM(stop_time);   
+    double time_limit = PARAM(stop_time);
+    int sock_port = 5000+PARAM(instance_id);
 '''
 temp_input_var=[]
 for item in input_port:
@@ -247,7 +248,7 @@ create_socket='''
 
         // memset(&server_addr, 0, sizeof(server_addr));                                                                                       
         server_addr.sin_family = AF_INET;                                                                                                      
-        server_addr.sin_port = htons(5000);                                                                                                    
+        server_addr.sin_port = htons(sock_port);                                                                                                    
         server_addr.sin_addr = *((struct in_addr *)host->h_addr);                                                                              
         bzero(&(server_addr.sin_zero),8);                                                                                                      
 
@@ -462,7 +463,8 @@ for item in cm_event_get_ptr:
     cfunc.write("\n")
 cfunc.write(systime_info)
 cfunc.write("\n")
-cfunc.write('\t\tsystem("'+home+'/ngspice-26/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/start_server.sh &");\n')
+cfunc.write('\t\tsnprintf(command,1024,"'+home+'/ngspice-26/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/start_server.sh %d &",sock_port);\n')
+cfunc.write('\t\tsystem(command)')
 cfunc.write("\t}")
 cfunc.write("\n")
 cfunc.write("\telse\n\t{\n")
@@ -554,6 +556,17 @@ for item in output_port:
     in_port_table.append(port_table+port_name+description+direction+default_type+allowed_type+vector+vector_bounds+null_allowed)
 
 parameter_table='''
+
+PARAMETER_TABLE:
+Parameter_Name:     instance_id
+Description:        "instance_id"
+Data_Type:          real
+Default_Value:      0
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
 PARAMETER_TABLE:                                                                                                                               
 Parameter_Name:     rise_delay                  fall_delay                                                                                     
 Description:        "rise delay"                "fall delay"                                                                                   
@@ -608,6 +621,7 @@ use ieee.numeric_std.all;
 library work;                                                                                                                                   
 use work.Vhpi_Foreign.all;                                                                                                                      
 use work.Utility_Package.all;
+use work.sock_pkg.all;
 
 
 '''
@@ -677,7 +691,7 @@ map.append("\t\t\t);")
 tb_clk= "clk_s <= not clk_s after 5 us;\n\n"
 #Adding Process block for Vhpi
 process_Vhpi=[]
-process_Vhpi.append("\tprocess\n\n\t\tbegin\n\n\t\tVhpi_Initialize;\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
+process_Vhpi.append("\tprocess\n\t\tvariable sock_port : integer;\n\t\tbegin\n\t\tsock_port := sock_pkg_fun;\n\t\tVhpi_Initialize(sock_port);\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
 #Adding process block 
 process=[]
 process.append("\tprocess\n\n")
@@ -743,7 +757,7 @@ for item in process:
 
 testbench.close()
 
-#####################################Creating and writing components in start_server.sh ################################
+##################################### Creating and writing components in start_server.sh ################################
 
 start_server = open('start_server.sh','w')
 
@@ -753,9 +767,34 @@ start_server.write("#gcc -c ghdlserver.c\n")
 start_server.write("#ghdl -a Utility_Package.vhdl &&\n")
 start_server.write("#ghdl -a Vhpi_Package.vhdl &&\n")
 start_server.write("cd "+home+"/ngspice-26/src/xspice/icm/ghdl/"+fname.split('.')[0]+"/DUTghdl/\n")
+start_server.write("./sock_pkg_create.sh &&\n")
+start_server.write("ghdl -a sock_pkg.vhdl &&\n")
 start_server.write("ghdl -a "+fname+" &&\n")
 start_server.write("ghdl -a "+fname.split('.')[0]+"_tb.vhdl  &&\n")
 start_server.write("ghdl -e -Wl,ghdlserver.o "+fname.split('.')[0]+"_tb &&\n")
 start_server.write("./"+fname.split('.')[0]+"_tb")
 
 start_server.close()
+
+##################################### Creating and writing in sock_pkg_create.sh ########################################
+
+sock_pkg_create = open('sock_pkg_create.sh','w')
+
+sock_pkg_create.write("echo \"#!/bin/bash\n\n")
+sock_pkg_create.write("###This file create sock_pkg_create.vhdl file and set the instance id from parameter based on parameter\n\n")
+sock_pkg_create.write("library ieee;\n")
+sock_pkg_create.write("package sock_pkg is\n")
+sock_pkg_create.write("\tfunction sock_pkg_fun return integer;\n")
+sock_pkg_create.write("end;\n\n")
+sock_pkg_create.write("\tpackage body sock_pkg is\n")
+sock_pkg_create.write("\t\tvariable sock_id : integer;\n")
+sock_pkg_create.write("\t\t\tbegin\n")
+sock_pkg_create.write("\t\t\t\tsock_id := $1;\n")
+sock_pkg_create.write("\t\t\t\treturn sock_id;\n")
+sock_pkg_create.write("\t\t\tend function;\n")
+sock_pkg_create.write("\t\tend package body;\" > sock_pkg.vhdl")
+
+
+
+
+

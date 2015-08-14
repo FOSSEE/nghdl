@@ -13,7 +13,6 @@
 #define MAX_BUF_SIZE 4096
 
 //Defualt port number
-#define DEFAULT_SERVER_PORT  5000
 
 //unlikely to have more than 16 active
 //threads talking to the TB?
@@ -21,6 +20,8 @@
 
 
 
+
+int DEFAULT_SERVER_PORT;
 
 //Payload Handling
 int extract_payload(char* receive_buffer,char* payload, int max_n);
@@ -47,7 +48,7 @@ void set_non_blocking(int sock_id);
 void Data_Send(int sockid);
 
 //Vhpi Function
-void   Vhpi_Initialize();                                                     
+void   Vhpi_Initialize(int sock_port);                                                     
 void   Vhpi_Close(); 
 void   Vhpi_Listen();
 void   Vhpi_Send();
