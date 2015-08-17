@@ -19,13 +19,10 @@ class Mainwindow(QtGui.QWidget):
         #super(Mainwindow, self).__init__()
         QtGui.QMainWindow.__init__(self)
         print "Initializing.........."
-        cwd = os.getcwd()
-        path, file = os.path.split(cwd)
-        print "cwd n path------ >", cwd, path
-        licensefile = os.path.join(path, "LICENSE")
+        self.home = os.path.expanduser("~")
+        licensefile = os.path.join(self.home+'/.FreeEDA/', "LICENSE")
         fileopen = open(licensefile, 'r')
         print fileopen.read()
-        self.home = os.path.expanduser("~")
         self.parser = SafeConfigParser()
         self.parser.read(self.home+'/.FreeEDA/config.ini')
         self.file_list = []             #to keep the supporting files
