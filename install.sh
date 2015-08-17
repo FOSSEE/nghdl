@@ -81,6 +81,9 @@ fi
 cd $cur_dir
 cp -rv src/* ~/$src_loc/
 
+#Copying LICENSE file
+cp LICENSE ~/$src_loc/
+
 #Creating config.ini file and adding configuration information
 
 cd ~/$src_loc/
