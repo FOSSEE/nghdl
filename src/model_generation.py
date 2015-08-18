@@ -794,7 +794,7 @@ sock_pkg_create.write("\t\t\t\tsock_id := $1;\n")
 sock_pkg_create.write("\t\t\t\treturn sock_id;\n")
 sock_pkg_create.write("\t\t\tend function;\n")
 sock_pkg_create.write("\t\tend package body;\" > sock_pkg.vhdl")
-
+sock_pkg_create.close()
 
 
 
