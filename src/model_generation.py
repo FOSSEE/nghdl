@@ -781,10 +781,9 @@ start_server.close()
 ##################################### Creating and writing in sock_pkg_create.sh ########################################
 
 sock_pkg_create = open('sock_pkg_create.sh','w')
-
-sock_pkg_create.write("echo \"#!/bin/bash\n\n")
-sock_pkg_create.write("---This file create sock_pkg_create.vhdl file and set the instance id from parameter based on parameter\n\n")
-sock_pkg_create.write("library ieee;\n")
+sock_pkg_create.write("#!/bin/sh")
+sock_pkg_create.write("#This file create sock_pkg_create.vhdl file and set the instance id from parameter based on parameter\n\n")
+sock_pkg_create.write("echo \"library ieee;\n")
 sock_pkg_create.write("package sock_pkg is\n")
 sock_pkg_create.write("\tfunction sock_pkg_fun return integer;\n")
 sock_pkg_create.write("end;\n\n")
