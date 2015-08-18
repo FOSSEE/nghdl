@@ -172,6 +172,7 @@ class Mainwindow(QtGui.QWidget):
         os.mkdir(path+"/DUTghdl/")
         shutil.move("connection_info.txt",path+"/DUTghdl/")
         shutil.move("start_server.sh",path+"/DUTghdl/")
+        shutil.move("sock_pkg_create.sh",path+"/DUTghdl/")
         shutil.move(self.modelname+"_tb.vhdl",path+"/DUTghdl/")
         
         shutil.copy(str(self.filename),path+"/DUTghdl/")
@@ -188,6 +189,7 @@ class Mainwindow(QtGui.QWidget):
         os.chdir(path+"/DUTghdl")
         subprocess.call("bash "+path+"/DUTghdl/compile.sh", shell=True)
         subprocess.call("chmod a+x start_server.sh",shell=True)
+        subprocess.call("chmod a+x sock_pkg_create.sh",shell=True)
         os.remove("compile.sh")
         os.remove("ghdlserver.c")
         #os.remove("ghdlserver.h")
