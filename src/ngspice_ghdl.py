@@ -68,7 +68,7 @@ class Mainwindow(QtGui.QWidget):
 
     def closeWindow(self):
         try:
-            self.process.kill()
+            self.process.close()
         except:
                 pass
         print "Close button clicked"
@@ -212,8 +212,10 @@ class Mainwindow(QtGui.QWidget):
             path = os.getcwd()
             #subprocess.call(cmd,shell=True)
             command = "cd "+path +";"+cmd +";"+"make install"
+            #command = "cd "+path +";"+cmd 
             self.args = ['-into', str(self.terminal.winId()),'-hold','+s','-e', command]
             self.process.start('xterm', self.args)
+
             print "pid ------ >",self.process.pid()
             
             #stdouterr = os.popen4(cmd)[1].read()
@@ -239,11 +241,12 @@ class Mainwindow(QtGui.QWidget):
         except:
             print "There is error during in 'make install' "
             quit()
+
     
     def uploadModle(self):
         print "Upload button clicked"
         try:
-            self.process.kill()
+            self.process.close()
         except:
                 pass
         try:
@@ -258,7 +261,7 @@ class Mainwindow(QtGui.QWidget):
                 self.addingModelInModpath()
                 self.createModelFiles()
                 self.runMake()
-                self.runMakeInstall()
+                #self.runMakeInstall()
             else:
                 QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
         except:
