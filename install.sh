@@ -27,6 +27,77 @@ sysdate="$(date)"
 timestamp=`echo $sysdate|awk '{print $3"_"$2"_"$6"_"$4 }'`
 
 
+#All functions goes here
+function addghdlPPA
+{
+        echo "Adding ghdl PPA to install latest ghdl version"
+        sudo add-apt-repository ppa:pgavin/ghdl
+        sudo apt-get update
+}
+
+function installDependency
+{
+        echo "Installing ghdl.................................."
+        sudo apt-get install ghdl
+        echo "Installing flex.................................."
+        sudo apt-get install flex
+        echo "Installing bison................................."
+        sudo apt-get install bison
+}
+
+echo "Enter proxy details if you are connected to internet thorugh proxy"
+
+echo -n "Is your internet connection behind proxy? (y/n): "
+read getProxy
+if [ $getProxy == "y" -o $getProxy == "Y" ];then
+        echo -n 'Proxy hostname :'
+        read proxyHostname
+
+        echo -n 'Proxy Port :'
+        read proxyPort
+
+        echo -n username@$proxyHostname:$proxyPort :
+        read username
+
+        echo -n 'Password :'
+        read -s passwd
+
+        unset http_proxy
+        unset https_proxy
+        unset HTTP_PROXY
+        unset HTTPS_PROXY
+        unset ftp_proxy
+        unset FTP_PROXY
+
+        export http_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+        export https_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+        export HTTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+        export HTTPS_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+        export ftp_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+        export FTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+
+        echo "Install with proxy"
+        #Calling functions
+        addghdlPPA
+        installDependency
+
+elif [ $getProxy == "n" -o $getProxy == "N" ];then
+        echo "Install without proxy"
+
+        #Calling functions
+        addghdlPPA
+        installDependency
+
+        if [ $? -ne 0 ];then
+                echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
+                exit 0
+        fi
+
+else
+        echo "Please select the right option"
+        exit 0
+
+fi
 
 #Checking if ngspice-26 directory is already present in Home directory
 if [ -d $HOME/$ngspice ];then
