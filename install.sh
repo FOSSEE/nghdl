@@ -12,13 +12,13 @@
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Fahim Khan , fahim.elex@gmail.com
-#  ORGANIZATION: FreeEDA, FOSSEE group at IIT Bombay
+#  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
 #      REVISION:  ---
 #===============================================================================
 
 ngspice="ngspice-26"
-src_loc=".FreeEDA"
+src_loc=".esim-nghdl"
 config_file="config.ini"
 cur_dir=`pwd`
 
@@ -141,7 +141,7 @@ fi
 
 #Creating directory to put source 
 if [ -d "$HOME/$src_loc" ];then
-    echo "(.)FreeEDA directory already in $HOME,removing it and copying new code"
+    echo "(.)esim-nghdl directory already in $HOME,removing it and copying new code"
     rm -rf ~/$src_loc
     mkdir -p ~/$src_loc
 else

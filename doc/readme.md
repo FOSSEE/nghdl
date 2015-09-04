@@ -30,7 +30,7 @@ for that model it will actually call the ghdl to get the result.
 
 ##Few words about installed code structure.
 1. Ngspice will be installed in home directory $HOME. If you already have ngspice-26 directory there it will take its backup.
-2. Source code for all other file will be present in ~/.FreeEDA
+2. Source code for all other file will be present in ~/.esim-nghdl
 3. symlink nghdl is stored in /usr/local/bin
 
 ##How to use?
@@ -47,5 +47,5 @@ for that model it will actually call the ghdl to get the result.
 ##FUTURE WORK
 1. Make changes to have more than one output.
 2. Making changes to include use of more than one code models.
-3. Interfacing it with FreeEDA formely known as Oscad so that we can use it in our schematic.
+3. Interfacing it with esim formely known as Oscad so that we can use it in our schematic.
 

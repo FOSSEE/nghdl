@@ -12,7 +12,7 @@ import subprocess
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from ConfigParser import SafeConfigParser
-
+from Appconfig import nghdl_src_loc
 
 class Mainwindow(QtGui.QWidget):
     def __init__(self):
@@ -20,11 +20,11 @@ class Mainwindow(QtGui.QWidget):
         QtGui.QMainWindow.__init__(self)
         print "Initializing.........."
         self.home = os.path.expanduser("~")
-        licensefile = os.path.join(self.home+'/.FreeEDA/', "LICENSE")
+        licensefile = os.path.join(os.path.join(self.home,nghdl_src_loc), "LICENSE")
         fileopen = open(licensefile, 'r')
         print fileopen.read()
         self.parser = SafeConfigParser()
-        self.parser.read(self.home+'/.FreeEDA/config.ini')
+        self.parser.read(os.path.join(self.home,nghdl_src_loc+'/config.ini'))
         self.file_list = []             #to keep the supporting files
         self.initUI()
 
@@ -160,7 +160,7 @@ class Mainwindow(QtGui.QWidget):
         print "Create Model Files Called"
         os.chdir(self.cur_dir)
         print "Current Working directory changed to ",self.cur_dir
-        cmd = "python ~/.FreeEDA/model_generation.py "+str(self.ledit.text())
+        cmd = "python ~/"+nghdl_src_loc+"/model_generation.py "+str(self.ledit.text())
         stdouterr = os.popen4(cmd)[1].read()
         print stdouterr
         #Moving file to model directory
@@ -176,12 +176,12 @@ class Mainwindow(QtGui.QWidget):
         shutil.move(self.modelname+"_tb.vhdl",path+"/DUTghdl/")
         
         shutil.copy(str(self.filename),path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/compile.sh",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/uthash.h",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/compile.sh",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/uthash.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
 
         for file in self.file_list:
                 shutil.copy(str(file), path+"/DUTghdl/")
