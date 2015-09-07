@@ -38,11 +38,11 @@ function addghdlPPA
 function installDependency
 {
         echo "Installing ghdl.................................."
-        sudo apt-get install ghdl
+        sudo apt-get install -y ghdl
         echo "Installing flex.................................."
-        sudo apt-get install flex
+        sudo apt-get install -y flex
         echo "Installing bison................................."
-        sudo apt-get install bison
+        sudo apt-get install -y bison
 }
 
 echo "Enter proxy details if you are connected to internet thorugh proxy"
