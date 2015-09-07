@@ -1,9 +1,9 @@
 #!/bin/bash 
 #===============================================================================
 #
-#          FILE: install.sh
+#          FILE: install-nghdl.sh
 # 
-#         USAGE: ./install.sh 
+#         USAGE: ./install-nghdl.sh 
 # 
 #   DESCRIPTION: It is installation script for ngspice and ghdl work (nghdl). 
 # 

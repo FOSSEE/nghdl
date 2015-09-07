@@ -25,7 +25,7 @@ for that model it will actually call the ghdl to get the result.
 
 ##How to install?
 1. Clone this repository.
-2. Run `./install.sh` It will install ngspice from source code and put it in $HOME.
+2. Run `./install-nghdl.sh` It will install ngspice from source code and put it in $HOME.
 
 
 ##Few words about installed code structure.
