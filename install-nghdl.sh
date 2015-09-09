@@ -1,9 +1,9 @@
 #!/bin/bash 
 #===============================================================================
 #
-#          FILE: install.sh
+#          FILE: install-nghdl.sh
 # 
-#         USAGE: ./install.sh 
+#         USAGE: ./install-nghdl.sh 
 # 
 #   DESCRIPTION: It is installation script for ngspice and ghdl work (nghdl). 
 # 
@@ -12,13 +12,13 @@
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Fahim Khan , fahim.elex@gmail.com
-#  ORGANIZATION: FreeEDA, FOSSEE group at IIT Bombay
+#  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
 #      REVISION:  ---
 #===============================================================================
 
 ngspice="ngspice-26"
-src_loc=".FreeEDA"
+src_loc=".esim-nghdl"
 config_file="config.ini"
 cur_dir=`pwd`
 
@@ -27,6 +27,77 @@ sysdate="$(date)"
 timestamp=`echo $sysdate|awk '{print $3"_"$2"_"$6"_"$4 }'`
 
 
+#All functions goes here
+function addghdlPPA
+{
+        echo "Adding ghdl PPA to install latest ghdl version"
+        sudo add-apt-repository ppa:pgavin/ghdl
+        sudo apt-get update
+}
+
+function installDependency
+{
+        echo "Installing ghdl.................................."
+        sudo apt-get install -y ghdl
+        echo "Installing flex.................................."
+        sudo apt-get install -y flex
+        echo "Installing bison................................."
+        sudo apt-get install -y bison
+}
+
+echo "Enter proxy details if you are connected to internet thorugh proxy"
+
+echo -n "Is your internet connection behind proxy? (y/n): "
+read getProxy
+if [ $getProxy == "y" -o $getProxy == "Y" ];then
+        echo -n 'Proxy hostname :'
+        read proxyHostname
+
+        echo -n 'Proxy Port :'
+        read proxyPort
+
+        echo -n username@$proxyHostname:$proxyPort :
+        read username
+
+        echo -n 'Password :'
+        read -s passwd
+
+        unset http_proxy
+        unset https_proxy
+        unset HTTP_PROXY
+        unset HTTPS_PROXY
+        unset ftp_proxy
+        unset FTP_PROXY
+
+        export http_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+        export https_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+        export HTTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+        export HTTPS_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+        export ftp_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+        export FTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+
+        echo "Install with proxy"
+        #Calling functions
+        addghdlPPA
+        installDependency
+
+elif [ $getProxy == "n" -o $getProxy == "N" ];then
+        echo "Install without proxy"
+
+        #Calling functions
+        addghdlPPA
+        installDependency
+
+        if [ $? -ne 0 ];then
+                echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
+                exit 0
+        fi
+
+else
+        echo "Please select the right option"
+        exit 0
+
+fi
 
 #Checking if ngspice-26 directory is already present in Home directory
 if [ -d $HOME/$ngspice ];then
@@ -70,7 +141,7 @@ fi
 
 #Creating directory to put source 
 if [ -d "$HOME/$src_loc" ];then
-    echo "(.)FreeEDA directory already in $HOME,removing it and copying new code"
+    echo "(.)esim-nghdl directory already in $HOME,removing it and copying new code"
     rm -rf ~/$src_loc
     mkdir -p ~/$src_loc
 else
@@ -80,6 +151,9 @@ fi
 #Change to current directory
 cd $cur_dir
 cp -rv src/* ~/$src_loc/
+
+#Copying LICENSE file
+cp LICENSE ~/$src_loc/
 
 #Creating config.ini file and adding configuration information
 

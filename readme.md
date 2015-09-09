@@ -25,12 +25,12 @@ for that model it will actually call the ghdl to get the result.
 
 ##How to install?
 1. Clone this repository.
-2. Run `./install.sh` It will install ngspice from source code and put it in $HOME.
+2. Run `./install-nghdl.sh` It will install ngspice from source code and put it in $HOME.
 
 
 ##Few words about installed code structure.
 1. Ngspice will be installed in home directory $HOME. If you already have ngspice-26 directory there it will take its backup.
-2. Source code for all other file will be present in ~/.FreeEDA
+2. Source code for all other file will be present in ~/.esim-nghdl
 3. symlink nghdl is stored in /usr/local/bin
 
 ##How to use?

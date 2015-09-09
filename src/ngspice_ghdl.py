@@ -12,22 +12,19 @@ import subprocess
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from ConfigParser import SafeConfigParser
-
+from Appconfig import nghdl_src_loc
 
 class Mainwindow(QtGui.QWidget):
     def __init__(self):
         #super(Mainwindow, self).__init__()
         QtGui.QMainWindow.__init__(self)
         print "Initializing.........."
-        cwd = os.getcwd()
-        path, file = os.path.split(cwd)
-        print "cwd n path------ >", cwd, path
-        licensefile = os.path.join(path, "LICENSE")
+        self.home = os.path.expanduser("~")
+        licensefile = os.path.join(os.path.join(self.home,nghdl_src_loc), "LICENSE")
         fileopen = open(licensefile, 'r')
         print fileopen.read()
-        self.home = os.path.expanduser("~")
         self.parser = SafeConfigParser()
-        self.parser.read(self.home+'/.FreeEDA/config.ini')
+        self.parser.read(os.path.join(self.home,nghdl_src_loc+'/config.ini'))
         self.file_list = []             #to keep the supporting files
         self.initUI()
 
@@ -71,7 +68,7 @@ class Mainwindow(QtGui.QWidget):
 
     def closeWindow(self):
         try:
-            self.process.kill()
+            self.process.close()
         except:
                 pass
         print "Close button clicked"
@@ -163,7 +160,7 @@ class Mainwindow(QtGui.QWidget):
         print "Create Model Files Called"
         os.chdir(self.cur_dir)
         print "Current Working directory changed to ",self.cur_dir
-        cmd = "python ~/.FreeEDA/model_generation.py "+str(self.ledit.text())
+        cmd = "python ~/"+nghdl_src_loc+"/model_generation.py "+str(self.ledit.text())
         stdouterr = os.popen4(cmd)[1].read()
         print stdouterr
         #Moving file to model directory
@@ -179,12 +176,12 @@ class Mainwindow(QtGui.QWidget):
         shutil.move(self.modelname+"_tb.vhdl",path+"/DUTghdl/")
         
         shutil.copy(str(self.filename),path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/compile.sh",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/uthash.h",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
-        shutil.copy(self.home+"/.FreeEDA/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/compile.sh",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/uthash.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
 
         for file in self.file_list:
                 shutil.copy(str(file), path+"/DUTghdl/")
@@ -215,8 +212,10 @@ class Mainwindow(QtGui.QWidget):
             path = os.getcwd()
             #subprocess.call(cmd,shell=True)
             command = "cd "+path +";"+cmd +";"+"make install"
+            #command = "cd "+path +";"+cmd 
             self.args = ['-into', str(self.terminal.winId()),'-hold','+s','-e', command]
             self.process.start('xterm', self.args)
+
             print "pid ------ >",self.process.pid()
             
             #stdouterr = os.popen4(cmd)[1].read()
@@ -242,11 +241,12 @@ class Mainwindow(QtGui.QWidget):
         except:
             print "There is error during in 'make install' "
             quit()
+
     
     def uploadModle(self):
         print "Upload button clicked"
         try:
-            self.process.kill()
+            self.process.close()
         except:
                 pass
         try:
@@ -261,7 +261,7 @@ class Mainwindow(QtGui.QWidget):
                 self.addingModelInModpath()
                 self.createModelFiles()
                 self.runMake()
-                self.runMakeInstall()
+                #self.runMakeInstall()
             else:
                 QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
         except:
