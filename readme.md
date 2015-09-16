@@ -21,12 +21,12 @@ for that model it will actually call the ghdl to get the result.
 1. Ubuntu 12.04 (You can try it on other version and let us know)
 2. Python 2.7
 3. PyQt4
-4. ghdl
+
 
 ##How to install?
 1. Clone this repository.
 2. Run `./install-nghdl.sh` It will install ngspice from source code and put it in $HOME.
-
+3. Set ngspice path in `.bashrc` file. Add `export PATH=/home/{your-username}/ngspice-26/install_dir/bin:$PATH` line in .bashrc
 
 ##Few words about installed code structure.
 1. Ngspice will be installed in home directory $HOME. If you already have ngspice-26 directory there it will take its backup.
