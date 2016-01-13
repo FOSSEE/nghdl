@@ -12,7 +12,8 @@ import subprocess
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from ConfigParser import SafeConfigParser
-from Appconfig import nghdl_src_loc
+from Appconfig import Appconfig
+from createKicadLibrary import AutoSchematic
 
 class Mainwindow(QtGui.QWidget):
     def __init__(self):
@@ -20,11 +21,11 @@ class Mainwindow(QtGui.QWidget):
         QtGui.QMainWindow.__init__(self)
         print "Initializing.........."
         self.home = os.path.expanduser("~")
-        licensefile = os.path.join(os.path.join(self.home,nghdl_src_loc), "LICENSE")
+        licensefile = os.path.join(os.path.join(self.home, Appconfig.nghdl_src_loc), "LICENSE")
         fileopen = open(licensefile, 'r')
         print fileopen.read()
         self.parser = SafeConfigParser()
-        self.parser.read(os.path.join(self.home,nghdl_src_loc+'/config.ini'))
+        self.parser.read(os.path.join(self.home, Appconfig.nghdl_src_loc+'/config.ini'))
         self.file_list = []             #to keep the supporting files
         self.initUI()
 
@@ -42,9 +43,16 @@ class Mainwindow(QtGui.QWidget):
         self.ledit = QtGui.QLineEdit(self)
         self.sedit = QtGui.QTextEdit(self)
         self.process = QtCore.QProcess(self)
-        self.terminal = QtGui.QWidget(self)
+        #self.terminal = QtGui.QWidget(self)
+        self.termedit = QtGui.QTextEdit(self)
+        self.termedit.setReadOnly(1)
+        pal = QtGui.QPalette()
+        bgc = QtGui.QColor(0, 0, 0)
+        pal.setColor(QtGui.QPalette.Base, bgc)
+        self.termedit.setPalette(pal)
+        self.termedit.setStyleSheet("QTextEdit {color:white}")
 
-        self.process.start('xterm',['-into', str(self.terminal.winId())])
+        #self.process.start('xterm',['-into', str(self.terminal.winId())])
 
         #Creating gridlayout
         grid = QtGui.QGridLayout()
@@ -54,7 +62,8 @@ class Mainwindow(QtGui.QWidget):
         grid.addWidget(self.sedit, 2, 0, 4, 1)
         grid.addWidget(self.addbtn, 2, 1)
         grid.addWidget(self.removebtn, 3, 1)
-        grid.addWidget(self.terminal, 6, 0,10,1)
+        #grid.addWidget(self.terminal, 6, 0,10,1)
+        grid.addWidget(self.termedit, 6, 0, 10, 1)
         grid.addWidget(self.uploadbtn, 17, 0)
         grid.addWidget(self.exitbtn,17, 1)
 
@@ -160,7 +169,7 @@ class Mainwindow(QtGui.QWidget):
         print "Create Model Files Called"
         os.chdir(self.cur_dir)
         print "Current Working directory changed to ",self.cur_dir
-        cmd = "python ~/"+nghdl_src_loc+"/model_generation.py "+str(self.ledit.text())
+        cmd = "python ~/"+Appconfig.nghdl_src_loc+"/model_generation.py "+str(self.ledit.text())
         stdouterr = os.popen4(cmd)[1].read()
         print stdouterr
         #Moving file to model directory
@@ -176,12 +185,12 @@ class Mainwindow(QtGui.QWidget):
         shutil.move(self.modelname+"_tb.vhdl",path+"/DUTghdl/")
         
         shutil.copy(str(self.filename),path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/compile.sh",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/uthash.h",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home,nghdl_src_loc)+"/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/compile.sh",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/uthash.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
 
         for file in self.file_list:
                 shutil.copy(str(file), path+"/DUTghdl/")
@@ -196,6 +205,11 @@ class Mainwindow(QtGui.QWidget):
         #os.remove("Utility_Package.vhdl")
         #os.remove("Vhpi_Package.vhdl")
         
+    
+    #slot to redirect stdout to window console
+    @QtCore.pyqtSlot()
+    def readStdOutput(self):
+        self.termedit.append(QtCore.QString(self.process.readAllStandardOutput()))
         
         
 
@@ -211,10 +225,14 @@ class Mainwindow(QtGui.QWidget):
             print "Running Make"
             path = os.getcwd()
             #subprocess.call(cmd,shell=True)
-            command = "cd "+path +";"+cmd +";"+"make install"
+            #command = "cd "+path +";"+cmd +";"+"make install"
             #command = "cd "+path +";"+cmd 
-            self.args = ['-into', str(self.terminal.winId()),'-hold','+s','-e', command]
-            self.process.start('xterm', self.args)
+            #self.args = ['-into', str(self.terminal.winId()),'-hold','+s','-e', command]
+            #self.process.start('xterm', self.args)
+
+            self.process.start(cmd)
+            self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+            QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readStdOutput()"))
 
             print "pid ------ >",self.process.pid()
             
@@ -232,17 +250,33 @@ class Mainwindow(QtGui.QWidget):
             path = os.getcwd()
             print "cwd------------>", path
             #subprocess.call(cmd,shell=True)
-            command = "cd "+path+ ";"+cmd
-            self.args = ['-into', str(self.terminal.winId()),'-hold','-e', command]
+            #command = "cd "+path+ ";"+cmd
+            #self.args = ['-into', str(self.terminal.winId()),'-hold','-e', command]
             #self.process.start('xterm', self.args)
             #self.process.waitForFinished(-1)
             #stdouterr = os.popen4(cmd)[1].read()
             #self.tedit.append(stdouterr)
+
+            try:
+                self.process.close()
+            except:
+                pass
+            self.process.finished.connect(self.createSchematicLib)
+            self.process.start(cmd)
+            self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+            QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readStdOutput()"))
+            os.chdir(self.cur_dir)
+
         except:
             print "There is error during in 'make install' "
             quit()
 
-    
+    def createSchematicLib(self):
+        if Appconfig.esimFlag == 1:
+            print 'Creating library files.................................'
+            self.schematicLib = AutoSchematic(self.modelname)
+            self.schematicLib.createKicadLibrary()
+
     def uploadModle(self):
         print "Upload button clicked"
         try:
@@ -261,7 +295,7 @@ class Mainwindow(QtGui.QWidget):
                 self.addingModelInModpath()
                 self.createModelFiles()
                 self.runMake()
-                #self.runMakeInstall()
+                self.runMakeInstall()
             else:
                 QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
         except:
@@ -343,6 +377,9 @@ class FileRemover(QtGui.QWidget):
 
 def main():
     app = QtGui.QApplication(sys.argv)
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '-e':
+            Appconfig.esimFlag = 1
     w = Mainwindow()
     sys.exit(app.exec_())
 
