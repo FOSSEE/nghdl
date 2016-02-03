@@ -16,9 +16,12 @@ class AutoSchematic(QtGui.QWidget):
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
         self.kicad_nghdl_lib = 'eSim_kicad.lib'
+        #Reading all varibale from config.ini
         self.parser = SafeConfigParser()
-        self.parser.read(os.path.join(self.home, Appconfig.nghdl_src_loc+'/config.ini'))
+        self.parser.read(os.path.join(self.home, os.path.join('.esim','config.ini')))
+        self.src_home = self.parser.get('SRC','SRC_HOME')
 
+        
     def createKicadLibrary(self):
         xmlFound = None
         for root, dirs, files in os.walk(self.xml_loc):

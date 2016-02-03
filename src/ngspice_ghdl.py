@@ -21,11 +21,16 @@ class Mainwindow(QtGui.QWidget):
         QtGui.QMainWindow.__init__(self)
         print "Initializing.........."
         self.home = os.path.expanduser("~")
-        licensefile = os.path.join(os.path.join(self.home, Appconfig.nghdl_src_loc), "LICENSE")
-        fileopen = open(licensefile, 'r')
-        print fileopen.read()
+        #Reading all varibale from config.ini
         self.parser = SafeConfigParser()
-        self.parser.read(os.path.join(self.home, Appconfig.nghdl_src_loc+'/config.ini'))
+        self.parser.read(os.path.join(self.home, os.path.join('.nghdl','config.ini')))
+        self.ngspice_home = self.parser.get('NGSPICE','NGSPICE_HOME')
+        self.release_dir = self.parser.get('NGSPICE','RELEASE')
+        self.src_home = self.parser.get('SRC','SRC_HOME')
+        self.licensefile = self.parser.get('SRC','LICENSE')
+        #Printing LICENCE file on terminal
+        fileopen = open(self.licensefile, 'r')
+        print fileopen.read()
         self.file_list = []             #to keep the supporting files
         self.initUI()
 
@@ -43,7 +48,6 @@ class Mainwindow(QtGui.QWidget):
         self.ledit = QtGui.QLineEdit(self)
         self.sedit = QtGui.QTextEdit(self)
         self.process = QtCore.QProcess(self)
-        #self.terminal = QtGui.QWidget(self)
         self.termedit = QtGui.QTextEdit(self)
         self.termedit.setReadOnly(1)
         pal = QtGui.QPalette()
@@ -51,8 +55,6 @@ class Mainwindow(QtGui.QWidget):
         pal.setColor(QtGui.QPalette.Base, bgc)
         self.termedit.setPalette(pal)
         self.termedit.setStyleSheet("QTextEdit {color:white}")
-
-        #self.process.start('xterm',['-into', str(self.terminal.winId())])
 
         #Creating gridlayout
         grid = QtGui.QGridLayout()
@@ -62,7 +64,6 @@ class Mainwindow(QtGui.QWidget):
         grid.addWidget(self.sedit, 2, 0, 4, 1)
         grid.addWidget(self.addbtn, 2, 1)
         grid.addWidget(self.removebtn, 3, 1)
-        #grid.addWidget(self.terminal, 6, 0,10,1)
         grid.addWidget(self.termedit, 6, 0, 10, 1)
         grid.addWidget(self.uploadbtn, 17, 0)
         grid.addWidget(self.exitbtn,17, 1)
@@ -86,16 +87,16 @@ class Mainwindow(QtGui.QWidget):
     def browseFile(self):
         print "Browse button clicked"
         self.filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
-        print "Path file :", self.filename
         self.ledit.setText(self.filename)
+        print "Vhdl file uploaded to process :", self.filename
 
     def addFiles(self):
-        print "Add Files button clicked"
+        print "Starts adding supporting files"
         title = self.addbtn.text()
         for file in QtGui.QFileDialog.getOpenFileNames(self, title):
-                print "Supporting file :", file
                 self.sedit.append(str(file))
                 self.file_list.append(file)
+        print "Supporting Files are :",self.file_list
 
 
     def removeFiles(self):
@@ -112,24 +113,23 @@ class Mainwindow(QtGui.QWidget):
                 self.file_list.remove(file)
 
         if nonvhdl_count > 0:
-             QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
+             QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>Supporting files should be <b>.vhdl</b> file ''')
 
 
     def createModelDirectory(self):
         print "Create Model Directory Called"
         self.digital_home=self.parser.get('NGSPICE','DIGITAL_MODEL')
-        print "Digital Home",self.digital_home
         os.chdir(self.digital_home)
         print "Current Working Directory Changed to",os.getcwd()
         self.modelname = os.path.basename(str(self.filename)).split('.')[0]
-        print "Model name is :",self.modelname
+        print "Model to be created :",self.modelname
         # Looking if model directory is present or not
         if os.path.isdir(self.modelname):
             print "Model Already present"
             ret = QtGui.QMessageBox.critical(self, "Critical",'''<b>The Model already exist.Do you want to overwrite it?</b><br/>
                     <b>If yes press ok else cancel it and change the name of you vhdl file</b>''', QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
             if ret == QtGui.QMessageBox.Ok:
-                print "Overwriting existing model"
+                print "Overwriting existing model "+self.modelname
                 cmd="rm -rf "+self.modelname
                 #process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 subprocess.call(cmd, shell=True)
@@ -141,25 +141,25 @@ class Mainwindow(QtGui.QWidget):
 
 
         else:
-            print "Creating new model directory"
+            print "Creating model "+self.modelname+" directory"
             os.mkdir(self.modelname)
     
     def addingModelInModpath(self):
-        print "Adding Model in Modpath file",self.modelname,self.digital_home
+        print "Adding Model "+self.modelname+" in Modpath file "+self.digital_home
         #Adding name of model in the modpath file
         #Check if the string is already in the file
         with open(self.digital_home+"/modpath.lst",'a+') as f:
             flag = 0
             for line in f:
                 if line.strip() == self.modelname:
-                    print "Found model"
+                    print "Found model "+self.modelname+" in the modpath.lst"
                     flag = 1
                     break
                 else:
                     pass
 
             if flag == 0:
-                print "Adding model name into modpath.lst"
+                print "Adding model name "+self.modelname+" into modpath.lst"
                 f.write(self.modelname+"\n")
             else:
                 print "Model name is already into modpath.lst"
@@ -168,29 +168,31 @@ class Mainwindow(QtGui.QWidget):
     def createModelFiles(self):
         print "Create Model Files Called"
         os.chdir(self.cur_dir)
-        print "Current Working directory changed to ",self.cur_dir
-        cmd = "python ~/"+Appconfig.nghdl_src_loc+"/model_generation.py "+str(self.ledit.text())
+        print "Current Working directory changed to "+self.cur_dir
+        cmd = "python "+self.src_home+"/src/model_generation.py "+str(self.ledit.text())
         stdouterr = os.popen4(cmd)[1].read()
         print stdouterr
         #Moving file to model directory
-        path=self.digital_home+"/"+self.modelname
+        path=os.path.join(self.digital_home,self.modelname)
         shutil.move("cfunc.mod",path)
         shutil.move("ifspec.ifs",path)
 
         #Creating directory inside model directoy
+        print "Creating DUT directory at "+os.path.join(path,"DUTghdl")
         os.mkdir(path+"/DUTghdl/")
+        print "Copying required file to DUTghdl directory"
         shutil.move("connection_info.txt",path+"/DUTghdl/")
         shutil.move("start_server.sh",path+"/DUTghdl/")
         shutil.move("sock_pkg_create.sh",path+"/DUTghdl/")
         shutil.move(self.modelname+"_tb.vhdl",path+"/DUTghdl/")
         
         shutil.copy(str(self.filename),path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/compile.sh",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/uthash.h",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
-        shutil.copy(os.path.join(self.home, Appconfig.nghdl_src_loc)+"/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, self.src_home)+"/src/ghdlserver/compile.sh",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, self.src_home)+"/src/ghdlserver/uthash.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, self.src_home)+"/src/ghdlserver/ghdlserver.c",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, self.src_home)+"/src/ghdlserver/ghdlserver.h",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, self.src_home)+"/src/ghdlserver/Utility_Package.vhdl",path+"/DUTghdl/")
+        shutil.copy(os.path.join(self.home, self.src_home)+"/src/ghdlserver/Vhpi_Package.vhdl",path+"/DUTghdl/")
 
         for file in self.file_list:
                 shutil.copy(str(file), path+"/DUTghdl/")
@@ -211,10 +213,6 @@ class Mainwindow(QtGui.QWidget):
     def readStdOutput(self):
         self.termedit.append(QtCore.QString(self.process.readAllStandardOutput()))
         
-        
-
-        
-
 
     def runMake(self):
         print "run Make Called"
@@ -222,22 +220,13 @@ class Mainwindow(QtGui.QWidget):
         os.chdir(self.release_home)
         try:
             cmd = " make"
-            print "Running Make"
+            print "Running Make command in "+self.release_home
             path = os.getcwd()
-            #subprocess.call(cmd,shell=True)
-            #command = "cd "+path +";"+cmd +";"+"make install"
-            #command = "cd "+path +";"+cmd 
-            #self.args = ['-into', str(self.terminal.winId()),'-hold','+s','-e', command]
-            #self.process.start('xterm', self.args)
-
             self.process.start(cmd)
             self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readStdOutput()"))
-
-            print "pid ------ >",self.process.pid()
+            print "make command process pid ---------- >",self.process.pid()
             
-            #stdouterr = os.popen4(cmd)[1].read()
-            #self.tedit.append(stdouterr)
         except:
             print "There is error in 'make' "
             quit()
@@ -248,15 +237,6 @@ class Mainwindow(QtGui.QWidget):
             cmd = " make install"
             print "Running Make Install"
             path = os.getcwd()
-            print "cwd------------>", path
-            #subprocess.call(cmd,shell=True)
-            #command = "cd "+path+ ";"+cmd
-            #self.args = ['-into', str(self.terminal.winId()),'-hold','-e', command]
-            #self.process.start('xterm', self.args)
-            #self.process.waitForFinished(-1)
-            #stdouterr = os.popen4(cmd)[1].read()
-            #self.tedit.append(stdouterr)
-
             try:
                 self.process.close()
             except:
@@ -285,10 +265,9 @@ class Mainwindow(QtGui.QWidget):
                 pass
         try:
             self.file_extension = os.path.splitext(str(self.filename))[1]
-            print "File extension",self.file_extension
-            print "Parser Content:",self.parser.get('NGSPICE', 'NGSPICE_HOME')
+            print "Uploaded File extension :"+self.file_extension
             self.cur_dir = os.getcwd()
-            print "My Current Working Directory",self.cur_dir
+            print "Current Working Directory :"+self.cur_dir
             self.checkSupportFiles()
             if self.file_extension == ".vhdl":
                 self.createModelDirectory()
@@ -361,7 +340,7 @@ class FileRemover(QtGui.QWidget):
         def removeFiles(self):
 
                 for path in self.marked_list:
-                        print path, "is removed"
+                        print path +" is removed"
                         self.sedit.append(path + " removed")
                         self.files.remove(path)
 

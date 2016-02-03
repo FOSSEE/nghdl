@@ -2,7 +2,6 @@ import os.path
 
 class Appconfig:
 
-    nghdl_src_loc =  ".esim-nghdl"
     xml_loc = "/opt/eSim/src/modelParamXML/"
     lib_loc = os.path.expanduser('~')
     esimFlag = 0
