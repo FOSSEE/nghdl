@@ -3,23 +3,17 @@ import re
 import os
 import xml.etree.cElementTree as ET
 from PyQt4 import QtGui, QtCore
-from ConfigParser import SafeConfigParser
 
 
 class AutoSchematic(QtGui.QWidget):
 
     def __init__(self, modelname):
         QtGui.QWidget.__init__(self)
-        self.home = os.path.expanduser("~")
         self.modelname = modelname.split('.')[0]
         self.template = Appconfig.kicad_lib_template
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
         self.kicad_nghdl_lib = 'eSim_kicad.lib'
-        #Reading all varibale from config.ini
-        self.parser = SafeConfigParser()
-        self.parser.read(os.path.join(self.home, os.path.join('.esim','config.ini')))
-        self.src_home = self.parser.get('SRC','SRC_HOME')
 
         
     def createKicadLibrary(self):

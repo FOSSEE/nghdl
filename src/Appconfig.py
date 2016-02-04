@@ -1,8 +1,14 @@
 import os.path
+from ConfigParser import SafeConfigParser
+
 
 class Appconfig:
-
-    xml_loc = "/opt/eSim/src/modelParamXML/"
+    home = os.path.expanduser("~")
+    #Reading all varibale from eSim config.ini
+    parser = SafeConfigParser()
+    parser.read(os.path.join(home, os.path.join('.esim','config.ini')))
+    src_home = parser.get('eSim','eSim_HOME')
+    xml_loc = os.path.join(src_home,'src/modelParamXML')#"/opt/eSim/src/modelParamXML/"
     lib_loc = os.path.expanduser('~')
     esimFlag = 0
 
