@@ -5,12 +5,16 @@ from ConfigParser import SafeConfigParser
 class Appconfig:
     home = os.path.expanduser("~")
     #Reading all varibale from eSim config.ini
-    parser = SafeConfigParser()
-    parser.read(os.path.join(home, os.path.join('.esim','config.ini')))
-    src_home = parser.get('eSim','eSim_HOME')
-    xml_loc = os.path.join(src_home,'src/modelParamXML')#"/opt/eSim/src/modelParamXML/"
+    parser_esim = SafeConfigParser()
+    parser_esim.read(os.path.join(home, os.path.join('.esim','config.ini')))
+    src_home = parser_esim.get('eSim','eSim_HOME')
+    xml_loc = os.path.join(src_home,'src/modelParamXML')
     lib_loc = os.path.expanduser('~')
     esimFlag = 0
+
+    #Reading all variable from nghdl config.ini
+    parser_nghdl = SafeConfigParser()
+    parser_nghdl.read(os.path.join(home,os.path.join('.nghdl','config.ini')))
 
     kicad_lib_template = {
     "start_def":"DEF comp_name U 0 40 Y Y 1 F N",

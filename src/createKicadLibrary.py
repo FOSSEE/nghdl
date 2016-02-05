@@ -14,7 +14,7 @@ class AutoSchematic(QtGui.QWidget):
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
         self.kicad_nghdl_lib = 'eSim_kicad.lib'
-
+        self.parser = Appconfig.parser_nghdl
         
     def createKicadLibrary(self):
         xmlFound = None
