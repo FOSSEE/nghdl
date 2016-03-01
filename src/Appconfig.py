@@ -7,9 +7,12 @@ class Appconfig:
     #Reading all varibale from eSim config.ini
     parser_esim = SafeConfigParser()
     parser_esim.read(os.path.join(home, os.path.join('.esim','config.ini')))
-    src_home = parser_esim.get('eSim','eSim_HOME')
-    xml_loc = os.path.join(src_home,'src/modelParamXML')
-    lib_loc = os.path.expanduser('~')
+    try:
+        src_home = parser_esim.get('eSim','eSim_HOME')
+        xml_loc = os.path.join(src_home,'src/modelParamXML')
+        lib_loc = os.path.expanduser('~')
+    except:
+        pass
     esimFlag = 0
 
     #Reading all variable from nghdl config.ini
