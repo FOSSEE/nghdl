@@ -81,7 +81,11 @@ function installNgspice
             echo "Installing Ngspice....."
             echo "------------------------------------"  
             sleep 5
-            ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/    
+            ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/   
+			
+			#dirty fix for adding patch to ngspice base code
+			cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
+ 
             make
             make install
             if [ "$?" == 0 ];then
