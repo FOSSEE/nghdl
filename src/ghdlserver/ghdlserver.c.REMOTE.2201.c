@@ -14,8 +14,10 @@
  *                         - Added the following functions:
  *                             o create_pid_file()
  *                             o get_ngspice_pid()
+ * 22.Feb.2017 - Raj Mohan - Implemented a kludge to fix a problem in the
+ *                           test bench VHDL code.
+ *                         - Changed sleep() to nanosleep().
  * 10.Feb.2017 - Raj Mohan - Log messages with timestamp/code clean up.
- *                           Changed sleep() to nanosleep().
  *                           Added the following functions:
  *                             o curtim()
  *                             o print_hash_table()
@@ -56,6 +58,8 @@ static char pid_filename[80];
 static char* Out_Port_Array[MAX_NUMBER_PORT];           
 static int out_port_num = 0; 
 static int server_socket_id = -1;
+static int sendto_sock;      // 22.Feb.2017 - RM - Kludge
+static int prev_sendto_sock; // 22.Feb.2017 - RM - Kludge
 static int pid_file_created; // 10.Mar.2017 - RM 
 static pid_t my_pid;
 
@@ -252,7 +256,7 @@ static int create_server(int port_number,int max_connections)
      exit(1);
  }
 
- // Listen for client connection requests.
+ // Start listening on the server.
  listen(sockfd, max_connections);
 
  return sockfd;
@@ -313,7 +317,8 @@ static int can_read_from_socket(int socket_id)
     int npending = select(socket_id + 1, &c_set, NULL, NULL, &time_limit);
     if (npending == -1)
     { 
-	syslog(LOG_ERR, "can_read_from_socket:select() ERRNO=%d", errno);
+        npending = errno;
+	syslog(LOG_ERR, "can_read_from_socket:select() ERRNO=%d",npending);
         return(-100);
     }
     return(FD_ISSET(socket_id, &c_set));
@@ -335,7 +340,10 @@ static int can_write_to_socket(int socket_id)
     int npending = select(socket_id + 1, NULL, &c_set, NULL, &time_limit);
     if (npending == -1)
     {
-	syslog(LOG_ERR, "can_write_to_socket() select() ERRNO=%d", errno);
+	npending = errno;
+
+	syslog(LOG_ERR, "can_write_to_socket() select() ERRNO=%d",npending);
+
 	return (-100);
     } else if (npending == 0) {  // select() timed out...
 	return(0);
@@ -373,7 +381,7 @@ static int receive_string(int sock_id, char* buffer)
     return(nbytes); 
 }   
 
-static void set_non_blocking(int sock_id)     
+static void set_non_blocking(int sock_id)                                              
 {                                                                               
     int x;                                                                    
     x = fcntl(sock_id, F_GETFL, 0); 
@@ -385,55 +393,66 @@ static void Data_Send(int sockid)
 {                                                                               
   static int trnum;
   char* out;
+
   int i;
   char colon = ':';
   char semicolon = ';'; 
+  int wrt_retries = 0;
   int ret;
+
   s = NULL;
+  int found = 0;
 
   out = calloc(1, 1024);
 
-/* Traverse the list of finished jobs and send the resulting port values
-   to the client in one string.
-*/
-  for (i=0; i<out_port_num; i++)
+  for (i=0;i<out_port_num;i++)
   {  
-     HASH_FIND_STR(users, Out_Port_Array[i], s);
-     if (s)
+     HASH_FIND_STR(users,Out_Port_Array[i],s);
+     if (strcmp(Out_Port_Array[i], s->key) == 0) 
      {
-	 syslog(LOG_INFO, 
-                "Data_Send():Sending data key:%s val:%s", s->key, s->val);
-	 strncat(out, s->key, strlen(s->key));
-	 strncat(out, &colon, 1);
-	 strncat(out, s->val, strlen(s->val));
-	 strncat(out, &semicolon, 1);
-      
-	 while(1)
-	 {
-	   ret = can_write_to_socket(sockid); 
-	   if (ret > 0) break;
-	   if( ret == -100)
-	   {
-	       syslog(LOG_ERR,"Send aborted to CLT:%d buffer:%s ret=%d",
-		      sockid, out,ret);
-	       free(out);
-	       return;
-	   } 
-	   else // select() timed out. Retry....
-	   {
-	       usleep(1000);
-	   }
-	 } 
-     }         
-     else 
-     {        
-	 syslog(LOG_ERR,"The %s's value not found in the table.",
-		Out_Port_Array[i]);
-	 free(out);
-	 return;
+      found=1;
+      break;
      }
   }
 
+  if(found) 
+  { 
+      strncat(out, s->key, strlen(s->key));
+      strncat(out, &colon, 1);
+      strncat(out, s->val, strlen(s->val));
+      strncat(out, &semicolon, 1);
+      
+      while(1)
+      {
+	  if (wrt_retries > 2)  // 22.Feb.2017 - Kludge
+	  {
+              free(out);
+	      return;
+	  }
+	  ret = can_write_to_socket(sockid); 
+	  if (ret > 0) break;
+	  if( ret == -100)
+	  {
+	      syslog(LOG_ERR,"Send aborted to CLT:%d buffer:%s ret=%d",
+		     sockid, out,ret);
+              free(out);
+	      return;
+	  } 
+	  else // select() timed out. Retry....
+	  {
+	      usleep(1000);
+	      wrt_retries++;
+	  }
+      } 
+  }         
+  else                                                                        
+  {        
+      syslog(LOG_ERR,"The %s's value not found in the table.",
+             Out_Port_Array[i]);
+      free(out);
+      return;
+  }
+  
   if ((send(sockid, out, strlen(out), 0)) == -1)
     {
       syslog(LOG_ERR,"Failure sending to CLT:%d buffer:%s", sockid, out);
@@ -450,8 +469,9 @@ void Vhpi_Initialize(int sock_port)
 
     my_pid = getpid();
 
-    signal(SIGINT, Vhpi_Exit);
-    signal(SIGTERM, Vhpi_Exit);
+    signal(SIGINT,Vhpi_Exit);
+    signal(SIGTERM,Vhpi_Exit);
+
     signal(SIGUSR1, Vhpi_Exit); //10.Mar.2017 - RM
 
     int try_limit = 100;
@@ -559,6 +579,7 @@ void Vhpi_Listen()
 	    int n = receive_string(new_sock, receive_buffer);
 	    if(n > 0)
             {
+		sendto_sock = new_sock; // 22.Feb.2017 - RM - Kludge
 		syslog(LOG_INFO,
                         "Vhpi_Listen:New socket connection CLT:%d",new_sock);
 		if(strcmp(receive_buffer, "END")==0) 
@@ -585,21 +606,36 @@ void Vhpi_Listen()
 void  Vhpi_Send() 
 {
     int sockid;
+    char* out;
 
-// From the hash table, find the client socket id to send the data.
-    HASH_FIND_STR(users, "sock_id", s);
-    if(s)
-    {  
-      sockid=atoi(s->val);
-    }
-    else
-    {
-	syslog(LOG_ERR, "Vhpi_Send(): Socket id not in table - key=%s val=%s\n",
-	      users->key, users->val); 
-        return;
-    }
+// Traverse the list of finished jobs and send out the resulting port values.. 
+// 22.Feb.2017 - RM - Kludge
+//    log_server=fopen("server.log","a");
+//    fprintf(log_server, "%s Vhpi_Send() called\n", curtim());
 
-    Data_Send(sockid);
+//    fprintf(log_server,"Vhpi_Send()-------------------\n");
+//    print_hash_table();
+//    fprintf(log_server,"----------------------------------------\n");
+//    HASH_FIND_STR(users,"sock_id",s);
+//    if(s)
+//    {  
+//      sockid=atoi(s->val);
+//    }
+//    else
+//    {
+//      fprintf(log_server,"%s Socket id not in table - key=%s val=%s\n",
+//              curtim(),
+//	      users->key, users->val);  
+//    }
+//    Data_Send(sockid);
+
+    if (prev_sendto_sock != sendto_sock)
+    { 
+	Data_Send(sendto_sock);                                      
+	prev_sendto_sock = sendto_sock;
+    }
+// 22.Feb.2017 End kludge
+ 
 }
 
 void  Vhpi_Close()                                                         
