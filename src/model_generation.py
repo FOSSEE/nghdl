@@ -215,10 +215,10 @@ init_else='''
         /*  retrieve storage for output ports. */
 '''
 
-els_evt_count1=0
-els_evt_count2=0
 els_evt_ptr=[]
+els_evt_count1=[]
 for item in output_port:
+    els_evt_count2=0
     els_evt_ptr.append("_op_"+item.split(":")[0]+" = cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
     els_evt_count2=els_evt_count2+1
     els_evt_ptr.append("_op_"+item.split(":")[0]+"_old"+" = cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
