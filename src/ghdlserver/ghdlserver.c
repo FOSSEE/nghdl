@@ -1,3 +1,28 @@
+/*************************************************************************
+ * <ghdlserver.c>  FOSSEE, IIT-Mumbai
+ * 24.Mar.2017 - Raj Mohan - Added signal handler for SIGUSR1, to handle an 
+ *                           orphan test bench process.
+ *                           The test bench will now create a PID file in
+ *                           /tmp directory with the name 
+ *                           NGHDL_<ngspice pid>_<test bench>_<instance_id>
+ *                           This file contains the PID of the test bench .
+ *                           On exit, the test bench removes this file.
+ *                           The SIGUSR1 signal serves the same purpose as the 
+ *                           "End" signal.
+ *                         - Added syslog interface for logging.
+ *                         - Enabled SO_REUSEADDR socket option.
+ *                         - Added the following functions:
+ *                             o create_pid_file()
+ *                             o get_ngspice_pid()
+ * 22.Feb.2017 - Raj Mohan - Implemented a kludge to fix a problem in the
+ *                           test bench VHDL code.
+ *                         - Changed sleep() to nanosleep().
+ * 10.Feb.2017 - Raj Mohan - Log messages with timestamp/code clean up.
+ *                           Added the following functions:
+ *                             o curtim()
+ *                             o print_hash_table()
+ *************************************************************************
+ */
 #include <string.h>
 #include "ghdlserver.h"
 #include "uthash.h"
@@ -6,615 +31,628 @@
 #include <stdlib.h>                                                             
 #include <assert.h>                                                             
 #include <signal.h>                                                             
+#include <unistd.h>
 #include <sys/types.h>                                                          
-#include <sys/socket.h>                                                         
+#include <sys/socket.h> 
+#include <sys/time.h>                                                        
 #include <netinet/in.h>                                                         
 #include <netdb.h>
 #include <limits.h>
 #include <time.h>
-    
+#include <errno.h>
+#include <dirent.h>
+#include <syslog.h>
+
 #define _XOPEN_SOURCE 500
 #define MAX_NUMBER_PORT 100
-//#define LOG_FILE "vhpi.log"                                                
-//FILE *log_file = NULL;    
-//FILE *log_sock_id = NULL;  
-FILE *log_server = NULL;
-FILE *log_server1 = NULL;
-#define z32__ "00000000000000000000000000000000"     
 
-char* Out_Port_Array[MAX_NUMBER_PORT];                                          
-int out_port_num=0; 
+#define NGSPICE "ngspice"     // 17.Mar.2017 - RM
 
-int vhpi_cycle_count =0;
-//server socket 
-int server_socket_id=-1;
+extern char* __progname;  // 26.Feb.2017 May not be portable to non-GNU systems.
+
+void Vhpi_Exit(int sig);
+
+static FILE* pid_file;
+static char pid_filename[80];
+
+static char* Out_Port_Array[MAX_NUMBER_PORT];           
+static int out_port_num = 0; 
+static int server_socket_id = -1;
+static int sendto_sock;      // 22.Feb.2017 - RM - Kludge
+static int prev_sendto_sock; // 22.Feb.2017 - RM - Kludge
+static int pid_file_created; // 10.Mar.2017 - RM 
+static pid_t my_pid;
+
 struct my_struct {
     char val[1024];                  
-    char key[1024];       //Key
-    UT_hash_handle hh;         /* makes this structure hashable */
+    char key[1024];       
+    UT_hash_handle hh;    //Makes this structure hashable.
 };
 
+static struct my_struct *s, *users, *tmp = NULL;
 
-struct my_struct *s, *users ,*tmp = NULL;
-
-void parse_buffer(int sock_id,char* receive_buffer)
+/* 17.Mar.2017 - RM - Get the process id of ngspice program.*/
+static int get_ngspice_pid(void)
 {
-    /*Taking time information for log*/
-    
-    //time_t systime;                                                             
-    //systime = time(NULL);  
-    log_server=fopen("server.log","a");                                                     
-    //fprintf(log_server,"Buffer came at %s \n",ctime(&systime));   
-    
-    fprintf(log_server,"Server-The recieved buffer is : %s \n",receive_buffer);
-    fprintf(log_server,"Server-The socket id is : %d \n",sock_id);
-    
+    DIR* dirp;
+    FILE* fp = NULL;
+    struct dirent* dir_entry;
+    char path[1024], rd_buff[1024];
+    pid_t pid = -1;
+
+    if ((dirp = opendir("/proc/")) == NULL)
+    {
+	perror("opendir /proc failed");
+	exit(-1);
+    }
+
+    while ((dir_entry = readdir(dirp)) != NULL)
+    {
+	char* nptr;
+        int valid_num = 0;
+
+	int tmp = strtol(dir_entry->d_name, &nptr, 10);
+	if ((errno == ERANGE) && (tmp == LONG_MAX || tmp == LONG_MIN))
+	{
+	    perror("strtol"); // Number out of range.
+	    return(-1);
+	}
+	if (dir_entry->d_name == nptr)
+	{
+	    continue; // No digits found.
+	}
+	if (tmp)
+	{
+	    sprintf(path, "/proc/%s/comm", dir_entry->d_name);
+	    if ((fp = fopen(path, "r")) != NULL)
+	    {
+		fscanf(fp, "%s", rd_buff);
+		if (strcmp(rd_buff, NGSPICE) == 0)
+		{
+		    pid = (pid_t)tmp;
+		    break;
+		}
+	    }
+	}
+    }
+	
+   if (fp) fclose(fp);
+
+   return(pid);
+}
+
+/* 23.Mar.2017 - RM - Pass the sock_port argument. We need this if a netlist
+ * uses more than one instance of the same test bench, so that we can uniquely
+ * identify the PID files.
+ */
+/* 10.Mar.2017 - RM - Create PID file for the test bench in /tmp. */
+static void create_pid_file(int sock_port)
+{
+    pid_t ngspice_pid = get_ngspice_pid(); 
+    if (ngspice_pid == -1)
+    {
+	fprintf(stderr, "create_pid_file() Failed to get ngspice PID");
+	syslog(LOG_ERR,  "create_pid_file() Failed to get ngspice PID");
+	exit(1);
+    }
+    sprintf(pid_filename, "/tmp/NGHDL_%d_%s_%d", ngspice_pid, __progname, 
+            sock_port);
+    pid_file = fopen(pid_filename, "w");
+    if (pid_file)
+    {
+	pid_file_created = 1;
+	fprintf(pid_file,"%d\n", my_pid);
+	fclose(pid_file);
+    } else {
+        perror("fopen() - PID file");
+	syslog(LOG_ERR, "create_pid_file(): Unable to open PID file in /tmp");
+        exit(1);
+    }
+
+    return;
+}
+
+#ifdef DEBUG
+static char* curtim(void)
+{
+    static char ct[50];
+    struct timeval tv;
+    struct tm* ptm;
+    long milliseconds;
+    char time_string[40];
+
+    gettimeofday (&tv, NULL);
+    ptm = localtime (&tv.tv_sec);
+    strftime (time_string, sizeof (time_string), "%Y-%m-%d %H:%M:%S", ptm);
+    milliseconds = tv.tv_usec / 1000;
+    sprintf (ct, "%s.%03ld", time_string, milliseconds);
+    return(ct);
+}
+#endif
+
+#ifdef DEBUG
+static void print_hash_table(void) 
+{
+    struct my_struct *sptr;
+
+    for(sptr=users; sptr != NULL; sptr=sptr->hh.next)
+    {
+	syslog(LOG_INFO, "Hash table:val:%s: key: %s", sptr->val, sptr->key);
+    }
+}
+#endif
+
+static void parse_buffer(int sock_id, char* receive_buffer)
+{
+    static int rcvnum;
+
+    syslog(LOG_INFO,"RCVD RCVN:%d from CLT:%d buffer : %s",
+	   rcvnum++, sock_id,receive_buffer);
+
     /*Parsing buffer to store in hash table */ 
     char *rest;
     char *token;
     char *ptr1=receive_buffer;
-    
     char *var;
     char *value;
 
-      
-    fprintf(stderr,"Server-The recieved buffer is : %s \n",receive_buffer);
-    fprintf(stderr,"Server-The socket id is : %d \n",sock_id);
-    while(token = strtok_r(ptr1,",",&rest)) 
+    // Processing tokens.
+    while(token = strtok_r(ptr1, ",", &rest)) 
     {
-        ptr1 = rest; // rest contains the left over part..assign it to ptr...and start tokenizing again.
-        
-        //Processing token again;
-
-        while(var=strtok_r(token,":",&value))
+        ptr1 = rest;
+        while(var=strtok_r(token, ":", &value))
         {
-
           s = (struct my_struct*)malloc(sizeof(struct my_struct));
-          printf("Server-Variable is %s \n",var);
-          printf("Server-Value is %s \n",value);
-            
-          strncpy(s->key, var,10);
-          strncpy(s->val,value,10);
-          HASH_ADD_STR( users, key, s );
-          break;    
+	  strncpy(s->key, var, 10);
+	  strncpy(s->val, value, 10);
+	  HASH_ADD_STR(users, key, s );
+	  break;    
         }
     }
         
     s = (struct my_struct*)malloc(sizeof(struct my_struct));
-    strncpy(s->key,"sock_id",10);
-    snprintf(s->val,10,"%d",sock_id);
-    HASH_ADD_STR(users,key,s);
-    fflush(log_server);
-    fclose(log_server);
+    strncpy(s->key, "sock_id", 10);
+    snprintf(s->val,10, "%d", sock_id);
+    HASH_ADD_STR(users, key, s);
 }
-
-
-void Vhpi_Set_Port_Value(char *port_name,char *port_value,int port_width)
-{
-  //char *lb; // you need to know maximum size of lb.
-  //int I;
-  //snprintf(lb,sizeof(char),"%s", port_value);
-  
-  printf("Server-Vhpi_Set_Port_value \n");
-  printf("Server-The port name is %s \n",port_name);
-   
-    
-  //printf("Port valu is %s",port_value);
-    
-  s = (struct my_struct*)malloc(sizeof(struct my_struct));
-  strncpy(s->key, port_name,10);
-  strncpy(s->val,port_value,10);
-  HASH_ADD_STR( users, key, s );
-    
-   
-  printf("Server-The out port value is %s \n ",port_value);
-  
-  log_server=fopen("server.log","a");
-  fprintf(log_server,"Set Port Details \n");
-  fprintf(log_server,"Port Name - %s And Port Value - %s \n",port_name,port_value);
-  fflush(log_server);
-  fclose(log_server);
-
-
-}
-
-void Vhpi_Get_Port_Value(char* port_name,char* port_value,int port_width)
-
-{
-  
-  printf("Server-Vhpi_Get_Port_Value \n");
-  //int I;
-  //snprintf(port_value,1024,"1");
- 
-  log_server=fopen("server.log","a");
-  fprintf(log_server,"Get Port Details \n");
-  
-  HASH_FIND_STR(users,port_name,s);
-  if(s)
-  {  
-    printf("Server-The key is %s and value is  %s \n",s->key,s->val);
-
-    snprintf(port_value,sizeof(port_value),"%s",s->val);
-    fprintf(log_server,"Port Name - %s And Port Value - %s \n",port_name,port_value);
-    HASH_DEL(users, s);
-    free(s);
-  }
-  else
-  {
-    printf("Server-Port %s Not found \n",port_name);
-    fprintf(log_server,"Port : %s not found \n",port_name);
-  }
- 
-  fflush(log_server);
-  fclose(log_server);
-}
-/*
-int Copy_Value(char* dest, char* src, int width)                                
-{                                                                               
-  int ret_val = 0;                                                              
-  char src_buf[4096];                                                           
-  int src_width = 0;      
-  
-  // skip spaces                                                                
-  while(*src == ' ')                                                            
-    src++;                                                                                                                                                                                 
-  while(1)                                                                      
-  {                                                                           
-    if(src[src_width] == '1' || src[src_width] == '0')                        
-    {                                                                             
-      src_buf[src_width] = src[src_width];                                        
-      src_width++;                                                                
-    }                                                                             
-    else                                                                      
-    break;                                                                        
-  }                                                                           
-  src_buf[src_width] = 0; // null-terminate                                                                                                                                                                              
-  ret_val = src_width - width;                                                  
-  dest[width] = 0;                                                              
-  int i;                                                                        
-  for(i = 1; i <= width; i++)                                                   
-  {                                                                           
-    if(i <= src_width)                                                        
-      dest[width-i] = src[src_width-i];                                             
-    else                                                                      
-      dest[width-i] = '0'; // pad with 0.                                           
-  }                                                                           
-  
-    return(ret_val);                                                                                                                                                  
-}
-
-*/
-/*
-int extract_payload(char* receive_buffer,char* payload, int max_n)
-{ 
-    int hash_pos = 0;
-    int ret_val = 0;
-    while(receive_buffer[hash_pos] != '#')
-    {
-        printf("Buffer is %c \n",receive_buffer[hash_pos]);
-        if(receive_buffer[hash_pos] == 0) // end of string
-        {
-            hash_pos = -1;
-            break;
-        }
-            hash_pos++;
-    }
-                                                     
-    if(hash_pos >= 0)
-    {
-        receive_buffer[hash_pos] = 0;
-        ret_val = max_n - (hash_pos+1);
-        bcopy(receive_buffer+(hash_pos+1),payload,ret_val);
-    }
-    
-    return(ret_val);
-} 
-*/
-
 
 //
-//Create Server to listen for message
+//Create Server and listen for client connections.
 //
-
-int create_server(int port_number,int max_connections)
+static int create_server(int port_number,int max_connections)
 {
-    
-    
- int sockfd;
+ int sockfd, reuse = 1;
  struct sockaddr_in serv_addr;
+
  sockfd = socket(AF_INET, SOCK_STREAM, 0);
- fprintf(stderr, "Server- Info: opening socket for server on port %d with socket id %d \n",port_number,sockfd);
+
  if (sockfd < 0)
-    fprintf(stderr, "Server- Error: in opening socket on port %d\n", port_number);
+ {
+    fprintf(stderr, "%s- Error: in opening socket on port %d\n", 
+            __progname, port_number);
+    exit(1);
+ }
+
+/* 20.Mar.2017 - RM - SO_REUSEADDR option. To take care of TIME_WAIT state.*/
+ int ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
+ if (ret < 0) 
+ {
+     syslog(LOG_ERR, "create_server:setsockopt() failed....");
+ }
 
  bzero((char *) &serv_addr, sizeof(serv_addr));
  serv_addr.sin_family = AF_INET;
  serv_addr.sin_addr.s_addr = INADDR_ANY;
  serv_addr.sin_port = htons(port_number);
-
+     
  if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
  {
-    fprintf(stderr,"Server- Error: could not bind socket to port %d\n",port_number);
-    close(sockfd);
-    sockfd= -1;
+     fprintf(stderr,"%s- Error: could not bind socket to port %d\n",
+             __progname, port_number);
+     syslog(LOG_ERR, "Error: could not bind socket to port %d", port_number);
+
+     close(sockfd);
+
+     exit(1);
  }
- else
- fprintf(stderr,"Server- Info: finished binding socket to port %d\n",port_number);
- // start listening on the server.
- listen(sockfd,max_connections);
+
+ // Start listening on the server.
+ listen(sockfd, max_connections);
+
  return sockfd;
- 
 }
 
-
-//
-// ask the server to wait for a client connection
-// and accept one connection if possible
-// 
-// uses select to make this non-blocking.
-// 
-//
-
-int connect_to_client(int server_fd)                                            
+// The server to wait (non-blocking) for a client connection.
+static int connect_to_client(int server_fd)                                            
 {                                                                               
-    int ret_val = 1;                                                              
-    int newsockfd = -1;                                                           
-    socklen_t clilen;                                                             
-    struct sockaddr_in  cli_addr;                                                 
-    fd_set c_set;                                                                 
-    struct timeval time_limit;                                                    
-    time_limit.tv_sec = 0;                                                        
-    time_limit.tv_usec = 1000;                                                    
+    int ret_val = 1;
+    int newsockfd = -1;
+    socklen_t clilen;
+    struct sockaddr_in  cli_addr;
+    fd_set c_set;
+    struct timeval time_limit;                                                
+  
+    time_limit.tv_sec = 0;
+    time_limit.tv_usec = 1000;
     
-    clilen = sizeof(cli_addr);                                                    
-    FD_ZERO(&c_set);                                                              
-    FD_SET(server_fd,&c_set);                                                     
-    select(server_fd+1, &c_set,NULL,NULL,&time_limit);                            
-    if(FD_ISSET(server_fd,&c_set))                                                
-    {                                                                           
-        newsockfd = accept(server_fd,(struct sockaddr *) &cli_addr,&clilen);      
-        if (newsockfd >= 0)                                                       
-        {                                                                           
-            fprintf(stderr,"Server- Info: new client connection %d \n",newsockfd);            
-        }                                                                           
-        else                                                                      
-        {                                                                           
-            fprintf(stderr,"Server- Info: failed in accept()\n");                             
-        }                                                                           
+    clilen = sizeof(cli_addr); 
+
+    FD_ZERO(&c_set);
+    FD_SET(server_fd, &c_set);
+
+    select(server_fd + 1, &c_set, NULL, NULL, &time_limit);
+
+    ret_val = FD_ISSET(server_fd, &c_set);
+
+    if(ret_val)
+    {
+        newsockfd = accept(server_fd, (struct sockaddr *) &cli_addr, &clilen);
+        if (newsockfd >= 0)
+        { 
+	    syslog(LOG_INFO, "SRV:%d New Client Connection CLT:%d",
+                   server_fd, newsockfd);
+        }        
+        else
+        {
+            syslog(LOG_ERR,"Error: failed in accept(), socket=%d", server_fd);
+	    exit(1);
+        }                   
     } 
-    //else
-    //{
-    //  fprintf(stderr,"Server- failed to connect to client \n");  
-    //}                                                                          
-    
-    return(newsockfd);                                                            
+    return(newsockfd);
 }   
-
-
-//
-//use select to check if we can write to                                       
-// the socket..
-//
-
-int can_read_from_socket(int socket_id)                                         
-{                                                                               
-    struct timeval time_limit;                                                    
-    time_limit.tv_sec = 0;                                                        
-    time_limit.tv_usec = 1000;                                                    
-    
-    fd_set c_set;                                                                 
-    FD_ZERO(&c_set);                                                              
-    FD_SET(socket_id,&c_set);                                                     
-    
-    int npending = select(socket_id + 1, &c_set, NULL,NULL,&time_limit);          
-    
-    return(FD_ISSET(socket_id,&c_set));                                           
-}   
-
 
 //                                                                              
-// use select to check if we can write to                                       
-// the socket..                                                                 
+// Check if we can read from the socket..
 //    
-
-int can_write_to_socket(int socket_id)                                          
+static int can_read_from_socket(int socket_id)                                         
 {                                                                               
-    struct timeval time_limit;                                                    
-    time_limit.tv_sec = 0;                                                        
-    time_limit.tv_usec = 1000;                                                    
+    struct timeval time_limit;  
+    time_limit.tv_sec = 0;  
+    time_limit.tv_usec = 1000;
     
-    fd_set c_set;                                                                 
-    FD_ZERO(&c_set);                                                              
-    FD_SET(socket_id,&c_set);                                                  
-    int npending = select(socket_id + 1, NULL, &c_set,NULL,&time_limit);          
+    fd_set c_set; 
+    FD_ZERO(&c_set); 
+    FD_SET(socket_id, &c_set);
     
-    return(FD_ISSET(socket_id,&c_set));                                           
+    int npending = select(socket_id + 1, &c_set, NULL, NULL, &time_limit);
+    if (npending == -1)
+    { 
+        npending = errno;
+	syslog(LOG_ERR, "can_read_from_socket:select() ERRNO=%d",npending);
+        return(-100);
+    }
+    return(FD_ISSET(socket_id, &c_set));
 }   
 
-
-//receive string from socket and put it inside buffer.
-
-int receive_string(int sock_id, char* buffer)                                   
+//                                                                              
+// Check if we can write to the socket..
+//    
+static int can_write_to_socket(int socket_id)                                          
 {                                                                               
-    int nbytes = 0;                                                               
+    struct timeval time_limit;  
+    time_limit.tv_sec = 0;
+    time_limit.tv_usec = 1000;
     
-    while(1)                                                                      
-    {                                                                           
-        if(can_read_from_socket(sock_id))
-            break;                                                                      
-        else                                                                      
-            usleep(1000);
+    fd_set c_set;
+    FD_ZERO(&c_set);
+    FD_SET(socket_id, &c_set);                                                  
+
+    int npending = select(socket_id + 1, NULL, &c_set, NULL, &time_limit);
+    if (npending == -1)
+    {
+	npending = errno;
+
+	syslog(LOG_ERR, "can_write_to_socket() select() ERRNO=%d",npending);
+
+	return (-100);
+    } else if (npending == 0) {  // select() timed out...
+	return(0);
+    }
+    return(FD_ISSET(socket_id,&c_set));
+}   
+
+//Receive string from socket and put it inside buffer.
+static int receive_string(int sock_id, char* buffer)                                   
+{                                                                               
+  int nbytes = 0;
+  int ret;  
+    
+    while(1)
+    {
+        ret = can_read_from_socket(sock_id); 
+	if (ret == 0) 
+	{ // select() had timed out. Retry...
+	    usleep(1000);
+	    continue;
+	} else 
+        if (ret == -100)
+	{
+	    return(-1);
+	}
+	break;
     }                                                                           
     
-    nbytes = recv(sock_id,buffer,MAX_BUF_SIZE,0);                                 
-    return(nbytes);                                                               
+    nbytes = recv(sock_id, buffer, MAX_BUF_SIZE, 0);
+    if (nbytes < 0)
+    {
+	perror("READ FAILURE");
+        exit(1);
+    }
+    return(nbytes); 
 }   
 
-//                                                                              
-// will establish a connection, send the                                        
-// packet and block till a response is obtained.                                
-// socket will be closed after the response                                     
-// is obtained..                                                                
-// the buffer is used for the sent as well                                      
-// as the received data.        
-//
-
-
-void set_non_blocking(int sock_id)                                              
+static void set_non_blocking(int sock_id)                                              
 {                                                                               
-    int x;                                                                        
-    x=fcntl(sock_id,F_GETFL,0);                                                   
-    fcntl(sock_id,F_SETFL,x | O_NONBLOCK); 
-    fprintf(stderr,"Server- Setting server to non blocking state");                                       
+    int x;                                                                    
+    x = fcntl(sock_id, F_GETFL, 0); 
+    fcntl(sock_id, F_SETFL, x | O_NONBLOCK); 
+    syslog(LOG_INFO, "Setting server to non blocking state."); 
 } 
 
+static void Data_Send(int sockid)                                       
+{                                                                               
+  static int trnum;
+  char* out;
+
+  int i;
+  char colon = ':';
+  char semicolon = ';'; 
+  int wrt_retries = 0;
+  int ret;
+
+  s = NULL;
+  int found = 0;
+
+  out = calloc(1, 1024);
+
+  for (i=0;i<out_port_num;i++)
+  {  
+     HASH_FIND_STR(users,Out_Port_Array[i],s);
+     if (strcmp(Out_Port_Array[i], s->key) == 0) 
+     {
+      found=1;
+      break;
+     }
+  }
+
+  if(found) 
+  { 
+      strncat(out, s->key, strlen(s->key));
+      strncat(out, &colon, 1);
+      strncat(out, s->val, strlen(s->val));
+      strncat(out, &semicolon, 1);
+      
+      while(1)
+      {
+	  if (wrt_retries > 2)  // 22.Feb.2017 - Kludge
+	  {
+              free(out);
+	      return;
+	  }
+	  ret = can_write_to_socket(sockid); 
+	  if (ret > 0) break;
+	  if( ret == -100)
+	  {
+	      syslog(LOG_ERR,"Send aborted to CLT:%d buffer:%s ret=%d",
+		     sockid, out,ret);
+              free(out);
+	      return;
+	  } 
+	  else // select() timed out. Retry....
+	  {
+	      usleep(1000);
+	      wrt_retries++;
+	  }
+      } 
+  }         
+  else                                                                        
+  {        
+      syslog(LOG_ERR,"The %s's value not found in the table.",
+             Out_Port_Array[i]);
+      free(out);
+      return;
+  }
+  
+  if ((send(sockid, out, strlen(out), 0)) == -1)
+    {
+      syslog(LOG_ERR,"Failure sending to CLT:%d buffer:%s", sockid, out);
+      exit(1);
+    }
+
+  syslog(LOG_INFO,"SNT:TRNUM:%d to CLT:%d buffer: %s", trnum++, sockid, out);  
+  free(out);
+} 
 
 void Vhpi_Initialize(int sock_port)
 {
     DEFAULT_SERVER_PORT = sock_port;
-    /*Taking time info for log*/ 
-    time_t systime;                                                             
-    systime = time(NULL);  
-    
-    log_server=fopen("server.log","a");
-    //log_file=fopen("vhpi.log","a");
 
-    signal(SIGINT,Vhpi_Close);
-    signal(SIGTERM,Vhpi_Close);
+    my_pid = getpid();
+
+    signal(SIGINT,Vhpi_Exit);
+    signal(SIGTERM,Vhpi_Exit);
+
+    signal(SIGUSR1, Vhpi_Exit); //10.Mar.2017 - RM
 
     int try_limit = 100;
 
     while(try_limit > 0)
     {
-        server_socket_id = create_server(DEFAULT_SERVER_PORT,DEFAULT_MAX_CONNECTIONS);
-
-        if(server_socket_id > 0)
+      server_socket_id = create_server(DEFAULT_SERVER_PORT,DEFAULT_MAX_CONNECTIONS);
+      if(server_socket_id > 0)
         {
-            fprintf(stderr,"Server- Info:Success: Started the server on port %d\n",DEFAULT_SERVER_PORT);
-            fprintf(log_server,"Server -Started the server at port %d \n",DEFAULT_SERVER_PORT);
+           syslog(LOG_INFO,"Started the server(PID=%d) on port %d  SRV:%d",
+		  my_pid, DEFAULT_SERVER_PORT, server_socket_id);
             set_non_blocking(server_socket_id);
             break;
-            
         }
         else
-            fprintf(stderr,"Server- Info:Could not start server on port %d,will try again\n",DEFAULT_SERVER_PORT);
-
-        usleep(1000);
-        try_limit--;
+	{
+            syslog(LOG_ERR,"Could not start server on port %d,will try again",
+                   DEFAULT_SERVER_PORT);
+	    usleep(1000);
+	    try_limit--;
         
-        if(try_limit==0)
-        {
-            fprintf(stderr,"Server- Error:Tried to start server on port %d, failed..giving up \n",DEFAULT_SERVER_PORT);
-            exit(1);
+	    if(try_limit==0)
+	    {
+	       syslog(LOG_ERR,
+                 "Error:Tried to start server on port %d, failed..giving up.",
+                      DEFAULT_SERVER_PORT);
+	       exit(1);
             }
-
+	    
+	}
     }
-    
-    //fprintf(log_server,"Setup completed on server side at %s ",ctime(&systime));
-    fflush(log_server);
-    fclose(log_server);
-
   //                                                                            
   //Reading Output Port name and storing in Out_Port_Array;                     
   //                                                                            
-  char *line = NULL;                                                            
-  size_t len = 0;                                                               
-  ssize_t read;                                                                 
-  char *token;                                                                  
-  FILE *fp;                                                                     
-  fp=fopen("connection_info.txt","r");                                          
-  
-  while ((read = getline(&line, &len, fp)) != -1)                               
-  {                                                                             
-    if (strstr(line,"OUT") != NULL || strstr(line,"out") != NULL )                                             
-    {                                                                           
-      strtok_r(line, " ",&token);                                               
-      Out_Port_Array[out_port_num] = line;                                      
-      out_port_num++;                                                           
-    }                                                                           
-    line = (char *)malloc(sizeof(char));                                        
-  }                     	
+    char* line = NULL;
+    size_t len = 0; 
+    ssize_t read;
+    char *token;
+    FILE *fp;
+    struct timespec ts;
 
+    fp=fopen("connection_info.txt","r");
+    if (! fp)
+    {
+	syslog(LOG_ERR,"Vhpi_Initialize: Failed to open connection_info.txt. Exiting...");
+	exit(1);
+    }
 
-  fprintf(stderr,"\n Server- Vhpi_Initialize finished \n"); 
-  sleep(2);
-  fclose(fp);
+    line = (char*) malloc(80);
+    while ((read = getline(&line, &len, fp)) != -1)
+    {
+	if (strstr(line,"OUT") != NULL || strstr(line,"out") != NULL )
+	{ 
+	    strtok_r(line, " ",&token);
+	    Out_Port_Array[out_port_num] = line;
+	    out_port_num++;
+	}
+	line = (char*) malloc(80);
+    }                     	
+    fclose(fp);
+    
+    free(line);
+
+    ts.tv_sec = 2;
+    ts.tv_nsec = 0;
+    nanosleep(&ts, NULL);
+
+// 10.Mar.2017 - RM - Create PID file for the test bench.
+    create_pid_file(sock_port);
+}
+void Vhpi_Set_Port_Value(char *port_name,char *port_value,int port_width)
+{
+    
+  s = (struct my_struct*)malloc(sizeof(struct my_struct));
+  strncpy(s->key, port_name,10);
+  strncpy(s->val,port_value,10);
+  HASH_ADD_STR( users, key, s );
+
+}
+
+void Vhpi_Get_Port_Value(char* port_name,char* port_value,int port_width)
+{
+
+  HASH_FIND_STR(users,port_name,s);
+  if(s)
+  {  
+    snprintf(port_value,sizeof(port_value),"%s",s->val);
+
+    HASH_DEL(users, s);
+    free(s);
+    s=NULL;
+  }
 }
 
 void Vhpi_Listen()
 {
-    char payload[4096];
-    int payload_length;
-    vhpi_cycle_count++;
-    //#ifdef DEBUG
-    //fprintf(log_file,"Server- Info: listening in cycle %d\n", vhpi_cycle_count);
-    //fflush(log_file);
-    //#endif
     int new_sock;
+
     while(1)
     {
-        if((new_sock = connect_to_client(server_socket_id)) > 0) 
+	new_sock=connect_to_client(server_socket_id);
+        if(new_sock  > 0) 
         {
             char receive_buffer[MAX_BUF_SIZE];
-            fprintf(stderr,"Server- Info : waiting for client message \n");
-
-        //if the client has connected "just now"
-        // it must send something!
-        //#ifdef DEBUG
-        //fprintf(log_file,"Server- Info: waiting for message from client %d\n", new_sock);
-        //fflush(log_file);
-        //#endif
-        int n = receive_string(new_sock,receive_buffer);
-  
-        
-        if(n > 0)
+	    int n = receive_string(new_sock, receive_buffer);
+	    if(n > 0)
             {
-                  
-                //payload_length = extract_payload(receive_buffer,payload,n);
-                //#ifdef DEBUG
-                //fprintf(log_file,"Info: received message from client %d: %s (payload-length=%d)\n",new_sock, receive_buffer,payload_length);
-                //fprintf(log_file,"Server- Info: received message from client %d : %s \n",new_sock,receive_buffer);
-                //fflush(log_file);
-                //#endif
-
-                
-                if(strcmp(receive_buffer,"END")==0) 
+		sendto_sock = new_sock; // 22.Feb.2017 - RM - Kludge
+		syslog(LOG_INFO,
+                        "Vhpi_Listen:New socket connection CLT:%d",new_sock);
+		if(strcmp(receive_buffer, "END")==0) 
                 {
-                  
-                  log_server=fopen("server.log","a");
-                  fprintf(log_server,"Accept Server closing request \n");  
-                  printf("Accept server closing request \n");
-                  fflush(log_server);
-                  fclose(log_server);
-                  Vhpi_Close();
-                  exit(0);
-                  sleep(1);
-                  //close(server_socket_id);
+                  syslog(LOG_INFO,
+			  "RCVD:CLOSE REQUEST from CLT:%d", new_sock);  
+                  Vhpi_Exit(0);
                 }  
-                
-                else 
+	      else 
                 {
                   parse_buffer(new_sock,receive_buffer);
-                  
                 }
-                
-                //parse_buffer(new_sock,receive_buffer);
                 break;
             }
-        
         } 
     else
       {
         break;
       }
     }
-    //#ifdef DEBUG
-    //fprintf(log_file,"Server- Info: finished listening in cycle %d\n", vhpi_cycle_count); 
-    //fflush(log_file);
-    //#endif
 }
 
-// go down the list of finished jobs and send                                   
-// out the resulting port values.. 
+
 void  Vhpi_Send() 
 {
     int sockid;
     char* out;
-    //#ifdef DEBUG                                                                    
-    //fprintf(log_file,"Server- Info: sending in cycle %d\n", vhpi_cycle_count);            
-    //fflush(log_file);                                                             
-    //#endif
-    
-    log_server=fopen("server.log","a");
 
-    fprintf(stderr,"Server- Sending data to client \n");
-    fprintf(log_server,"Sending data from server to client \n");  
-    HASH_FIND_STR(users,"sock_id",s);
-    if(s)
-    {  
-      printf("Server- The key is %s and value is  %s \n",s->key,s->val);
-      sockid=atoi(s->val);
-      //strncpy(sockid,10,atoi(s->val));
-      //HASH_DEL(users, s);
-      //free(s);
-    }
-    else
-    {
-      printf("Server- The socket id not found in table \n");
-      fprintf(log_server,"The socket id is not present in table \n");
-    }
-    
-    //snprintf(sockid,sizeof(sockid),"%d",s->val);
-  
-      Data_Send(sockid);                                      
+// Traverse the list of finished jobs and send out the resulting port values.. 
+// 22.Feb.2017 - RM - Kludge
+//    log_server=fopen("server.log","a");
+//    fprintf(log_server, "%s Vhpi_Send() called\n", curtim());
 
-    fflush(log_server);
-    fclose(log_server);
+//    fprintf(log_server,"Vhpi_Send()-------------------\n");
+//    print_hash_table();
+//    fprintf(log_server,"----------------------------------------\n");
+//    HASH_FIND_STR(users,"sock_id",s);
+//    if(s)
+//    {  
+//      sockid=atoi(s->val);
+//    }
+//    else
+//    {
+//      fprintf(log_server,"%s Socket id not in table - key=%s val=%s\n",
+//              curtim(),
+//	      users->key, users->val);  
+//    }
+//    Data_Send(sockid);
+
+    if (prev_sendto_sock != sendto_sock)
+    { 
+	Data_Send(sendto_sock);                                      
+	prev_sendto_sock = sendto_sock;
+    }
+// 22.Feb.2017 End kludge
  
 }
 
-void Data_Send(int sockid)                                       
-{                                                                               
-  char* out;
-  out = (char *) malloc(sizeof(char));
-  *out = '\0';
-  char send_data_buf[BUFSIZ];
-  int i;
-  char colon = ':';
-  char semicolon = ';'; 
-  for (i=0;i<out_port_num;i++)
-  {  
-  HASH_FIND_STR(users,Out_Port_Array[i],s);                                            
-  if(s)                                                                       
-  {                                                                           
-    printf("Server-Sending data has key:%s and value:%s \n",s->key,s->val);        
-    fprintf(log_server,"Sending data has key:%s and value:%s \n",s->key,s->val);
-    
-    strncat(out, s->key, strlen(s->key));
-    strncat(out, &colon, 1);
-    strncat(out, s->val, strlen(s->val));
-    strncat(out, &semicolon, 1);
-
-    
-    //HASH_DEL(users, s);                                                     
-    //free(s);                                                                
-    while(1)                                                                  
-    {                                                                         
-    if(can_write_to_socket(sockid))                                         
-      break;                                                                
-    usleep(1000);                                                           
-    }                                                                         
-  
-  }                                                                           
-  else                                                                        
-  {                                                                           
-    printf("Server- The output port's %s value Not found \n",Out_Port_Array[i]);
-    fprintf(log_server,"The %s's value not found in the table \n",Out_Port_Array[i]);                         
-  }
-  }
-
-        strcpy(send_data_buf, out);
-
-        if ((send(sockid, send_data_buf, sizeof(send_data_buf), 0)) == -1)
-        {
-                perror("Server- Failure Sending Message\n");
-                exit(1);
-        }
-        fprintf(log_server,"Val of output buffer %s\n",send_data_buf);  
-} 
-
 void  Vhpi_Close()                                                         
 {  
- fprintf(stderr,"Server- Info: closing VHPI link\n");
- //fclose(log_file); 
- close(server_socket_id);
-    
+    close(server_socket_id);
+    syslog(LOG_INFO, "*** Closed VHPI link. ***");
 }
 
-static void Vhpi_Exit(int sig)                                                  
+void Vhpi_Exit(int sig) 
 {                                                                               
-    fprintf(stderr, "Server- *** Break! ***\n");                                          
-    fprintf(stderr,"Server- Info: Stopping the simulation \n");                           
-    Vhpi_Close();                                                                 
-    exit(0);                                                                      
+    Vhpi_Close(); 
+
+// 10.Mar.2017 - RM
+    if (pid_file_created)
+       remove(pid_filename);
+
+    syslog(LOG_INFO, "*** PID=%d Exiting ***", my_pid);
+
+    exit(0);
 }    
