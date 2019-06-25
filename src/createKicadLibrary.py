@@ -21,11 +21,12 @@ class AutoSchematic(QtGui.QWidget):
         for root, dirs, files in os.walk(self.xml_loc):
             if (str(self.modelname) + '.xml') in files:
                 xmlFound = root
+                print(xmlFound)
         if (xmlFound == None):
             self.getPortInformation()
             self.createXML()
             self.createLib()
-        elif (xmlFound == self.xml_loc + 'Nghdl'):
+        elif (xmlFound == self.xml_loc + '/Nghdl'):
             print 'Library already exists...'
             ret = QtGui.QMessageBox.critical(self, "Critical",'''<b>The Libraries of this model already exist.Do you want to overwrite it?</b><br/>
                     <b>If yes press ok else cancel it and change the name of your vhdl file</b>''', QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
@@ -43,7 +44,7 @@ class AutoSchematic(QtGui.QWidget):
             ret = QtGui.QMessageBox.critical(self, "Error",'''<b>A standard library already exists in this name.</b><br/>
                     <b>Please change the name of your vhdl file and upload it again</b>''', QtGui.QMessageBox.Ok)
 
-            quit()
+            # quit()
 
     def getPortInformation(self):
         portInformation = PortInfo(self)
@@ -164,8 +165,14 @@ class AutoSchematic(QtGui.QWidget):
         output_port = output_port.split()
         inputs = self.portInfo[0: self.input_length]
         outputs = self.portInfo[self.input_length:]
+
+        print "INPUTS AND OUTPUTS "
+        print inputs
+        print outputs
+
         inputs = self.char_sum(inputs)
         outputs= self.char_sum(outputs)
+ 
         total = inputs+outputs
 
         port_list = []

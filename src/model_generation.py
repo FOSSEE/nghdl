@@ -92,7 +92,9 @@ data=read_file.readlines()
 read_file.close()
 
 #Extracting input and output port list from data
+print "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 for line in data:
+    print line
     if re.match(r'^\s*$', line):
         pass
         #print "Blank Line"
@@ -216,9 +218,9 @@ init_else='''
 '''
 
 els_evt_ptr=[]
-els_evt_count1=[]
+els_evt_count1=0
+els_evt_count2=0
 for item in output_port:
-    els_evt_count2=0
     els_evt_ptr.append("_op_"+item.split(":")[0]+" = cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
     els_evt_count2=els_evt_count2+1
     els_evt_ptr.append("_op_"+item.split(":")[0]+"_old"+" = cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
@@ -612,6 +614,7 @@ ifspec.close()
 print "Starting with testbench file"
 
 testbench=open(fname.split('.')[0]+'_tb.vhdl','w')
+print fname.split('.')[0] + '_tb.vhdl'
 #comment
 comment_vhdl="--------------------------------------------------------------------------------\n--This testbench has been created by Ambikeshwar Srivastava, FOSSEE, IIT Bombay\n-------------------------------------------------------------------------------"
 #Adding header, entity and architecture statement
