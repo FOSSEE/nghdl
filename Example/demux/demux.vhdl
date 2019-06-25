@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 
-entity t_demux is
+entity demux is
  port(
 
  F : in STD_LOGIC_vector(0 downto 0);
@@ -12,9 +12,9 @@ entity t_demux is
  C: out STD_LOGIC_vector(0 downto 0);
  D: out STD_LOGIC_vector(0 downto 0)
  );
-end t_demux;
+end demux;
 
-architecture bhv of t_demux is
+architecture bhv of demux is
 begin
 process (F,S0,S1) is
 begin
