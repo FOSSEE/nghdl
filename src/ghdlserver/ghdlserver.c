@@ -405,62 +405,78 @@ static void Data_Send(int sockid)
 
   out = calloc(1, 1024);
 
-  for (i=0;i<out_port_num;i++)
+  for (i=0; i<out_port_num; i++)
   {  
+     
+     found = 0;
+     printf("\n Server : i=%d out_port_num=%d \n", i, out_port_num);
+
+
      HASH_FIND_STR(users,Out_Port_Array[i],s);
      if (strcmp(Out_Port_Array[i], s->key) == 0) 
      {
       found=1;
-      break;
+     //  break;
      }
-  }
+  // }
 
-  if(found) 
-  { 
-      strncat(out, s->key, strlen(s->key));
-      strncat(out, &colon, 1);
-      strncat(out, s->val, strlen(s->val));
-      strncat(out, &semicolon, 1);
+      if(found) 
+      { 
+          strncat(out, s->key, strlen(s->key));
+          strncat(out, &colon, 1);
+          strncat(out, s->val, strlen(s->val));
+          strncat(out, &semicolon, 1);
       
-      while(1)
-      {
-	  if (wrt_retries > 2)  // 22.Feb.2017 - Kludge
-	  {
-              free(out);
-	      return;
-	  }
-	  ret = can_write_to_socket(sockid); 
-	  if (ret > 0) break;
-	  if( ret == -100)
-	  {
-	      syslog(LOG_ERR,"Send aborted to CLT:%d buffer:%s ret=%d",
-		     sockid, out,ret);
-              free(out);
-	      return;
-	  } 
-	  else // select() timed out. Retry....
-	  {
-	      usleep(1000);
-	      wrt_retries++;
-	  }
-      } 
-  }         
-  else                                                                        
-  {        
-      syslog(LOG_ERR,"The %s's value not found in the table.",
-             Out_Port_Array[i]);
-      free(out);
-      return;
-  }
-  
-  if ((send(sockid, out, strlen(out), 0)) == -1)
-    {
-      syslog(LOG_ERR,"Failure sending to CLT:%d buffer:%s", sockid, out);
-      exit(1);
+          printf("\n\n Out 1: %s \n\n", out);
+      }         
+      else                                                                        
+      {        
+          printf("\n Failed (Not Found) at i=%d \n", i);
+
+          syslog(LOG_ERR,"The %s's value not found in the table.",
+                 Out_Port_Array[i]);
+          free(out);
+          return;
+      }
     }
 
-  syslog(LOG_INFO,"SNT:TRNUM:%d to CLT:%d buffer: %s", trnum++, sockid, out);  
-  free(out);
+      while(1)
+      {
+            if (wrt_retries > 2)  // 22.Feb.2017 - Kludge
+            {
+                free(out);
+                printf("\n Retries finished \n");
+                return;
+            }
+            ret = can_write_to_socket(sockid); 
+            if (ret > 0) break;
+          
+            if( ret == -100)
+            {
+                syslog(LOG_ERR,"Send aborted to CLT:%d buffer:%s ret=%d",
+                 sockid, out,ret);
+                      free(out);
+                printf("\n Cannot write Socket \n");
+                return;
+            } 
+            else // select() timed out. Retry....
+            {
+              printf("\n Sleep \n");
+              usleep(1000);
+              wrt_retries++;
+            }
+          }
+
+      if ((send(sockid, out, strlen(out), 0)) == -1)
+        {
+          printf("\n Failed (Socket not send) at i=%d \n", i);
+          syslog(LOG_ERR,"Failure sending to CLT:%d buffer:%s", sockid, out);
+          exit(1);
+        }
+
+      syslog(LOG_INFO,"SNT:TRNUM:%d to CLT:%d buffer: %s", trnum++, sockid, out);  
+      free(out);
+    
 } 
 
 void Vhpi_Initialize(int sock_port)
