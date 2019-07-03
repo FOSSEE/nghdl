@@ -77,7 +77,7 @@ static int get_ngspice_pid(void)
     FILE* fp = NULL;
     struct dirent* dir_entry;
     char path[1024], rd_buff[1024];
-    pid_t pid = -1;
+    pid_t pid[32];
 
     if ((dirp = opendir("/proc/")) == NULL)
     {
@@ -85,39 +85,47 @@ static int get_ngspice_pid(void)
 	exit(-1);
     }
 
+    for(int i=0; i<31; i++)
+    	pid[i] = -1;
+
+    int i=0;
+
     while ((dir_entry = readdir(dirp)) != NULL)
     {
-	char* nptr;
-        int valid_num = 0;
+		char* nptr;
+	    int valid_num = 0;
 
-	int tmp = strtol(dir_entry->d_name, &nptr, 10);
-	if ((errno == ERANGE) && (tmp == LONG_MAX || tmp == LONG_MIN))
-	{
-	    perror("strtol"); // Number out of range.
-	    return(-1);
-	}
-	if (dir_entry->d_name == nptr)
-	{
-	    continue; // No digits found.
-	}
-	if (tmp)
-	{
-	    sprintf(path, "/proc/%s/comm", dir_entry->d_name);
-	    if ((fp = fopen(path, "r")) != NULL)
-	    {
-		fscanf(fp, "%s", rd_buff);
-		if (strcmp(rd_buff, NGSPICE) == 0)
+		int tmp = strtol(dir_entry->d_name, &nptr, 10);
+		if ((errno == ERANGE) && (tmp == LONG_MAX || tmp == LONG_MIN))
 		{
-		    pid = (pid_t)tmp;
-		    break;
+		    perror("strtol"); // Number out of range.
+		    return(-1);
 		}
-	    }
-	}
+		if (dir_entry->d_name == nptr)
+		{
+		    continue; // No digits found.
+		}
+		if (tmp)
+		{
+		    sprintf(path, "/proc/%s/comm", dir_entry->d_name);
+		    if ((fp = fopen(path, "r")) != NULL)
+		    {
+				fscanf(fp, "%s", rd_buff);
+				if (strcmp(rd_buff, NGSPICE) == 0)
+				{
+				    pid[i++] = (pid_t)tmp;
+				    // break;
+				}
+		    }
+		}
     }
+
+    for(int j=0; j<i; j++)
+    	printf("Pid : %d\n", pid[j]);
 	
    if (fp) fclose(fp);
 
-   return(pid);
+   return(pid[i-1]);
 }
 
 /* 23.Mar.2017 - RM - Pass the sock_port argument. We need this if a netlist
@@ -203,16 +211,16 @@ static void parse_buffer(int sock_id, char* receive_buffer)
         while(var=strtok_r(token, ":", &value))
         {
           s = (struct my_struct*)malloc(sizeof(struct my_struct));
-	  strncpy(s->key, var, 10);
-	  strncpy(s->val, value, 10);
+	  strncpy(s->key, var, 64);
+	  strncpy(s->val, value, 64);
 	  HASH_ADD_STR(users, key, s );
 	  break;    
         }
     }
         
     s = (struct my_struct*)malloc(sizeof(struct my_struct));
-    strncpy(s->key, "sock_id", 10);
-    snprintf(s->val,10, "%d", sock_id);
+    strncpy(s->key, "sock_id", 64);
+    snprintf(s->val,64, "%d", sock_id);
     HASH_ADD_STR(users, key, s);
 }
 
@@ -289,15 +297,15 @@ static int connect_to_client(int server_fd)
         newsockfd = accept(server_fd, (struct sockaddr *) &cli_addr, &clilen);
         if (newsockfd >= 0)
         { 
-	    syslog(LOG_INFO, "SRV:%d New Client Connection CLT:%d",
-                   server_fd, newsockfd);
+	    	syslog(LOG_INFO, "SRV:%d New Client Connection CLT:%d", server_fd, newsockfd);
         }        
         else
         {
             syslog(LOG_ERR,"Error: failed in accept(), socket=%d", server_fd);
-	    exit(1);
+		    exit(1);
         }                   
     } 
+
     return(newsockfd);
 }   
 
@@ -409,16 +417,12 @@ static void Data_Send(int sockid)
   {  
      
      found = 0;
-     printf("\n Server : i=%d out_port_num=%d \n", i, out_port_num);
-
-
+     
      HASH_FIND_STR(users,Out_Port_Array[i],s);
      if (strcmp(Out_Port_Array[i], s->key) == 0) 
      {
       found=1;
-     //  break;
      }
-  // }
 
       if(found) 
       { 
@@ -426,12 +430,9 @@ static void Data_Send(int sockid)
           strncat(out, &colon, 1);
           strncat(out, s->val, strlen(s->val));
           strncat(out, &semicolon, 1);
-      
-          printf("\n\n Out 1: %s \n\n", out);
       }         
       else                                                                        
       {        
-          printf("\n Failed (Not Found) at i=%d \n", i);
 
           syslog(LOG_ERR,"The %s's value not found in the table.",
                  Out_Port_Array[i]);
@@ -445,7 +446,6 @@ static void Data_Send(int sockid)
             if (wrt_retries > 2)  // 22.Feb.2017 - Kludge
             {
                 free(out);
-                printf("\n Retries finished \n");
                 return;
             }
             ret = can_write_to_socket(sockid); 
@@ -456,7 +456,6 @@ static void Data_Send(int sockid)
                 syslog(LOG_ERR,"Send aborted to CLT:%d buffer:%s ret=%d",
                  sockid, out,ret);
                       free(out);
-                printf("\n Cannot write Socket \n");
                 return;
             } 
             else // select() timed out. Retry....
@@ -469,7 +468,6 @@ static void Data_Send(int sockid)
 
       if ((send(sockid, out, strlen(out), 0)) == -1)
         {
-          printf("\n Failed (Socket not send) at i=%d \n", i);
           syslog(LOG_ERR,"Failure sending to CLT:%d buffer:%s", sockid, out);
           exit(1);
         }
@@ -586,33 +584,34 @@ void Vhpi_Listen()
 
     while(1)
     {
-	new_sock=connect_to_client(server_socket_id);
+		new_sock = connect_to_client(server_socket_id);
         if(new_sock  > 0) 
         {
             char receive_buffer[MAX_BUF_SIZE];
-	    int n = receive_string(new_sock, receive_buffer);
-	    if(n > 0)
+	    	int n = receive_string(new_sock, receive_buffer);
+	    	if(n > 0)
             {
-		sendto_sock = new_sock; // 22.Feb.2017 - RM - Kludge
-		syslog(LOG_INFO,
-                        "Vhpi_Listen:New socket connection CLT:%d",new_sock);
-		if(strcmp(receive_buffer, "END")==0) 
+				sendto_sock = new_sock; // 22.Feb.2017 - RM - Kludge
+				syslog(LOG_INFO, "Vhpi_Listen:New socket connection CLT:%d",new_sock);
+
+				printf("\n\n%s\n\n", receive_buffer);
+
+				if(strcmp(receive_buffer, "END")==0) 
                 {
-                  syslog(LOG_INFO,
-			  "RCVD:CLOSE REQUEST from CLT:%d", new_sock);  
+                  syslog(LOG_INFO, "RCVD:CLOSE REQUEST from CLT:%d", new_sock);  
                   Vhpi_Exit(0);
                 }  
-	      else 
+	      		else 
                 {
                   parse_buffer(new_sock,receive_buffer);
                 }
                 break;
             }
         } 
-    else
-      {
-        break;
-      }
+    	else
+      	{
+        	break;
+      	}
     }
 }
 
@@ -662,9 +661,13 @@ void Vhpi_Exit(int sig)
 {                                                                               
     Vhpi_Close(); 
 
+    // printf("\nVHPI EXIT\n");
+
 // 10.Mar.2017 - RM
-    if (pid_file_created)
-       remove(pid_filename);
+    if (pid_file_created) {
+    	// printf("%s\n", pid_filename);
+       	remove(pid_filename);
+    }
 
     syslog(LOG_INFO, "*** Exiting ***");
 
