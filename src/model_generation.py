@@ -41,6 +41,7 @@ for item in vhdl_data:
     
 #print "Scan Data",scan_data
 port_info=[]
+port_vector_info = []
 
 for item in scan_data:
     print "Scan Data :",item
@@ -67,7 +68,12 @@ for item in scan_data:
     lhs=temp.split(item)[0]
     rhs=temp.split(item)[1]
     bit_info=re.compile(r"\s*downto\s*",flags=re.I).split(rhs)[0]
-    port_info.append(lhs+":"+str(int(bit_info)+int(1)))
+    if bit_info:
+        port_info.append(lhs+":"+str(int(bit_info)+int(1)))
+        port_vector_info.append(1)
+    else:
+        port_info.append(lhs+":"+str(int(1)))
+        port_vector_info.append(0)
 
 print "Port Info :",port_info
 
@@ -639,16 +645,32 @@ arch="architecture "+fname.split('.')[0]+"_tb_beh of "+fname.split('.')[0]+"_tb 
 components=[]
 components.append("\tcomponent "+fname.split('.')[0]+" is\n\t\tport(\n\t\t\t\t")
 
+port_vector_count = 0
+
 for item in input_port:
-    components.append(item.split(':')[0]+": in std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
-    #if item.split(":")[1] != '1':
-    #    components.append(item.split(':')[0]+": in std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
-    #else:
-    #    components.append(item.split(':')[0]+": in std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
+    if port_vector_info[port_vector_count]:
+        components.append(item.split(':')[0]+": in std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
+    else:
+        components.append(item.split(':')[0]+": in std_logic;\n\t\t\t\t")
+
+    port_vector_count += 1
+        #if item.split(":")[1] != '1':
+        #    components.append(item.split(':')[0]+": in std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
+        #else:
+        #    components.append(item.split(':')[0]+": in std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
 
 for item in output_port[:-1]:
-    components.append(item.split(':')[0]+": out std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
-components.append(output_port[-1].split(':')[0]+": out std_logic_vector("+str(int(output_port[-1].split(':')[1])-int(1))+" downto 0)\n\t\t\t\t")
+    if port_vector_info[port_vector_count]:
+        components.append(item.split(':')[0]+": out std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n\t\t\t\t")
+    else:
+        components.append(item.split(':')[0]+": out std_logic;\n\t\t\t\t")   
+
+    port_vector_count += 1
+
+if port_vector_info[port_vector_count]:
+    components.append(output_port[-1].split(':')[0]+": out std_logic_vector("+str(int(output_port[-1].split(':')[1])-int(1))+" downto 0)\n\t\t\t\t")
+else:
+    components.append(output_port[-1].split(':')[0]+": out std_logic\n\t\t\t\t")
     #if item.split(":")[1] != '1':                                                                                                               
     #    components.append(item.split(':')[0]+": out std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0)\n\t\t\t\t")                
     #else:                                                                                                                                       
@@ -661,8 +683,15 @@ components.append("\tend component;\n\n")
 signals=[]
 signals.append("\tsignal clk_s : std_logic := '0';\n")
 
+port_vector_count = 0
+
 for item in input_port:
-    signals.append("\tsignal "+item.split(':')[0]+": std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n")
+    if port_vector_info[port_vector_count]:
+        signals.append("\tsignal "+item.split(':')[0]+": std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n")
+    else:
+        signals.append("\tsignal "+item.split(':')[0]+": std_logic;\n")
+    port_vector_count += 1
+
     #if item.split(":")[1] != '1':                                                                                                               
     #    signals.append("\tsignal "+item.split(':')[0]+": std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n")                
     #else:                                                                                                                                       
@@ -670,7 +699,11 @@ for item in input_port:
 
 
 for item in output_port:
-    signals.append("\tsignal "+item.split(':')[0]+": std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n")
+    if port_vector_info[port_vector_count]:
+        signals.append("\tsignal "+item.split(':')[0]+": std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n")
+    else:
+        signals.append("\tsignal "+item.split(':')[0]+": std_logic;\n")    
+    port_vector_count += 1
     #if item.split(":")[1] != '1':                                                                                                               
     #    signals.append("\tsignal "+item.split(':')[0]+": std_logic_vector("+str(int(item.split(':')[1])-int(1))+" downto 0);\n")                
     #else:                                                                                                                                       
@@ -711,17 +744,28 @@ process.append("\tbegin\n")
 process.append("\t\twhile true loop\n")
 process.append("\t\t\twait until clk_s = '0';\n\n")
 
+port_vector_count = 0
+
 for item in input_port:
     process.append('\t\t\tobj_ref := Pack_String_To_Vhpi_String("'+item.split(':')[0]+'");\n')
     process.append('\t\t\tVhpi_Get_Port_Value(obj_ref,'+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
     process.append('\t\t\tassert false report "Get port value '+item.split(':')[0]+' returns " &'+item.split(':')[0]+'_v severity note;\n')
-    process.append('\t\t\t'+item.split(':')[0]+' <= Unpack_String('+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
+    if port_vector_info[port_vector_count]:
+        process.append('\t\t\t'+item.split(':')[0]+' <= Unpack_String('+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
+    else:
+        process.append('\t\t\t'+item.split(':')[0]+' <= To_Std_Logic('+item.split(':')[0]+'_v'+');\n')
+    port_vector_count += 1
     process.append("\n")
 
 process.append('\t\t\twait for 1 us;\n')
 
 for item in output_port:
-    process.append('\t\t\t'+item.split(':')[0]+'_v := Pack_String_To_Vhpi_String(Convert_SLV_To_String('+item.split(':')[0]+'));\n')
+    if port_vector_info[port_vector_count]:
+        process.append('\t\t\t'+item.split(':')[0]+'_v := Pack_String_To_Vhpi_String(Convert_SLV_To_String('+item.split(':')[0]+'));\n')
+    else:
+        process.append('\t\t\t'+item.split(':')[0]+'_v := Pack_String_To_Vhpi_String(To_String('+item.split(':')[0]+'));\n')
+    port_vector_count += 1
+
     process.append('\t\t\tobj_ref := Pack_String_To_Vhpi_String("'+item.split(':')[0]+'");\n')
     process.append('\t\t\tVhpi_Set_Port_Value(obj_ref,'+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
     process.append('\t\t\tassert false report "Set port value '+item.split(':')[0]+' returns " &'+item.split(':')[0]+'_v severity note;\n')
@@ -799,8 +843,3 @@ sock_pkg_create.write("\t\t\t\tsock_id := $1;\n")
 sock_pkg_create.write("\t\t\t\treturn sock_id;\n")
 sock_pkg_create.write("\t\t\tend function;\n")
 sock_pkg_create.write("\t\tend package body;\" > sock_pkg.vhdl")
-
-
-
-
-
