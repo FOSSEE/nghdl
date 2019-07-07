@@ -411,7 +411,7 @@ static void Data_Send(int sockid)
   s = NULL;
   int found = 0;
 
-  out = calloc(1, 1024);
+  out = calloc(1, 2048);
 
   for (i=0; i<out_port_num; i++)
   {  
@@ -439,6 +439,7 @@ static void Data_Send(int sockid)
           free(out);
           return;
       }
+
     }
 
       while(1)
@@ -558,8 +559,8 @@ void Vhpi_Set_Port_Value(char *port_name,char *port_value,int port_width)
 {
     
   s = (struct my_struct*)malloc(sizeof(struct my_struct));
-  strncpy(s->key, port_name,10);
-  strncpy(s->val,port_value,10);
+  strncpy(s->key, port_name,64);
+  strncpy(s->val,port_value,64);
   HASH_ADD_STR( users, key, s );
 
 }
