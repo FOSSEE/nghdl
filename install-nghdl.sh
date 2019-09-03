@@ -135,6 +135,9 @@ function installNgspice
             make
             make install
             if [ "$?" == 0 ];then
+                echo "Removing previously Installed Ngspice......"
+                sudo apt-get remove ngspice
+
                 echo "Ngspice Installed sucessfully......"
                 echo "Adding softlink for the installed ngspice......"
 
