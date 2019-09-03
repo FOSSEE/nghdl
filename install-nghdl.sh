@@ -11,9 +11,9 @@
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
-#        AUTHOR: Fahim Khan , fahim.elex@gmail.com
+#        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Tuesday 02 December 2014 17:01
+#       CREATED: Tuesday 03 September 2019 11:30
 #      REVISION:  ---
 #===============================================================================
 
@@ -44,53 +44,50 @@ function addghdlPPA
         fi
 }
 
-# make
-# gnat
-# llvm
-# clang
-# zlib1g-dev
 function installDependency
 {
 
-    # echo "Updating indexes to install latest versions......"
-    # sudo apt-get update
+    echo "Updating indexes to install latest versions......"
+    sudo apt-get update
 
-    # echo "Installing dependencies for ghdl-0.36 LLVM......."
-    # echo "Installing make.................................."
-    # sudo apt-get install -y make
-    # echo "Installing gnat-5.................................."
-    # sudo apt-get install -y gnat-5
-    # echo "Installing llvm.................................."
-    # sudo apt-get install -y llvm
-    # echo "Installing clang.................................."
-    # sudo apt-get install -y clang
-    # echo "Installing zlib1g-dev.................................."
-    # sudo apt-get install -y zlib1g-dev
-    # echo "Installing xterm.................................."
-    # sudo apt-get install -y xterm
+    echo "Installing dependencies for ghdl-0.36 LLVM......."
+    echo "Installing make.................................."
+    sudo apt-get install -y make
+    echo "Installing gnat-5.................................."
+    sudo apt-get install -y gnat-5
+    echo "Installing llvm.................................."
+    sudo apt-get install -y llvm
+    echo "Installing clang.................................."
+    sudo apt-get install -y clang
+    echo "Installing zlib1g-dev.................................."
+    sudo apt-get install -y zlib1g-dev
+    echo "Installing xterm.................................."
+    sudo apt-get install -y xterm
 
-    # if [ -d $HOME/$ghdl ]; then
-    #     echo "$ghdl directory already exists at $HOME"
-    #     echo "Leaving ghdl-0.36 LLVM installation"
-    # else
-    #     tar -xzvf $ghdl.tar.gz -C $HOME
-    #     if [ "$?" == 0 ];then
-    #         echo "ghdl-0.36 LLVM successfully extracted to $HOME......"
-    #         echo "Changing directory to ghdl-0.36 LLVM installation..."
-    #         cd $HOME/$ghdl
-    #         echo "Configuring ghdl-0.36 build as per requirements....."
-    #         #Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    #         sudo ./configure --with-llvm-config
-    #         echo "Building the install file for ghdl-0.36 LLVM....."
-    #         sudo make
-    #         echo "Installing ghdl-0.36 LLVM....."
-    #         sudo make install
-    #     else
-    #         echo "Unable to extract ghdl-0.36 LLVM"
-    #         echo "Exiting installation"
-    #         exit 1
-    #     fi
-    # fi
+    if [ -d $HOME/$ghdl ]; then
+        echo "$ghdl directory already exists at $HOME"
+        echo "Leaving ghdl-0.36 LLVM installation"
+    else
+        tar -xzvf ghdl-0.36.tar.gz -C $HOME
+        if [ "$?" == 0 ];then
+            echo "ghdl-0.36 LLVM successfully extracted to $HOME......"
+            echo "Changing directory to ghdl-0.36 LLVM installation..."
+            cd $HOME/ghdl-0.36	
+            echo "Configuring ghdl-0.36 build as per requirements....."
+            #Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
+            sudo ./configure --with-llvm-config
+            echo "Building the install file for ghdl-0.36 LLVM....."
+            sudo make
+            echo "Installing ghdl-0.36 LLVM....."
+            sudo make install
+            echo "Removing unused part of ghdl-0.36 LLVM....."
+    		  sudo rm -r ../ghdl-0.36
+        else
+            echo "Unable to extract ghdl-0.36 LLVM"
+            echo "Exiting installation"
+            exit 1
+        fi
+    fi
     
     echo "Installing flex.................................."
     sudo apt-get install -y flex
@@ -238,7 +235,7 @@ if [ $getProxy == "y" -o $getProxy == "Y" ];then
 
         echo "Install with proxy"
         #Calling functions
-        addghdlPPA
+        #addghdlPPA
         installDependency
         if [ $? -ne 0 ];then
             echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
@@ -252,7 +249,7 @@ elif [ $getProxy == "n" -o $getProxy == "N" ];then
         echo "Install without proxy"
 
         #Calling functions
-        addghdlPPA
+        #addghdlPPA
         installDependency
         if [ $? -ne 0 ];then
             echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
