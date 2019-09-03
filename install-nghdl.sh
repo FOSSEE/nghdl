@@ -18,6 +18,7 @@
 #===============================================================================
 
 ngspice="ngspice-nghdl"
+ghdl="ghdl-0.36"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -43,14 +44,63 @@ function addghdlPPA
         fi
 }
 
+# make
+# gnat
+# llvm
+# clang
+# zlib1g-dev
 function installDependency
 {
-        echo "Installing ghdl.................................."
-        sudo apt-get install -y ghdl
-        echo "Installing flex.................................."
-        sudo apt-get install -y flex
-        echo "Installing bison................................."
-        sudo apt-get install -y bison
+
+    # echo "Updating indexes to install latest versions......"
+    # sudo apt-get update
+
+    # echo "Installing dependencies for ghdl-0.36 LLVM......."
+    # echo "Installing make.................................."
+    # sudo apt-get install -y make
+    # echo "Installing gnat-5.................................."
+    # sudo apt-get install -y gnat-5
+    # echo "Installing llvm.................................."
+    # sudo apt-get install -y llvm
+    # echo "Installing clang.................................."
+    # sudo apt-get install -y clang
+    # echo "Installing zlib1g-dev.................................."
+    # sudo apt-get install -y zlib1g-dev
+
+    # if [ -d $HOME/$ghdl ]; then
+    #     echo "$ghdl directory already exists at $HOME"
+    #     echo "Leaving ghdl-0.36 LLVM installation"
+    # else
+    #     tar -xzvf $ghdl.tar.gz -C $HOME
+    #     if [ "$?" == 0 ];then
+    #         echo "ghdl-0.36 LLVM successfully extracted to $HOME......"
+    #         echo "Changing directory to ghdl-0.36 LLVM installation..."
+    #         cd $HOME/$ghdl
+    #         echo "Configuring ghdl-0.36 build as per requirements....."
+    #         #Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
+    #         sudo ./configure --with-llvm-config
+    #         echo "Building the install file for ghdl-0.36 LLVM....."
+    #         sudo make
+    #         echo "Installing ghdl-0.36 LLVM....."
+    #         sudo make install
+    #     else
+    #         echo "Unable to extract ghdl-0.36 LLVM"
+    #         echo "Exiting installation"
+    #         exit 1
+    #     fi
+    # fi
+    
+    echo "Installing flex.................................."
+    sudo apt-get install -y flex
+    echo "Installing bison................................."
+    sudo apt-get install -y bison
+
+    # Specific dependency for nvidia graphic cards
+    echo "Installing graphics dependency for ngspice souce build"
+    echo "Installing libxaw7................................"
+    sudo apt-get install libxaw7
+    echo "Installing libxaw7-dev............................"
+    sudo apt-get install libxaw7-dev
 }
 
 
@@ -59,15 +109,12 @@ function installNgspice
     echo "Installing ngspice..................................."
     #Checking if ngspice-nghdl directory is already present in Home directory
     if [ -d $HOME/$ngspice ];then
-        echo "$ngspice directory already exist"
+        echo "$ngspice directory already exists at $HOME"
         echo "Leaving ngspice installation"
-        
-
     else
-
         #Extracting Ngspice to Home Directory
+        cd $src_dir
         tar -xzvf $ngspice.tar.gz -C $HOME 
-
         if [ "$?" == 0 ];then 
             echo "Ngspice extracted sucessfuly to $HOME "
             #change to ngspice-nghdl directory
@@ -82,17 +129,29 @@ function installNgspice
             echo "------------------------------------"  
             sleep 5
             ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/   
-			
-			#dirty fix for adding patch to ngspice base code
-			cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
+            
+            #dirty fix for adding patch to ngspice base code
+            cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
  
             make
             make install
             if [ "$?" == 0 ];then
-                echo "Ngspice Installed sucessfully"
+                echo "Ngspice Installed sucessfully......"
+                echo "Adding softlink for the installed ngspice......"
+
+                sudo ln -s $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
+                if [ "$?" == 0 ];then
+                    echo "failed to add softlink"
+                    echo "ngspice already installed at /usr/bin/ngspice..."
+                    echo "Remove earlier installations and try again..."
+                else
+                    echo "Added softlink for ngspce"
+                fi
+
             else 
                 echo "There was some error in installing ngspice"
             fi
+
 
         else 
             echo "Unable to extract ngspice tar file"

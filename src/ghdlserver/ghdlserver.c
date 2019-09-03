@@ -77,18 +77,13 @@ static int get_ngspice_pid(void)
     FILE* fp = NULL;
     struct dirent* dir_entry;
     char path[1024], rd_buff[1024];
-    pid_t pid[32];
+    pid_t pid = -1;
 
     if ((dirp = opendir("/proc/")) == NULL)
     {
 	perror("opendir /proc failed");
 	exit(-1);
     }
-
-    for(int i=0; i<31; i++)
-    	pid[i] = -1;
-
-    int i=0;
 
     while ((dir_entry = readdir(dirp)) != NULL)
     {
@@ -113,19 +108,15 @@ static int get_ngspice_pid(void)
 				fscanf(fp, "%s", rd_buff);
 				if (strcmp(rd_buff, NGSPICE) == 0)
 				{
-				    pid[i++] = (pid_t)tmp;
-				    // break;
+				    pid = (pid_t)tmp;
 				}
 		    }
 		}
     }
 
-    for(int j=0; j<i; j++)
-    	printf("Pid : %d\n", pid[j]);
-	
    if (fp) fclose(fp);
 
-   return(pid[i-1]);
+   return(pid);
 }
 
 /* 23.Mar.2017 - RM - Pass the sock_port argument. We need this if a netlist
