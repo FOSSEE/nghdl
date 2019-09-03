@@ -66,6 +66,8 @@ function installDependency
     # sudo apt-get install -y clang
     # echo "Installing zlib1g-dev.................................."
     # sudo apt-get install -y zlib1g-dev
+    # echo "Installing xterm.................................."
+    # sudo apt-get install -y xterm
 
     # if [ -d $HOME/$ghdl ]; then
     #     echo "$ghdl directory already exists at $HOME"
