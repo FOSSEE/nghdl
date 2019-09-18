@@ -1,5 +1,20 @@
-/*************************************************************************
- * <ghdlserver.c>  FOSSEE, IIT-Mumbai
+/********************************************************************************
+ * <ghdlserver.c>  FOSSEE, IIT-Bombay
+ * 18.Sept.2019 - Rahul Paknikar - Added reading of IP from a file to 
+ *                                 support multiple digital models
+ *                               - Reads the ip set by its client to map 
+ *                                 with the same socket with the name of file
+ *                                 NGHDL_IP in the model's local directory
+ *                               - On exit, the test bench removes this file as 
+ *                                 well as the NGHDL_COMMON_IP file. It is created
+ *                                 by its client (cfunc) and stored in /tmp
+ *                                 directory. It tracks the used IPs for existing
+ *                                 digital models in current simulation.
+ * 5.July.2019 - Rahul Paknikar  - Added loop to send all port values for 
+ *                                 a given event.
+ *                               - Removed bug to terminate multiple testbench
+ *                                 instances in ngpsice windows.
+ *
  * 24.Mar.2017 - Raj Mohan - Added signal handler for SIGUSR1, to handle an 
  *                           orphan test bench process.
  *                           The test bench will now create a PID file in
@@ -21,8 +36,8 @@
  *                           Added the following functions:
  *                             o curtim()
  *                             o print_hash_table()
- *************************************************************************
- */
+ *********************************************************************************/
+
 #include <string.h>
 #include "ghdlserver.h"
 #include "uthash.h"
@@ -33,7 +48,8 @@
 #include <signal.h>                                                             
 #include <unistd.h>
 #include <sys/types.h>                                                          
-#include <sys/socket.h> 
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <sys/time.h>                                                        
 #include <netinet/in.h>                                                         
 #include <netdb.h>
@@ -105,11 +121,11 @@ static int get_ngspice_pid(void)
 		    sprintf(path, "/proc/%s/comm", dir_entry->d_name);
 		    if ((fp = fopen(path, "r")) != NULL)
 		    {
-				fscanf(fp, "%s", rd_buff);
-				if (strcmp(rd_buff, NGSPICE) == 0)
-				{
-				    pid = (pid_t)tmp;
-				}
+  				fscanf(fp, "%s", rd_buff);
+  				if (strcmp(rd_buff, NGSPICE) == 0)
+  				{
+  				    pid = (pid_t)tmp;             // 5.July.2019 - RP - Kludge
+  				}
 		    }
 		}
     }
@@ -127,24 +143,25 @@ static int get_ngspice_pid(void)
 static void create_pid_file(int sock_port)
 {
     pid_t my_pid = getpid();
-    pid_t ngspice_pid = get_ngspice_pid(); 
+    pid_t ngspice_pid = get_ngspice_pid();
     if (ngspice_pid == -1)
     {
-	fprintf(stderr, "create_pid_file() Failed to get ngspice PID");
-	syslog(LOG_ERR,  "create_pid_file() Failed to get ngspice PID");
-	exit(1);
+      fprintf(stderr, "create_pid_file() Failed to get ngspice PID");
+      syslog(LOG_ERR,  "create_pid_file() Failed to get ngspice PID");
+      exit(1);
     }
+
     sprintf(pid_filename, "/tmp/NGHDL_%d_%s_%d", ngspice_pid, __progname, 
             sock_port);
     pid_file = fopen(pid_filename, "w");
     if (pid_file)
     {
-	pid_file_created = 1;
-	fprintf(pid_file,"%d\n", my_pid);
-	fclose(pid_file);
+    	pid_file_created = 1;
+	    fprintf(pid_file,"%d\n", my_pid);
+	    fclose(pid_file);
     } else {
         perror("fopen() - PID file");
-	syslog(LOG_ERR, "create_pid_file(): Unable to open PID file in /tmp");
+	      syslog(LOG_ERR, "create_pid_file(): Unable to open PID file in /tmp");
         exit(1);
     }
 
@@ -218,7 +235,7 @@ static void parse_buffer(int sock_id, char* receive_buffer)
 //
 //Create Server and listen for client connections.
 //
-static int create_server(int port_number,int max_connections)
+static int create_server(int port_number, int max_connections)
 {
  int sockfd, reuse = 1;
  struct sockaddr_in serv_addr;
@@ -236,12 +253,32 @@ static int create_server(int port_number,int max_connections)
  int ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
  if (ret < 0) 
  {
-     syslog(LOG_ERR, "create_server:setsockopt() failed....");
+    syslog(LOG_ERR, "create_server:setsockopt() failed....");
  }
+
+/* 18.Sept.2019 - RP - Read and set IP of server decided by its client */
+  char ip_filename[80];
+  sprintf(ip_filename, "NGHDL_IP.txt");
+
+  char lo_ip[20];
+
+  FILE* fp = fopen(ip_filename, "r");
+
+  if (fp)
+  {
+    if (fscanf(fp, "%s", lo_ip) != EOF)
+    {
+        fclose(fp);
+    }
+  } else {
+      perror("fopen() - NGHDL_IP file");
+      syslog(LOG_ERR, "create_server(): Unable to open NGHDL_IP file in /tmp");
+      exit(1);
+  }
 
  bzero((char *) &serv_addr, sizeof(serv_addr));
  serv_addr.sin_family = AF_INET;
- serv_addr.sin_addr.s_addr = INADDR_ANY;
+ serv_addr.sin_addr.s_addr = inet_addr(lo_ip);  // 18.Sept.2019 - RP - Bind to specific IP only
  serv_addr.sin_port = htons(port_number);
      
  if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
@@ -404,7 +441,7 @@ static void Data_Send(int sockid)
 
   out = calloc(1, 2048);
 
-  for (i=0; i<out_port_num; i++)
+  for (i=0; i<out_port_num; i++)  // 5.July.2019 - RP - loop to send all ports
   {  
      
      found = 0;
@@ -482,7 +519,8 @@ void Vhpi_Initialize(int sock_port)
 
     while(try_limit > 0)
     {
-      server_socket_id = create_server(DEFAULT_SERVER_PORT,DEFAULT_MAX_CONNECTIONS);
+      // 18.Sept.2019 - RP
+      server_socket_id = create_server(DEFAULT_SERVER_PORT, DEFAULT_MAX_CONNECTIONS);
       if(server_socket_id > 0)
         {
            syslog(LOG_INFO,"Started the server on port %d  SRV:%d",
@@ -636,8 +674,8 @@ void  Vhpi_Send()
 
     if (prev_sendto_sock != sendto_sock)
     { 
-	Data_Send(sendto_sock);                                      
-	prev_sendto_sock = sendto_sock;
+	    Data_Send(sendto_sock);                                      
+	    prev_sendto_sock = sendto_sock;
     }
 // 22.Feb.2017 End kludge
  
@@ -653,13 +691,14 @@ void Vhpi_Exit(int sig)
 {                                                                               
     Vhpi_Close(); 
 
-    // printf("\nVHPI EXIT\n");
-
-// 10.Mar.2017 - RM
+    // 10.Mar.2017 - RM
     if (pid_file_created) {
-    	// printf("%s\n", pid_filename);
        	remove(pid_filename);
     }
+
+    // 18.Sept.2019 - RP
+    remove("NGHDL_IP.txt");
+    remove("/tmp/NGHDL_COMMON_IP.txt");
 
     syslog(LOG_INFO, "*** Exiting ***");
 
