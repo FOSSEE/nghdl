@@ -1,4 +1,7 @@
 -- author: Madhav P. Desai
+-- modified: Rahul Paknikar
+--			     (changed definition of Vhpi_Initialize)
+
 library ieee;
 use ieee.std_logic_1164.all;
 library work;
@@ -8,7 +11,7 @@ package Vhpi_Foreign is
   -----------------------------------------------------------------------------
   -- foreign Vhpi function
   -----------------------------------------------------------------------------
-  procedure  Vhpi_Initialize(sock_port : in integer);
+  procedure  Vhpi_Initialize(sock_port : in integer; sock_ip : in VhpiString);
   attribute foreign of Vhpi_Initialize : procedure is "VHPIDIRECT Vhpi_Initialize";
   
   procedure Vhpi_Close; -- close .
@@ -36,7 +39,7 @@ package body Vhpi_Foreign is
   -----------------------------------------------------------------------------
   -- subprogram bodies for foreign vhpi routines.  will never be called
   -----------------------------------------------------------------------------
-  procedure  Vhpi_Initialize(sock_port: in integer) is
+  procedure  Vhpi_Initialize(sock_port: in integer; sock_ip : in VhpiString) is
   begin
     assert false  report "fatal: this should never be called" severity failure;
   end Vhpi_Initialize;

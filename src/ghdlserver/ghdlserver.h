@@ -21,7 +21,7 @@
 int DEFAULT_SERVER_PORT;
 
 //Vhpi Functions.
-void   Vhpi_Initialize(int sock_port);
+void   Vhpi_Initialize(int sock_port, char sock_ip[]);	/* 26.Sept.2019 - RP */
 void   Vhpi_Close(); 
 void   Vhpi_Exit();
 void   Vhpi_Listen();

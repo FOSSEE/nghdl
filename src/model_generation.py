@@ -239,7 +239,7 @@ client_setup_ip='''
         /* Client Setup IP Addr */
         FILE *fptr; 
         int ip_count = 0;
-        char my_ip[20];
+        char* my_ip = malloc(16);
 
         fptr = fopen("/tmp/NGHDL_COMMON_IP.txt", "r"); 
         if (fptr) 
@@ -268,43 +268,15 @@ client_setup_ip='''
             exit(1);
         }
 
-
-        char ip_filename[300];
-''' 
-client_setup_ip +='sprintf(ip_filename,"'+home+'/ngspice-nghdl/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/NGHDL_IP.txt");'
-client_setup_ip +='''
-        fptr = fopen(ip_filename, "w");
-        if(fptr)
-        {
-            fprintf(fptr, "%s\\n", my_ip);
-            fclose(fptr);
-        } else {
-            perror("fopen() - IP file");
-            exit(1);
-        }
+        STATIC_VAR(my_ip) = my_ip;        
 '''
 
 client_fetch_ip='''
         /* Client Fetch IP Addr */ 
         
-        char lo_ip[20];
-        char ip_filename[300];
-'''
-client_fetch_ip +='sprintf(ip_filename,"'+home+'/ngspice-nghdl/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/NGHDL_IP.txt");\n'
-client_fetch_ip +='''
-        FILE* fp = fopen(ip_filename, "r");
-        if (fp)
-        {
-            if (fscanf(fp, "%s", lo_ip) != EOF)
-            {
-                fclose(fp);
-            }
-        } else {
-            perror("fopen() - NGHDL_IP file");
-            exit(1);
-        }
-
-        host = gethostbyname(lo_ip);
+        char* my_ip = STATIC_VAR(my_ip);
+        
+        host = gethostbyname(my_ip);
         printf("Client-Creating Client Socket \\n");                                                                                             
         fprintf(log_client,"Creating client socket \\n"); 
 '''
@@ -543,7 +515,7 @@ cfunc.write("\n")
 cfunc.write(client_setup_ip)
 cfunc.write("\n")
 cfunc.write("\t\tchar command[1024];\n")
-cfunc.write('\t\tsnprintf(command,1024,"'+home+'/ngspice-nghdl/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/start_server.sh %d &",sock_port);\n')
+cfunc.write('\t\tsnprintf(command,1024,"'+home+'/ngspice-nghdl/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/start_server.sh %d %s &",sock_port, my_ip);')
 cfunc.write('\t\tsystem(command);')
 cfunc.write("\n\t}")
 cfunc.write("\n")
@@ -669,6 +641,16 @@ Null_Allowed:       yes                         no
 
 '''
 
+static__table='''
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    my_ip
+Data_Type:          pointer
+Description:        "connect to ghdlserver through this ip"
+
+'''
+
 
 #Writing all the content in ifspec file
 ifspec.write(ifspec_comment)
@@ -684,6 +666,8 @@ for item in out_port_table:
 
 ifspec.write("\n")
 ifspec.write(parameter_table)
+ifspec.write("\n")
+ifspec.write(static_table)
 ifspec.close()
 
 
@@ -693,7 +677,9 @@ print "Starting with testbench file"
 testbench=open(fname.split('.')[0]+'_tb.vhdl','w')
 print fname.split('.')[0] + '_tb.vhdl'
 #comment
-comment_vhdl="--------------------------------------------------------------------------------\n--This testbench has been created by Ambikeshwar Srivastava, FOSSEE, IIT Bombay\n-------------------------------------------------------------------------------"
+comment_vhdl="--------------------------------------------------------------------------------\n--This testbench has been created by Ambikeshwar Srivastava, FOSSEE, IIT Bombay\n--------------------------------------------------------------------------------\n"
+comment_vhdl+="--------------------------------------------------------------------------------\n--Modified by Rahul Paknikar, FOSSEE, IIT Bombay"
+comment_vhdl+="--retrieves the IP-Addr from sock_pkg and forwards it to the ghdlserver\n--------------------------------------------------------------------------------"
 #Adding header, entity and architecture statement
 tb_header='''
 library ieee;                                                                                                                                   
@@ -799,7 +785,7 @@ map.append("\t\t\t);")
 tb_clk= "clk_s <= not clk_s after 5 us;\n\n"
 #Adding Process block for Vhpi
 process_Vhpi=[]
-process_Vhpi.append("\tprocess\n\t\tvariable sock_port : integer;\n\t\tbegin\n\t\tsock_port := sock_pkg_fun;\n\t\tVhpi_Initialize(sock_port);\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
+process_Vhpi.append("\tprocess\n\t\tvariable sock_port : integer;\n\t\ttype string_ptr is access string;\n\t\tvariable sock_ip : string_ptr;\n\t\tbegin\n\t\tsock_port := sock_port_fun;\n\t\tsock_ip := new string'(sock_ip_fun);\n\t\tVhpi_Initialize(sock_port, Pack_String_To_Vhpi_String(sock_ip.all));\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
 #Adding process block 
 process=[]
 process.append("\tprocess\n\n")
@@ -882,12 +868,9 @@ start_server = open('start_server.sh','w')
 
 start_server.write("#!/bin/bash\n\n")
 start_server.write("###This server run ghdl testebench for infinite time till ngspice send END signal to stop it\n\n")
-start_server.write("#gcc -c ghdlserver.c\n")
-start_server.write("#ghdl -a Utility_Package.vhdl &&\n")
-start_server.write("#ghdl -a Vhpi_Package.vhdl &&\n")
 start_server.write("cd "+home+"/ngspice-nghdl/src/xspice/icm/ghdl/"+fname.split('.')[0]+"/DUTghdl/\n")
 start_server.write("chmod 775 sock_pkg_create.sh &&\n")
-start_server.write("./sock_pkg_create.sh $1 &&\n")
+start_server.write("./sock_pkg_create.sh $1 $2 &&\n")
 start_server.write("ghdl -a sock_pkg.vhdl &&\n")
 start_server.write("ghdl -a "+fname+" &&\n")
 start_server.write("ghdl -a "+fname.split('.')[0]+"_tb.vhdl  &&\n")
@@ -901,16 +884,24 @@ start_server.close()
 sock_pkg_create = open('sock_pkg_create.sh','w')
 
 sock_pkg_create.write("#!/bin/bash\n\n")
-sock_pkg_create.write("##This file create sock_pkg_create.vhdl file and set the instance id from parameter based on parameter\n\n")
+sock_pkg_create.write("##This file creates sock_pkg.vhdl file and sets the port and ip from parameters passed to it\n\n")
 sock_pkg_create.write("echo \"library ieee;\n")
 sock_pkg_create.write("package sock_pkg is\n")
-sock_pkg_create.write("\tfunction sock_pkg_fun return integer;\n")
+sock_pkg_create.write("\tfunction sock_port_fun return integer;\n")
+sock_pkg_create.write("\tfunction sock_ip_fun return string;\n")
 sock_pkg_create.write("end;\n\n")
-sock_pkg_create.write("\tpackage body sock_pkg is\n")
-sock_pkg_create.write("\t function sock_pkg_fun return integer is")
-sock_pkg_create.write("\t\tvariable sock_id : integer;\n")
+sock_pkg_create.write("package body sock_pkg is\n")
+sock_pkg_create.write("\tfunction sock_port_fun return integer is\n")
+sock_pkg_create.write("\t\tvariable sock_port : integer;\n")
 sock_pkg_create.write("\t\t\tbegin\n")
-sock_pkg_create.write("\t\t\t\tsock_id := $1;\n")
-sock_pkg_create.write("\t\t\t\treturn sock_id;\n")
-sock_pkg_create.write("\t\t\tend function;\n")
+sock_pkg_create.write("\t\t\t\tsock_port := $1;\n")
+sock_pkg_create.write("\t\t\t\treturn sock_port;\n")
+sock_pkg_create.write("\t\t\tend function;\n\n")
+sock_pkg_create.write("\tfunction sock_ip_fun return string is\n")
+sock_pkg_create.write("\t\ttype string_ptr is access string;\n")
+sock_pkg_create.write("\t\tvariable sock_ip : string_ptr;\n")
+sock_pkg_create.write("\t\t\tbegin\n")
+sock_pkg_create.write('\t\t\t\tsock_ip := new string\'(\\"$2\\");\n')
+sock_pkg_create.write("\t\t\t\treturn sock_ip.all;\n")
+sock_pkg_create.write("\t\t\tend function;\n\n")
 sock_pkg_create.write("\t\tend package body;\" > sock_pkg.vhdl")
