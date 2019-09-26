@@ -100,30 +100,38 @@ static void nghdl_tb_SIGUSR1(char* pid_file)
     int ret;
     char line[80];
     char* nptr;
+    pid_t pid[256], tmp;
+    int count=0, i;
 
     FILE* fp = fopen(pid_file, "r");
 
     if (fp)
     {
-	if (fscanf(fp, "%s", line) != EOF)
+		while (fscanf(fp, "%s", line) == 1)
+		{	
+			// PID is converted to a decimal value.
+		    tmp = (pid_t) strtol(line, &nptr, 10);
+		    if ((errno != ERANGE) && (errno!= EINVAL))
+			{
+				pid[count++] = tmp;
+			}
+		}
+
+		fclose(fp);
+	}
+
+	for(i=0; i<count; i++)
 	{
-	    fclose(fp);
-	    pid_t pid = (pid_t) strtol(line, &nptr, 10);
-	                             // PID is converted to a decimal value.
-	    if ((errno != ERANGE) && (errno!= EINVAL))
-	    {
-		if (pid)      
+		if (pid[i])      
 		{
-                   // Check if a process with this pid really exists.
-		    ret = kill(pid, 0);
+            // Check if a process with this pid really exists.
+		    ret = kill(pid[i], 0);
 		    if (ret == 0)
 		    {
-			kill(pid, SIGUSR1);
+				kill(pid[i], SIGUSR1);
 		    }
 		}
-	    }
 	}
-    }
 }
 
 /* 10.Mar.2017 - RM - Added nghdl_orphan_tb().*/
