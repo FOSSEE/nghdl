@@ -641,7 +641,7 @@ Null_Allowed:       yes                         no
 
 '''
 
-static__table='''
+static_table='''
 
 STATIC_VAR_TABLE:
 
