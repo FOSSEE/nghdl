@@ -516,7 +516,7 @@ cfunc.write(client_setup_ip)
 cfunc.write("\n")
 cfunc.write("\t\tchar command[1024];\n")
 cfunc.write('\t\tsnprintf(command,1024,"'+home+'/ngspice-nghdl/src/xspice/icm/ghdl/'+fname.split('.')[0]+'/DUTghdl/start_server.sh %d %s &",sock_port, my_ip);')
-cfunc.write('\t\tsystem(command);')
+cfunc.write('\n\t\tsystem(command);')
 cfunc.write("\n\t}")
 cfunc.write("\n")
 cfunc.write("\telse\n\t{\n")
@@ -678,8 +678,8 @@ testbench=open(fname.split('.')[0]+'_tb.vhdl','w')
 print fname.split('.')[0] + '_tb.vhdl'
 #comment
 comment_vhdl="--------------------------------------------------------------------------------\n--This testbench has been created by Ambikeshwar Srivastava, FOSSEE, IIT Bombay\n--------------------------------------------------------------------------------\n"
-comment_vhdl+="--------------------------------------------------------------------------------\n--Modified by Rahul Paknikar, FOSSEE, IIT Bombay"
-comment_vhdl+="--retrieves the IP-Addr from sock_pkg and forwards it to the ghdlserver\n--------------------------------------------------------------------------------"
+comment_vhdl+="--------------------------------------------------------------------------------\n--Modified by Rahul Paknikar, FOSSEE, IIT Bombay\n"
+comment_vhdl+="--retrieves the IP-Addr from sock_pkg and forwards it to the ghdlserver\n--------------------------------------------------------------------------------\n"
 #Adding header, entity and architecture statement
 tb_header='''
 library ieee;                                                                                                                                   

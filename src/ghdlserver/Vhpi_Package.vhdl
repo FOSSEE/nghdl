@@ -1,6 +1,6 @@
 -- author: Madhav P. Desai
--- modified: Rahul Paknikar
---			     (changed definition of Vhpi_Initialize)
+-- modified: Rahul Paknikar (26.Sept.2019)
+--			 (changed definition of Vhpi_Initialize)
 
 library ieee;
 use ieee.std_logic_1164.all;
