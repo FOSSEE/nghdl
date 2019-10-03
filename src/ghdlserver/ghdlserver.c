@@ -1,5 +1,7 @@
-/********************************************************************************
+/**********************************************************************************
  * <ghdlserver.c>  FOSSEE, IIT-Bombay
+ * 2.Oct.2019 - Rahul Paknikar - Removed select() file descriptors and replaced
+ *                               with poll() to handle sockets greater than 1024.
  * 26.Sept.2019 - Rahul Paknikar - Added reading of IP from a file to 
  *                                 support multiple digital models
  *                               - Reads the ip set by its client to map 
@@ -10,7 +12,7 @@
  *                                 by its client (cfunc) and stored in /tmp
  *                                 directory. It tracks the used IPs for existing
  *                                 digital models in current simulation.
- *								 - Write PID file in append mode.
+ *              								 - Write PID file in append mode.
  * 5.July.2019 - Rahul Paknikar  - Added loop to send all port values for 
  *                                 a given event.
  *                               - Removed bug to terminate multiple testbench
@@ -52,7 +54,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/time.h>                                                        
-#include <netinet/in.h>                                                         
+#include <netinet/in.h> 
+#include <poll.h>
 #include <netdb.h>
 #include <limits.h>
 #include <time.h>
@@ -267,9 +270,7 @@ static int create_server(int port_number, char my_ip[], int max_connections)
      fprintf(stderr,"%s- Error: could not bind socket to port %d\n",
              __progname, port_number);
      syslog(LOG_ERR, "Error: could not bind socket to port %d", port_number);
-
      close(sockfd);
-
      exit(1);
  }
 
@@ -286,22 +287,19 @@ static int connect_to_client(int server_fd)
     int newsockfd = -1;
     socklen_t clilen;
     struct sockaddr_in  cli_addr;
-    fd_set c_set;
-    struct timeval time_limit;                                                
-  
-    time_limit.tv_sec = 0;
-    time_limit.tv_usec = 1000;
     
+    /* 2.Oct.2019 - RP - Poll File Descriptor */
+    struct pollfd fds[1];
+
     clilen = sizeof(cli_addr); 
 
-    FD_ZERO(&c_set);
-    FD_SET(server_fd, &c_set);
+    fds[0].fd = server_fd;
+    fds[0].events = POLLIN;
 
-    select(server_fd + 1, &c_set, NULL, NULL, &time_limit);
+    poll(fds, 1, 1);
+    ret_val = (fds[0].revents & POLLIN);
 
-    ret_val = FD_ISSET(server_fd, &c_set);
-
-    if(ret_val)
+    if(ret_val > 0)
     {
         newsockfd = accept(server_fd, (struct sockaddr *) &cli_addr, &clilen);
         if (newsockfd >= 0)
@@ -313,7 +311,7 @@ static int connect_to_client(int server_fd)
             syslog(LOG_ERR,"Error: failed in accept(), socket=%d", server_fd);
 		    exit(1);
         }                   
-    } 
+    }
 
     return(newsockfd);
 }   
@@ -323,49 +321,47 @@ static int connect_to_client(int server_fd)
 //    
 static int can_read_from_socket(int socket_id)                                         
 {                                                                               
-    struct timeval time_limit;  
-    time_limit.tv_sec = 0;  
-    time_limit.tv_usec = 1000;
-    
-    fd_set c_set; 
-    FD_ZERO(&c_set); 
-    FD_SET(socket_id, &c_set);
-    
-    int npending = select(socket_id + 1, &c_set, NULL, NULL, &time_limit);
+    /* 2.Oct.2019 - RP - Poll File Descriptor */
+    struct pollfd fds[1];
+
+    fds[0].fd = socket_id;
+    fds[0].events = POLLIN;
+
+    int npending = poll(fds, 1, 1);
+
     if (npending == -1)
     { 
         npending = errno;
-	syslog(LOG_ERR, "can_read_from_socket:select() ERRNO=%d",npending);
+	syslog(LOG_ERR, "can_read_from_socket:poll() ERRNO=%d",npending);
         return(-100);
     }
-    return(FD_ISSET(socket_id, &c_set));
+
+    return (fds[0].revents & POLLIN); // 2.Oct.2019 - RP
 }   
 
 //                                                                              
 // Check if we can write to the socket..
 //    
 static int can_write_to_socket(int socket_id)                                          
-{                                                                               
-    struct timeval time_limit;  
-    time_limit.tv_sec = 0;
-    time_limit.tv_usec = 1000;
-    
-    fd_set c_set;
-    FD_ZERO(&c_set);
-    FD_SET(socket_id, &c_set);                                                  
+{                                                       
+    /* 2.Oct.2019 - RP - Poll File Descriptor */                     
+    struct pollfd fds[1];
 
-    int npending = select(socket_id + 1, NULL, &c_set, NULL, &time_limit);
+    fds[0].fd = socket_id;
+    fds[0].events = POLLOUT;
+
+    int npending = poll(fds, 1, 1);
+
     if (npending == -1)
     {
-	npending = errno;
-
-	syslog(LOG_ERR, "can_write_to_socket() select() ERRNO=%d",npending);
-
-	return (-100);
-    } else if (npending == 0) {  // select() timed out...
-	return(0);
+    	npending = errno;
+    	syslog(LOG_ERR, "can_write_to_socket() : poll() ERRNO=%d",npending);
+    	return (-100);
+    } else if (npending == 0) {  // poll() timed out...
+    	return(0);
     }
-    return(FD_ISSET(socket_id,&c_set));
+    
+    return(fds[0].revents & POLLOUT); // 2.Oct.2019 - RP
 }   
 
 //Receive string from socket and put it inside buffer.
@@ -377,19 +373,20 @@ static int receive_string(int sock_id, char* buffer)
     while(1)
     {
         ret = can_read_from_socket(sock_id); 
-	if (ret == 0) 
-	{ // select() had timed out. Retry...
-	    usleep(1000);
-	    continue;
-	} else 
-        if (ret == -100)
-	{
-	    return(-1);
-	}
-	break;
+
+      	if (ret == 0) 
+      	{ // poll() had timed out. Retry...
+      	    usleep(1000);
+      	    continue;
+      	} else if (ret == -100)
+      	{
+      	    return(-1);
+      	}
+      	break;
     }                                                                           
     
     nbytes = recv(sock_id, buffer, MAX_BUF_SIZE, 0);
+
     if (nbytes < 0)
     {
 	perror("READ FAILURE");
@@ -468,7 +465,7 @@ static void Data_Send(int sockid)
                       free(out);
                 return;
             } 
-            else // select() timed out. Retry....
+            else // poll() timed out. Retry....
             {
               printf("\n Sleep \n");
               usleep(1000);
@@ -597,31 +594,30 @@ void Vhpi_Listen()
 
     while(1)
     {
-		new_sock = connect_to_client(server_socket_id);
+		    new_sock = connect_to_client(server_socket_id);
+
         if(new_sock  > 0) 
         {
             char receive_buffer[MAX_BUF_SIZE];
-	    	int n = receive_string(new_sock, receive_buffer);
-	    	if(n > 0)
+	    	    int n = receive_string(new_sock, receive_buffer);
+    	    	if(n > 0)
             {
-				sendto_sock = new_sock; // 22.Feb.2017 - RM - Kludge
-				syslog(LOG_INFO, "Vhpi_Listen:New socket connection CLT:%d",new_sock);
+      				sendto_sock = new_sock; // 22.Feb.2017 - RM - Kludge
+      				syslog(LOG_INFO, "Vhpi_Listen:New socket connection CLT:%d",new_sock);
 
-				printf("\n\n%s\n\n", receive_buffer);
-
-				if(strcmp(receive_buffer, "END")==0) 
-                {
-                  syslog(LOG_INFO, "RCVD:CLOSE REQUEST from CLT:%d", new_sock);  
-                  Vhpi_Exit(0);
-                }  
-	      		else 
-                {
-                  parse_buffer(new_sock,receive_buffer);
-                }
-                break;
+      				if(strcmp(receive_buffer, "END")==0) 
+              {
+                syslog(LOG_INFO, "RCVD:CLOSE REQUEST from CLT:%d", new_sock);  
+                Vhpi_Exit(0);
+              }  
+  	      		else 
+              {
+                parse_buffer(new_sock,receive_buffer);
+              }
+              break;
             }
         } 
-    	else
+    	  else
       	{
         	break;
       	}
