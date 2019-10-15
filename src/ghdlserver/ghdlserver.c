@@ -1,18 +1,14 @@
 /**********************************************************************************
  * <ghdlserver.c>  FOSSEE, IIT-Bombay
- * 2.Oct.2019 - Rahul Paknikar - Removed select() file descriptors and replaced
- *                               with poll() to handle sockets greater than 1024.
+ * 15.Oct.2019 - Rahul Paknikar  - Switched to blocking sockets from non-blocking
  * 26.Sept.2019 - Rahul Paknikar - Added reading of IP from a file to 
  *                                 support multiple digital models
- *                               - Reads the ip set by its client to map 
- *                                 with the same socket with the name of file
- *                                 NGHDL_IP in the model's local directory
- *                               - On exit, the test bench removes this file as 
- *                                 well as the NGHDL_COMMON_IP file. It is created
- *                                 by its client (cfunc) and stored in /tmp
+ *                               - On exit, the test bench removes the
+ *                                 NGHDL_COMMON_IP file. It is shared by all the 
+ *                                 nghdl digital models and is stored in /tmp
  *                                 directory. It tracks the used IPs for existing
  *                                 digital models in current simulation.
- *              								 - Write PID file in append mode.
+ *              				 - Writes PID file in append mode.
  * 5.July.2019 - Rahul Paknikar  - Added loop to send all port values for 
  *                                 a given event.
  *                               - Removed bug to terminate multiple testbench
@@ -55,7 +51,6 @@
 #include <arpa/inet.h>
 #include <sys/time.h>                                                        
 #include <netinet/in.h> 
-#include <poll.h>
 #include <netdb.h>
 #include <limits.h>
 #include <time.h>
@@ -236,7 +231,6 @@ static void parse_buffer(int sock_id, char* receive_buffer)
     HASH_ADD_STR(users, key, s);
 }
 
-//
 //Create Server and listen for client connections.
 // 26.Sept.2019 - RP - added parameter of socket ip
 static int create_server(int port_number, char my_ip[], int max_connections)
@@ -280,88 +274,29 @@ static int create_server(int port_number, char my_ip[], int max_connections)
  return sockfd;
 }
 
-// The server to wait (non-blocking) for a client connection.
+// The server to wait (blocking) for a client connection.
 static int connect_to_client(int server_fd)                                            
 {                                                                               
-    int ret_val = 1;
+    int ret_val = 0;
     int newsockfd = -1;
     socklen_t clilen;
     struct sockaddr_in  cli_addr;
     
-    /* 2.Oct.2019 - RP - Poll File Descriptor */
-    struct pollfd fds[1];
-
     clilen = sizeof(cli_addr); 
 
-    fds[0].fd = server_fd;
-    fds[0].events = POLLIN;
-
-    poll(fds, 1, 1);
-    ret_val = (fds[0].revents & POLLIN);
-
-    if(ret_val > 0)
+    /* 15.Oct.2019 - RP - Blocking Socket (Accept) */
+    newsockfd = accept(server_fd, (struct sockaddr *) &cli_addr, &clilen);
+    if (newsockfd >= 0)
+    { 
+	    syslog(LOG_INFO, "SRV:%d New Client Connection CLT:%d", server_fd, newsockfd);
+    }        
+    else
     {
-        newsockfd = accept(server_fd, (struct sockaddr *) &cli_addr, &clilen);
-        if (newsockfd >= 0)
-        { 
-	    	syslog(LOG_INFO, "SRV:%d New Client Connection CLT:%d", server_fd, newsockfd);
-        }        
-        else
-        {
-            syslog(LOG_ERR,"Error: failed in accept(), socket=%d", server_fd);
-		    exit(1);
-        }                   
-    }
+        syslog(LOG_ERR,"Error: failed in accept(), socket=%d", server_fd);
+	    exit(1);
+    }                   
 
     return(newsockfd);
-}   
-
-//                                                                              
-// Check if we can read from the socket..
-//    
-static int can_read_from_socket(int socket_id)                                         
-{                                                                               
-    /* 2.Oct.2019 - RP - Poll File Descriptor */
-    struct pollfd fds[1];
-
-    fds[0].fd = socket_id;
-    fds[0].events = POLLIN;
-
-    int npending = poll(fds, 1, 1);
-
-    if (npending == -1)
-    { 
-        npending = errno;
-	syslog(LOG_ERR, "can_read_from_socket:poll() ERRNO=%d",npending);
-        return(-100);
-    }
-
-    return (fds[0].revents & POLLIN); // 2.Oct.2019 - RP
-}   
-
-//                                                                              
-// Check if we can write to the socket..
-//    
-static int can_write_to_socket(int socket_id)                                          
-{                                                       
-    /* 2.Oct.2019 - RP - Poll File Descriptor */                     
-    struct pollfd fds[1];
-
-    fds[0].fd = socket_id;
-    fds[0].events = POLLOUT;
-
-    int npending = poll(fds, 1, 1);
-
-    if (npending == -1)
-    {
-    	npending = errno;
-    	syslog(LOG_ERR, "can_write_to_socket() : poll() ERRNO=%d",npending);
-    	return (-100);
-    } else if (npending == 0) {  // poll() timed out...
-    	return(0);
-    }
-    
-    return(fds[0].revents & POLLOUT); // 2.Oct.2019 - RP
 }   
 
 //Receive string from socket and put it inside buffer.
@@ -369,39 +304,18 @@ static int receive_string(int sock_id, char* buffer)
 {                                                                               
   int nbytes = 0;
   int ret;  
-    
-    while(1)
-    {
-        ret = can_read_from_socket(sock_id); 
 
-      	if (ret == 0) 
-      	{ // poll() had timed out. Retry...
-      	    usleep(1000);
-      	    continue;
-      	} else if (ret == -100)
-      	{
-      	    return(-1);
-      	}
-      	break;
-    }                                                                           
-    
+	/* 15.Oct.2019 - RP - Blocking Socket - Receive */    
     nbytes = recv(sock_id, buffer, MAX_BUF_SIZE, 0);
 
     if (nbytes < 0)
     {
-	perror("READ FAILURE");
+		perror("READ FAILURE");
         exit(1);
     }
+
     return(nbytes); 
 }   
-
-static void set_non_blocking(int sock_id)                                              
-{                                                                               
-    int x;                                                                    
-    x = fcntl(sock_id, F_GETFL, 0); 
-    fcntl(sock_id, F_SETFL, x | O_NONBLOCK); 
-    syslog(LOG_INFO, "Setting server to non blocking state."); 
-} 
 
 static void Data_Send(int sockid)                                       
 {                                                                               
@@ -419,7 +333,8 @@ static void Data_Send(int sockid)
 
   out = calloc(1, 2048);
 
-  for (i=0; i<out_port_num; i++)  // 5.July.2019 - RP - loop to send all ports
+  // 5.July.2019 - RP - loop to send all ports at once for an event
+  for (i=0; i<out_port_num; i++)  
   {  
      
      found = 0;
@@ -448,31 +363,7 @@ static void Data_Send(int sockid)
 
     }
 
-      while(1)
-      {
-            if (wrt_retries > 2)  // 22.Feb.2017 - Kludge
-            {
-                free(out);
-                return;
-            }
-            ret = can_write_to_socket(sockid); 
-            if (ret > 0) break;
-          
-            if( ret == -100)
-            {
-                syslog(LOG_ERR,"Send aborted to CLT:%d buffer:%s ret=%d",
-                 sockid, out,ret);
-                      free(out);
-                return;
-            } 
-            else // poll() timed out. Retry....
-            {
-              printf("\n Sleep \n");
-              usleep(1000);
-              wrt_retries++;
-            }
-          }
-
+    /* 15.Oct.2019 - RP - Blocking Socket (Send) */
       if ((send(sockid, out, strlen(out), 0)) == -1)
         {
           syslog(LOG_ERR,"Failure sending to CLT:%d buffer:%s", sockid, out);
@@ -505,25 +396,23 @@ void Vhpi_Initialize(int sock_port, char sock_ip[])
         {
            syslog(LOG_INFO,"Started the server on port %d  SRV:%d",
 		  DEFAULT_SERVER_PORT, server_socket_id);
-            set_non_blocking(server_socket_id);
             break;
         }
         else
-	{
+		{
             syslog(LOG_ERR,"Could not start server on port %d,will try again",
                    DEFAULT_SERVER_PORT);
-	    usleep(1000);
-	    try_limit--;
-        
-	    if(try_limit==0)
-	    {
-	       syslog(LOG_ERR,
-                 "Error:Tried to start server on port %d, failed..giving up.",
-                      DEFAULT_SERVER_PORT);
-	       exit(1);
+		    usleep(1000);
+		    try_limit--;
+	        
+		    if(try_limit==0)
+		    {
+		       syslog(LOG_ERR,
+	                 "Error:Tried to start server on port %d, failed..giving up.",
+	                      DEFAULT_SERVER_PORT);
+		       exit(1);
             }
-	    
-	}
+		}
     }
   //                                                                            
   //Reading Output Port name and storing in Out_Port_Array;                     
@@ -594,7 +483,7 @@ void Vhpi_Listen()
 
     while(1)
     {
-		    new_sock = connect_to_client(server_socket_id);
+		new_sock = connect_to_client(server_socket_id);
 
         if(new_sock  > 0) 
         {
@@ -624,7 +513,6 @@ void Vhpi_Listen()
     }
 }
 
-
 void  Vhpi_Send() 
 {
 // 22.Feb.2017 - RM - Kludge
@@ -633,29 +521,12 @@ void  Vhpi_Send()
 	    Data_Send(sendto_sock);                                      
 	    prev_sendto_sock = sendto_sock;
     }
-// 22.Feb.2017 End kludge
- 
-}
-
-void  Vhpi_Close()                                                         
-{  
-    close(server_socket_id);
-    syslog(LOG_INFO, "*** Closed VHPI link. ***");
+// 22.Feb.2017 End kludge 
 }
 
 void Vhpi_Exit(int sig) 
-{                                                                               
-    Vhpi_Close(); 
-
-    // 10.Mar.2017 - RM
-    if (pid_file_created) {
-       	remove(pid_filename);
-    }
-
-    // 26.Sept.2019 - RP
-    remove("/tmp/NGHDL_COMMON_IP.txt");
-
-    syslog(LOG_INFO, "*** Exiting ***");
-
+{                          
+    close(server_socket_id);
+    syslog(LOG_INFO, "*** Closed VHPI link. Exiting... ***");
     exit(0);
 }    

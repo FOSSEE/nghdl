@@ -1,6 +1,7 @@
 -- author: Madhav P. Desai
--- modified: Rahul Paknikar (26.Sept.2019)
---			 (changed definition of Vhpi_Initialize)
+-- modified: Rahul Paknikar
+--			     -changed procedure of Vhpi_Initialize - 26.Sept.2019
+--           -removed procedure Vhpi_Close - 15.Oct.2019
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -14,9 +15,6 @@ package Vhpi_Foreign is
   procedure  Vhpi_Initialize(sock_port : in integer; sock_ip : in VhpiString);
   attribute foreign of Vhpi_Initialize : procedure is "VHPIDIRECT Vhpi_Initialize";
   
-  procedure Vhpi_Close; -- close .
-  attribute foreign of Vhpi_Close : procedure is "VHPIDIRECT Vhpi_Close";
-
   procedure Vhpi_Listen;
   attribute foreign of Vhpi_Listen : procedure is "VHPIDIRECT Vhpi_Listen";
 
@@ -44,11 +42,6 @@ package body Vhpi_Foreign is
     assert false  report "fatal: this should never be called" severity failure;
   end Vhpi_Initialize;
   
-  procedure Vhpi_Close is
-  begin
-    assert false  report "fatal: this should never be called" severity failure;
-  end Vhpi_Close;
-
   procedure Vhpi_Listen is
   begin
     assert false  report "fatal: this should never be called" severity failure;
