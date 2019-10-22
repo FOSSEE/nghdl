@@ -3,8 +3,8 @@ USE ieee.std_logic_1164.ALL;
 
 entity bin_to_gray is
 port(   
-		bin : in std_logic_vector(3 downto 0);  -- binary input
-        G   : out std_logic_vector(3 downto 0)  -- gray code output
+		bin : in std_logic_vector(3 downto 0); 
+        G   : out std_logic_vector(3 downto 0)
     );
 end bin_to_gray;
 
