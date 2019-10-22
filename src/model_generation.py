@@ -241,7 +241,10 @@ client_setup_ip='''
         int ip_count = 0;
         char* my_ip = malloc(16);
 
-        fptr = fopen("/tmp/NGHDL_COMMON_IP.txt", "r"); 
+        char ip_filename[40];
+        sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+
+        fptr = fopen(ip_filename, "r"); 
         if (fptr) 
         { 
             char line[20];
@@ -258,7 +261,7 @@ client_setup_ip='''
             sprintf(my_ip, "127.0.%d.1", (ip_count+1)%256);
         }
 
-        fptr = fopen("/tmp/NGHDL_COMMON_IP.txt", "a");
+        fptr = fopen(ip_filename, "a");
         if (fptr)
         {
             fprintf(fptr, "%s\\n", my_ip);   

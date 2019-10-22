@@ -9,6 +9,11 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
  *             o nghdl_orphan_tb()
  *             o nghdl_tb_SIGUSR1()
  **************************************************************************/
+/**************************************************************************
+ * 22.Oct.2019 - RP - Read all the PIDs and send kill signal to all those
+ * processes. Also, Remove the common file of used IPs and PIDs for this 
+ * Ngspice's instance rather than depending on GHDLServer to do the same. 
+ **************************************************************************/
 /*
  * This module replaces the old "writedata" routines in nutmeg.
  * Unlike the writedata routines, the OUT routines are only called by
@@ -120,7 +125,7 @@ static void nghdl_tb_SIGUSR1(char* pid_file)
 
     if (fp)
     {
-        /* 15.Oct.2019 - RP - Scan and store all the PIDs in this file */
+        /* 22.Oct.2019 - RP - Scan and store all the PIDs in this file */
         while (fscanf(fp, "%s", line) == 1)
         {   
             // PID is converted to a decimal value.
@@ -134,7 +139,7 @@ static void nghdl_tb_SIGUSR1(char* pid_file)
         fclose(fp);
     }
 
-    /* 15.Oct.2019 - RP - Kill all the active PIDs */
+    /* 22.Oct.2019 - RP - Kill all the active PIDs */
     for(i=0; i<count; i++)
     {
         if (pid[i])      
@@ -148,7 +153,7 @@ static void nghdl_tb_SIGUSR1(char* pid_file)
         }
     }
 
-    // 15.Oct.2019 - RP
+    // 22.Oct.2019 - RP
     remove(pid_file);
 }
 
@@ -169,7 +174,7 @@ static void nghdl_orphan_tb(void)
         return;
     }
 
-/* Loop through /tmp directories looking for "NGHDL_<my pid>*" files.*/
+    /* Loop through /tmp directories looking for "NGHDL_<my pid>*" files.*/
     while ((dirp = readdir(dirfd)) != NULL)
     {
     struct stat stbuf;
@@ -195,8 +200,10 @@ static void nghdl_orphan_tb(void)
     }
     }
 
-    // 15.Oct.2019 - RP
-    remove("/tmp/NGHDL_COMMON_IP.txt");
+    // 22.Oct.2019 - RP
+    char ip_filename[40];
+    sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+    remove(ip_filename);
 }
 /* End 10.Mar.2017 - RM */
 
