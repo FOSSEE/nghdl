@@ -277,8 +277,8 @@ class Mainwindow(QtGui.QWidget):
                 self.runMakeInstall()
             else:
                 QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
-        except:
-            QtGui.QMessageBox.about(self, 'Message','''<b>Error</b><br/><br/> select a <b>.vhdl</b> file ''')
+        except Exception as e:
+            QtGui.QMessageBox.about(self, 'Message','''<b>Error</b><br/><br/>  ''' + str(e))
 
 class FileRemover(QtGui.QWidget):
 
