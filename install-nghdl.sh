@@ -3,7 +3,9 @@
 #
 #          FILE: install-nghdl.sh
 # 
-#         USAGE: ./install-nghdl.sh 
+#         USAGE: ./install-nghdl.sh --install
+#                 or
+#                ./install-nghdl.sh --uninstall
 # 
 #   DESCRIPTION: It is installation script for ngspice and ghdl work (nghdl). 
 # 
@@ -13,7 +15,7 @@
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Tuesday 03 September 2019 11:30
+#       CREATED: Wednesday 23 October 2019 14:30
 #      REVISION:  ---
 #===============================================================================
 
@@ -29,21 +31,6 @@ timestamp=`echo $sysdate|awk '{print $3"_"$2"_"$6"_"$4 }'`
 
 
 #All functions goes here
-function addghdlPPA
-{
-        ghdlppa="pgavin/ghdl"
-        #Checking if ghdl ppa is already exist
-        grep -h "^deb.*$ghdlppa*" /etc/apt/sources.list.d/* > /dev/null 2>&1
-        if [ $? -ne 0 ]
-        then
-            echo "Adding ghdl PPA to install latest ghdl version"
-            sudo add-apt-repository -y ppa:pgavin/ghdl
-            sudo apt-get update
-        else
-            echo "ghdl is available in synaptic"
-        fi
-}
-
 function installDependency
 {
 
@@ -64,12 +51,10 @@ function installDependency
     echo "Installing xterm.................................."
     sudo apt-get install -y xterm
 
-    if [ -d $HOME/$ghdl ]; then
-        echo "$ghdl directory already exists at $HOME"
-        echo "Leaving ghdl-0.36 LLVM installation"
-    else
+    grep -h "ghdl" /usr/local/bin/ghdl > /dev/null
+    if [ $? -ne 0 ]; then
         tar -xzvf ghdl-0.36.tar.gz -C $HOME
-        if [ "$?" == 0 ];then
+        if [ "$?" == 0 ]; then
             echo "ghdl-0.36 LLVM successfully extracted to $HOME......"
             echo "Changing directory to ghdl-0.36 LLVM installation..."
             cd $HOME/ghdl-0.36	
@@ -81,12 +66,15 @@ function installDependency
             echo "Installing ghdl-0.36 LLVM....."
             sudo make install
             echo "Removing unused part of ghdl-0.36 LLVM....."
-    		  sudo rm -r ../ghdl-0.36
+    		  sudo rm -rf ../ghdl-0.36
         else
             echo "Unable to extract ghdl-0.36 LLVM"
             echo "Exiting installation"
             exit 1
         fi
+    else
+        echo "ghdl already exists....."
+        echo "Leaving ghdl-0.36 LLVM installation"
     fi
     
     echo "Installing flex.................................."
@@ -135,8 +123,8 @@ function installNgspice
             make
             make install
             if [ "$?" == 0 ];then
-                echo "Removing previously Installed Ngspice......"
-                sudo apt-get remove ngspice
+                echo "Removing previously Installed Ngspice (if any)......"
+                sudo apt-get remove -y ngspice
 
                 echo "Ngspice Installed sucessfully......"
                 echo "Adding softlink for the installed ngspice......"
@@ -147,7 +135,7 @@ function installNgspice
                     echo "ngspice already installed at /usr/bin/ngspice..."
                     echo "Remove earlier installations and try again..."
                 else
-                    echo "Added softlink for ngspce"
+                    echo "Added softlink for ngspice"
                 fi
 
             else 
@@ -186,7 +174,6 @@ function createConfigFile
 
 function createSoftLink
 {
-
     ## Creating softlink 
     cd /usr/local/bin
     if [[ -L nghdl ]];then
@@ -199,76 +186,92 @@ function createSoftLink
         sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
     fi
     cd $pwd
-
 }
 
 #####################################################################
 #       Script start from here                                     #
 #####################################################################
-echo "Enter proxy details if you are connected to internet thorugh proxy"
 
-echo -n "Is your internet connection behind proxy? (y/n): "
-read getProxy
-if [ $getProxy == "y" -o $getProxy == "Y" ];then
-        echo -n 'Proxy hostname :'
-        read proxyHostname
+###Checking if file is passsed as argument to script
 
-        echo -n 'Proxy Port :'
-        read proxyPort
-
-        echo -n username@$proxyHostname:$proxyPort :
-        read username
-
-        echo -n 'Password :'
-        read -s passwd
-
-        unset http_proxy
-        unset https_proxy
-        unset HTTP_PROXY
-        unset HTTPS_PROXY
-        unset ftp_proxy
-        unset FTP_PROXY
-
-        export http_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
-        export https_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
-        export HTTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
-        export HTTPS_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
-        export ftp_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
-        export FTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
-
-        echo "Install with proxy"
-        #Calling functions
-        #addghdlPPA
-        installDependency
-        if [ $? -ne 0 ];then
-            echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
-            exit 0
-        fi
-        installNgspice
-        createConfigFile
-        createSoftLink
-
-elif [ $getProxy == "n" -o $getProxy == "N" ];then
-        echo "Install without proxy"
-
-        #Calling functions
-        #addghdlPPA
-        installDependency
-        if [ $? -ne 0 ];then
-            echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
-            exit 0
-        fi
-        installNgspice
-        createConfigFile
-        createSoftLink
-
-
+if [ "$#" -eq 1 ];then
+    option=$1
 else
-        echo "Please select the right option"
-        exit 0
-
+    echo "USAGE : "
+    echo "./install.sh --install"
+    exit 1;
 fi
 
+##Checking flags
 
+if [ $option == "--install" ];then
+    echo "Enter proxy details if you are connected to internet thorugh proxy"
 
+    echo -n "Is your internet connection behind proxy? (y/n): "
+    read getProxy
+    if [ $getProxy == "y" -o $getProxy == "Y" ];then
+            echo -n 'Proxy hostname :'
+            read proxyHostname
 
+            echo -n 'Proxy Port :'
+            read proxyPort
+
+            echo -n username@$proxyHostname:$proxyPort :
+            read username
+
+            echo -n 'Password :'
+            read -s passwd
+
+            unset http_proxy
+            unset https_proxy
+            unset HTTP_PROXY
+            unset HTTPS_PROXY
+            unset ftp_proxy
+            unset FTP_PROXY
+
+            export http_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+            export https_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+            export HTTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+            export HTTPS_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+            export ftp_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
+            export FTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
+
+            echo "Install with proxy"
+            #Calling functions
+            installDependency
+            if [ $? -ne 0 ];then
+                echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
+                exit 0
+            fi
+            installNgspice
+            createConfigFile
+            createSoftLink
+
+    elif [ $getProxy == "n" -o $getProxy == "N" ];then
+            echo "Install without proxy"
+
+            #Calling functions
+            installDependency
+            if [ $? -ne 0 ];then
+                echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
+                exit 0
+            fi
+            installNgspice
+            createConfigFile
+            createSoftLink
+
+elif [ $option == "--uninstall" ];then
+    echo "Deleting Files............"
+    sudo rm -rf $HOME/ngspice-nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
+    echo "Removing gnat-5............"
+    sudo apt-get remove -y gnat-5
+    echo "Removing llvm............"
+    sudo apt-get remove -y llvm
+    echo "Removing ghdl............"
+    sudo rm -rf /usr/local/bin/ghdl /usr/local/lib/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/libghdlvpi.so
+
+else 
+    echo "Please select the proper operation."
+    echo "--install"
+    echo "--uninstall"
+fi
