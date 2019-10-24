@@ -13,7 +13,7 @@ class AutoSchematic(QtGui.QWidget):
         self.template = Appconfig.kicad_lib_template
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
-        self.kicad_nghdl_lib = 'eSim_kicad.lib'
+        self.kicad_nghdl_lib = '/usr/share/kicad/library/eSim_Nghdl.lib'
         self.parser = Appconfig.parser_nghdl
         
     def createKicadLibrary(self):
@@ -29,7 +29,7 @@ class AutoSchematic(QtGui.QWidget):
         elif (xmlFound == self.xml_loc + '/Nghdl'):
             print 'Library already exists...'
             ret = QtGui.QMessageBox.critical(self, "Critical",'''<b>The Libraries of this model already exist.Do you want to overwrite it?</b><br/>
-                    <b>If yes press ok else cancel it and change the name of your vhdl file</b>''', QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
+                    <b>If yes, press ok else cancel it and change the name of your vhdl file</b>''', QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
             if ret == QtGui.QMessageBox.Ok:
                 print "Overwriting existing libraries"
                 self.getPortInformation()
