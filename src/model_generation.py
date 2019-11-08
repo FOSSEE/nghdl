@@ -470,9 +470,9 @@ els_time_limit='''
                 fprintf(log_client,"Socket Id : %d & Message sent : %s for END signal \\n",socket_fd,send_data);                                
             }                                                                                                                                  
             flag++;                                                                                                                            
-            close(socket_fd);                                                                                                                  
         }    
 
+        close(socket_fd);
 '''
 
 
