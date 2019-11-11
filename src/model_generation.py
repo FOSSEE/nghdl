@@ -213,7 +213,7 @@ systime_info='''
         time_t systime;                                                                                                                        
         systime = time(NULL);                                                                                                                  
         printf(ctime(&systime));                                                                                                               
-        printf("Client-Initialising ngspice \\n");                                                                                              
+        printf("Client-Initialising GHDL...");                                                                                              
         fprintf(log_client,"Setup Client Server Connection at %s \\n",ctime(&systime));                                                         
 '''
 
@@ -280,34 +280,34 @@ client_fetch_ip='''
         char* my_ip = STATIC_VAR(my_ip);
         
         host = gethostbyname(my_ip);
-        printf("Client-Creating Client Socket \\n");                                                                                             
-        fprintf(log_client,"Creating client socket \\n"); 
+        printf("\\n\\nClient-Creating Socket \\n");
+        fprintf(log_client,"Creating client socket \\n");
 '''
 
 create_socket='''
-        //Creating socket for client                                                                                                           
-        if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)                                                                               
-        {                                                                                                                                      
-            perror("Client-Error while creating client Socket \\n");                                                                             
-            fprintf(log_client,"Error while creating client sockte \\n");                                                                        
-            exit(1);                                                                                                                           
-        }                                                                                                                                      
-                                                                                                                                                              
-        printf("Client-Client Socket created successfully \\n");                                                                                 
-        printf("Client- Socket Id : %d \\n",socket_fd);                                                                                         
-        fprintf(log_client,"Client-Client Socket created successfully \\n");                                                                     
-        fprintf(log_client,"Client- Socket Id : %d \\n",socket_fd);                                                                             
+        //Creating socket for client                                                                                      
+        if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+        {
+            perror("Client-Error while creating client Socket \\n");
+            fprintf(log_client,"Error while creating client socket \\n");
+            exit(1);
+        }
 
-        // memset(&server_addr, 0, sizeof(server_addr));                                                                                       
-        server_addr.sin_family = AF_INET;                                                                                                      
-        server_addr.sin_port = htons(sock_port);                                                                                                    
-        server_addr.sin_addr = *((struct in_addr *)host->h_addr);                                                                              
-        bzero(&(server_addr.sin_zero),8);                                                                                                      
+        printf("Client-Client Socket created successfully \\n");
+        printf("Client- Socket Id : %d \\n",socket_fd);
+        fprintf(log_client,"Client-Client Socket created successfully \\n");
+        fprintf(log_client,"Client- Socket Id : %d \\n",socket_fd);
+
+        // memset(&server_addr, 0, sizeof(server_addr));
+        server_addr.sin_family = AF_INET;
+        server_addr.sin_port = htons(sock_port);
+        server_addr.sin_addr = *((struct in_addr *)host->h_addr);
+        bzero(&(server_addr.sin_zero),8);
 
 '''
 
 connect_server='''
-        printf("Client-Connecting to server \\n");                                                                                              
+        printf("Client-Connecting to server \\n");
         fprintf(log_client,"Client-Connecting to server \\n");                                                                                  
         //Conneting to server                                                                                                                  
 
