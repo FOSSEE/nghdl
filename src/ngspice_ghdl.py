@@ -31,6 +31,7 @@ class Mainwindow(QtGui.QWidget):
         #Printing LICENCE file on terminal
         fileopen = open(self.licensefile, 'r')
         print fileopen.read()
+        fileopen.close()
         self.file_list = []             #to keep the supporting files
         self.initUI()
 
@@ -75,7 +76,6 @@ class Mainwindow(QtGui.QWidget):
         self.show()
 	
 
-
     def closeWindow(self):
         try:
             self.process.close()
@@ -84,11 +84,13 @@ class Mainwindow(QtGui.QWidget):
         print "Close button clicked"
         quit()
 
+
     def browseFile(self):
         print "Browse button clicked"
         self.filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
         self.ledit.setText(self.filename)
         print "Vhdl file uploaded to process :", self.filename
+
 
     def addFiles(self):
         print "Starts adding supporting files"
@@ -137,13 +139,11 @@ class Mainwindow(QtGui.QWidget):
             else:
                 print "Exiting application"
                 quit()
-                
-
-
         else:
             print "Creating model "+self.modelname+" directory"
             os.mkdir(self.modelname)
     
+
     def addingModelInModpath(self):
         print "Adding Model "+self.modelname+" in Modpath file "+self.digital_home
         #Adding name of model in the modpath file
@@ -222,6 +222,7 @@ class Mainwindow(QtGui.QWidget):
             cmd = " make"
             print "Running Make command in "+self.release_home
             path = os.getcwd()
+            self.process = QtCore.QProcess(self)
             self.process.start(cmd)
             self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readStdOutput()"))
@@ -230,6 +231,7 @@ class Mainwindow(QtGui.QWidget):
         except:
             print "There is error in 'make' "
             quit()
+
 
     def runMakeInstall(self):
         print "run Make Install Called"
@@ -241,8 +243,10 @@ class Mainwindow(QtGui.QWidget):
                 self.process.close()
             except:
                 pass
-            self.process.finished.connect(self.createSchematicLib)
+            
+            self.process = QtCore.QProcess(self)
             self.process.start(cmd)
+            self.process.finished.connect(self.createSchematicLib)
             self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readStdOutput()"))
             os.chdir(self.cur_dir)
@@ -251,11 +255,13 @@ class Mainwindow(QtGui.QWidget):
             print "There is error during in 'make install' "
             quit()
 
+
     def createSchematicLib(self):
         if Appconfig.esimFlag == 1:
             print 'Creating library files.................................'
-            self.schematicLib = AutoSchematic(self.modelname)
-            self.schematicLib.createKicadLibrary()
+            schematicLib = AutoSchematic(self.modelname)
+            schematicLib.createKicadLibrary()
+
 
     def uploadModle(self):
         print "Upload button clicked"
