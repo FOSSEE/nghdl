@@ -10,7 +10,7 @@ class AutoSchematic(QtGui.QWidget):
     def __init__(self, modelname):
         QtGui.QWidget.__init__(self)
         self.modelname = modelname.split('.')[0]
-        self.template = Appconfig.kicad_lib_template
+        self.template = Appconfig.kicad_lib_template.copy()
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
         self.kicad_nghdl_lib = '/usr/share/kicad/library/eSim_Nghdl.lib'
@@ -125,7 +125,7 @@ class AutoSchematic(QtGui.QWidget):
         lib_file = open(self.kicad_nghdl_lib,"a")
         line1 = self.template["start_def"]
         line1 = line1.split()
-        line1 = [w.replace('comp_name', self.modelname) for w in line1]
+        line1 = [w.replace('comp_name', self.modelname) for w in line1]     
         self.template["start_def"] = ' '.join(line1)
         if os.stat(self.kicad_nghdl_lib).st_size == 0:
             lib_file.write("EESchema-LIBRARY Version 2.3"+ "\n\n")
@@ -198,7 +198,7 @@ class AutoSchematic(QtGui.QWidget):
 
         os.chdir(cwd)
         print 'Leaving directory, ', self.lib_loc
-        QtGui.QMessageBox.information(self, "Library added", '''Library details for this model is added to the <b>eSim-kicad.lib</b> in the home directory''', QtGui.QMessageBox.Ok)
+        QtGui.QMessageBox.information(self, "Library added", '''Library details for this model is added to the <b>eSim_Nghdl.lib</b> in the KiCad shared directory''', QtGui.QMessageBox.Ok)
 
 
 class PortInfo:
@@ -232,5 +232,3 @@ class PortInfo:
         self.input_len = len(self.bit_list)
         for out_list in output_list:
             self.bit_list.append(out_list[2])
-
-
