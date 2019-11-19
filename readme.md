@@ -3,8 +3,8 @@ Ngspice Ghdl Interfacing Documentation
 
 It contains all the documenation for Ngspice and Ghdl related work.
 
-Note: This project is in beta version and has been tested for rings, counters and PWM controllers.
-====
+> Note: This project is in beta version and has been tested for rings, counters and PWM controllers.
+
 
 ## What exactly interfacing of ngspice ghdl do?
 Ngspice support mixed mode simulation. It can simulate both digital and analog component. 
