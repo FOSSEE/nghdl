@@ -74,7 +74,6 @@ class AutoSchematic(QtGui.QWidget):
         ET.SubElement(param ,"fall_delay", default ="1.0e-9").text = "Enter Fall Delay (default=1.0e-9)"
         ET.SubElement(param ,"input_load", default ="1.0e-12").text = "Enter Input Load (default=1.0e-12)"
         ET.SubElement(param ,"instance_id", default ="1").text = "Enter Instance ID (Between 0-99)"
-        ET.SubElement(param ,"stop_time", default ="90e-9").text = "Enter the stop time to end the simulation (default=90e-9)"
         tree = ET.ElementTree(root)
         tree.write(str(self.modelname) + '.xml')
         print "Leaving the directory ", (xmlDestination)

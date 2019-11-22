@@ -168,19 +168,18 @@ for item in output_port:
 
 
 var_section='''
-    // Declaring components of Client                                                                                                          
-    static int flag=0;                                                                                                                         
-    FILE *log_client = NULL;                                                                                                                   
-    log_client=fopen("client.log","a");                                                                                                        
-    int socket_fd, bytes_recieved;                                                                                                             
-    char send_data[1024];                                                                                                                      
+    // Declaring components of Client
+    FILE *log_client = NULL;
+    log_client=fopen("client.log","a");
+    int socket_fd, bytes_recieved;
+    char send_data[1024];
     char recv_data[1024];
     char *key_iter;
-    struct hostent *host;                                                                                                                      
-    struct sockaddr_in server_addr;                                                                                                            
-    double time_limit = PARAM(stop_time);
+    struct hostent *host;
+    struct sockaddr_in server_addr;
     int sock_port = 5000+PARAM(instance_id);
 '''
+
 temp_input_var=[]
 for item in input_port:
     temp_input_var.append("char temp_"+item.split(':')[0]+"[1024];")
@@ -229,9 +228,9 @@ els_evt_ptr=[]
 els_evt_count1=0
 els_evt_count2=0
 for item in output_port:
-    els_evt_ptr.append("_op_"+item.split(":")[0]+" = cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
+    els_evt_ptr.append("_op_"+item.split(":")[0]+" = (Digital_State_t *) cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
     els_evt_count2=els_evt_count2+1
-    els_evt_ptr.append("_op_"+item.split(":")[0]+"_old"+" = cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
+    els_evt_ptr.append("_op_"+item.split(":")[0]+"_old"+" = (Digital_State_t *) cm_event_get_ptr("+str(els_evt_count1)+","+str(els_evt_count2)+");")
     els_evt_count1=els_evt_count1+1
 
 
@@ -275,87 +274,80 @@ client_setup_ip='''
 '''
 
 client_fetch_ip='''
-        /* Client Fetch IP Addr */ 
+    /* Client Fetch IP Addr */ 
         
-        char* my_ip = STATIC_VAR(my_ip);
+    char* my_ip = STATIC_VAR(my_ip);
         
-        host = gethostbyname(my_ip);
-        printf("\\n\\nClient-Creating Socket \\n");
-        fprintf(log_client,"Creating client socket \\n");
+    host = gethostbyname(my_ip);
+    printf("\\n\\nClient-Creating Socket \\n");
+    fprintf(log_client,"Creating client socket \\n");
 '''
 
 create_socket='''
-        //Creating socket for client                                                                                      
-        if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-        {
-            perror("Client-Error while creating client Socket \\n");
-            fprintf(log_client,"Error while creating client socket \\n");
-            exit(1);
-        }
+    //Creating socket for client                                                                                      
+    if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+    {
+        perror("Client-Error while creating client Socket \\n");
+        fprintf(log_client,"Error while creating client socket \\n");
+        exit(1);
+    }
 
-        printf("Client-Client Socket created successfully \\n");
-        printf("Client- Socket Id : %d \\n",socket_fd);
-        fprintf(log_client,"Client-Client Socket created successfully \\n");
-        fprintf(log_client,"Client- Socket Id : %d \\n",socket_fd);
+    printf("Client-Client Socket created successfully \\n");
+    printf("Client- Socket Id : %d \\n",socket_fd);
+    fprintf(log_client,"Client-Client Socket created successfully \\n");
+    fprintf(log_client,"Client- Socket Id : %d \\n",socket_fd);
 
-        // memset(&server_addr, 0, sizeof(server_addr));
-        server_addr.sin_family = AF_INET;
-        server_addr.sin_port = htons(sock_port);
-        server_addr.sin_addr = *((struct in_addr *)host->h_addr);
-        bzero(&(server_addr.sin_zero),8);
+    // memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(sock_port);
+    server_addr.sin_addr = *((struct in_addr *)host->h_addr);
+    bzero(&(server_addr.sin_zero),8);
 
 '''
 
 connect_server='''
-        printf("Client-Connecting to server \\n");
-        fprintf(log_client,"Client-Connecting to server \\n");                                                                                  
-        //Conneting to server                                                                                                                  
-
-        int try_limit=10;                                                                                                                      
-        while(try_limit>0)                                                                                                                     
-        {                                                                                                                                      
-            if (connect(socket_fd, (struct sockaddr*)&server_addr,sizeof(struct sockaddr)) == -1)                                              
-            {                                                                                                                                  
-                sleep(1);                                                                                                                      
-                try_limit--;                                                                                                                   
-                if(try_limit==0)                                                                                                               
-                {                                                                                                                              
-                    fprintf(stderr,"Connect- Error:Tried to connect server on port , failed..giving up \\n");                                   
-                    fprintf(log_client,"Connect- Error:Tried to connect server on port , failed..giving up \\n");                               
-                    exit(1);                                                                                                                   
-                }                                                                                                                              
-            }                                                                                                                                
-            else                                                                                                                               
-            {                                                                                                                                  
-                printf("Client-Connected to server \\n");                                                                                       
-                fprintf(log_client,"Client-Connected to server \\n");                                                                           
-                break;                                                                                                                         
-            }                                                                                                                                  
-        } 
-
-'''
-
-time_limit ='''
-        if(TIME < time_limit)                                                                                                                  
-        {                                                                                                                                      
-            //Formating data for sending it to client
-            int Ii;
+    printf("Client-Connecting to server \\n");
+    fprintf(log_client,"Client-Connecting to server \\n");                                                                                  
+    
+    //Connecting to server
+    int try_limit=10;                                                                                                                      
+    while(try_limit>0)                                                                                                                     
+    {                                                                                                                                      
+        if (connect(socket_fd, (struct sockaddr*)&server_addr,sizeof(struct sockaddr)) == -1)                                              
+        {                                                                                                                                  
+            sleep(1);                                                                                                                      
+            try_limit--;                                                                                                                   
+            if(try_limit==0)                                                                                                               
+            {                                                                                                                              
+                fprintf(stderr,"Connect- Error:Tried to connect server on port , failed..giving up \\n");                                   
+                fprintf(log_client,"Connect- Error:Tried to connect server on port , failed..giving up \\n");                               
+                exit(1);                                                                                                                   
+            }                                                                                                                              
+        }                                                                                                                                
+        else                                                                                                                               
+        {                                                                                                                                  
+            printf("Client-Connected to server \\n");                                                                                       
+            fprintf(log_client,"Client-Connected to server \\n");                                                                           
+            break;                                                                                                                         
+        }                                                                                                                                  
+    } 
 
 '''
+
 #Assign bit value to every input
 assign_data_to_input=[]
 for item in input_port:
-    assign_data_to_input.append("\t\t\tfor(Ii=0;Ii<PORT_SIZE("+item.split(':')[0]+");Ii++)\n\
-\t\t\t{\n\t\t\t\tif( INPUT_STATE("+item.split(':')[0]+"[Ii])==ZERO )\n\
-\t\t\t\t{\n\t\t\t\t\ttemp_"+item.split(':')[0]+"[Ii]='0';\n\t\t\t\t}\n\
-\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\ttemp_"+item.split(':')[0]+"[Ii]='1';\n\
-\t\t\t\t}\n\t\t\t}\n\t\t\ttemp_"+item.split(':')[0]+"[Ii]='\\0';\n\n")
+    assign_data_to_input.append("\tfor(Ii=0;Ii<PORT_SIZE("+item.split(':')[0]+");Ii++)\n\
+\t{\n\t\tif( INPUT_STATE("+item.split(':')[0]+"[Ii])==ZERO )\n\
+\t\t{\n\t\t\ttemp_"+item.split(':')[0]+"[Ii]='0';\n\t\t}\n\
+\t\telse\n\t\t{\n\t\t\ttemp_"+item.split(':')[0]+"[Ii]='1';\n\
+\t\t}\n\t}\n\ttemp_"+item.split(':')[0]+"[Ii]='\\0';\n\n")
 
 
 snprintf_stmt=[]
 snprintf_count=0
-snprintf_stmt.append("\t\t\t//Sending and receiving data to-from server \n")
-snprintf_stmt.append('\t\t\tsnprintf(send_data,sizeof(send_data),"')
+snprintf_stmt.append("\t//Sending and receiving data to-from server \n")
+snprintf_stmt.append('\tsnprintf(send_data,sizeof(send_data),"')
 for item in input_port:
     snprintf_count=snprintf_count+1
     snprintf_stmt.append(item.split(':')[0]+":%s")
@@ -376,37 +368,37 @@ for item in input_port:
     else:
         snprintf_stmt.append(",")
 
-snprintf_stmt.append('\n\t\t\tprintf("Client-Value of buffer string is %s \\n",send_data);')
-snprintf_stmt.append('\n\t\t\tprintf("Client-Sending data to server from client \\n");')
+snprintf_stmt.append('\n\tprintf("Client-Value of buffer string is %s \\n",send_data);')
+snprintf_stmt.append('\n\tprintf("Client-Sending data to server from client \\n");')
 
 send_data='''
 
-            if ( send(socket_fd,send_data,sizeof(send_data),0)==-1)                                                                            
-            {                                                                                                                                  
-                fprintf(stderr, "Client-Failure Sending Message \\n");                                                                           
-                close(socket_fd);                                                                                                              
-                exit(1);                                                                                                                       
-            }                                                                                                                                  
-            else                                                                                                                               
-            {                                                                                                                                  
-                printf("Client-Message being sent: %s \\n",send_data);                                                                           
-                fprintf(log_client,"Socket Id : %d & Message sent : %s \\n",socket_fd,send_data);                                               
-            }
+    if ( send(socket_fd,send_data,sizeof(send_data),0)==-1)                                                                            
+    {                                                                                                                                  
+        fprintf(stderr, "Client-Failure Sending Message \\n");                                                                           
+        close(socket_fd);                                                                                                              
+        exit(1);                                                                                                                       
+    }                                                                                                                                  
+    else                                                                                                                               
+    {                                                                                                                                  
+        printf("Client-Message being sent: %s \\n",send_data);                                                                           
+        fprintf(log_client,"Socket Id : %d & Message sent : %s \\n",socket_fd,send_data);                                               
+    }
 
 '''
 
 recv_data='''
 
-            bytes_recieved=recv(socket_fd,recv_data,sizeof(recv_data),0);                                                                      
-            if ( bytes_recieved <= 0 )                                                                                                         
-            {                                                                                                                                  
-                printf("Client-Either Connection Closed or Error \\n");                                                                          
-                exit(1);                                                                                                                       
-            }                                                                                                                                  
-            recv_data[bytes_recieved] = '\\0';                                                                                                
+    bytes_recieved=recv(socket_fd,recv_data,sizeof(recv_data),0);                                                                      
+    if ( bytes_recieved <= 0 )                                                                                                         
+    {                                                                                                                                  
+        printf("Client-Either Connection Closed or Error \\n");                                                                          
+        exit(1);                                                                                                                       
+    }                                                                                                                                  
+    recv_data[bytes_recieved] = '\\0';                                                                                                
             
-            printf("Client-Message Received From Server -  %s\\n",recv_data);                                                                   
-            fprintf(log_client,"Message Received From Server- %s\\n",recv_data);   
+    printf("Client-Message Received From Server -  %s\\n",recv_data);                                                                   
+    fprintf(log_client,"Message Received From Server- %s\\n",recv_data);   
 
 '''
 
@@ -415,66 +407,33 @@ recv_data='''
 sch_output_event=[]
 
 for item in output_port:
-    sch_output_event.append("\t\t\t/* Scheduling event and processing them */\n\
-\t\t\tif((key_iter=strstr(recv_data, "+'"'+item.split(':')[0]+':"'")) != NULL)\n\
-\t\t\t{\n\
-\t\t\twhile(*key_iter++ != ':');\n\
-\t\t\tfor(Ii=0;*key_iter != ';';Ii++,key_iter++)\n\
-\t\t\t{\n\
-\t\t\t\tprintf(\"Client- Bit val is %c \\n\",*key_iter);\n\
-\t\t\t\tfprintf(log_client,\"Client-Bit val is %c \\n\",*key_iter);\n\
-\t\t\t\tif(*key_iter=='0')\n\t\t\t\t{\n\
-\t\t\t\t\tprintf(\"Client-Zero Received \");\n\
-\t\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ZERO;\n\t\t\t\t}\n\
-\t\t\t\telse if(*key_iter=='1')\n\t\t\t\t{\n\
-\t\t\t\t\tprintf(\"Client-One Received \\n\");\n\
-\t\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ONE;\n\
-\t\t\t\t}\n\t\t\t\telse\t\t\t\t{\n\
-\t\t\t\t\tfprintf(log_client,\"Unknow value return from server \\n\");\n\
-\t\t\t\t\tprintf(\"Client-Unknown value return \\n\");\n\t\t\t\t}\n\
-\t\t\t\tif(ANALYSIS == DC)\n\t\t\t\t{\n\
-\t\t\t\t\tOUTPUT_STATE("+item.split(':')[0]+"[Ii]) = _op_"+item.split(':')[0]+"[Ii];\n\
-\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\
-\t\t\t\t\tif(_op_"+item.split(':')[0]+"[Ii] != _op_"+item.split(':')[0]+"_old[Ii])\n\
-\t\t\t\t\t{\n\
-\t\t\t\t\t\tOUTPUT_STATE("+item.split(':')[0]+"[Ii]) = _op_"+item.split(':')[0]+"[Ii];\n\
-\t\t\t\t\t\tOUTPUT_DELAY("+item.split(':')[0]+"[Ii]) = ((_op_"+item.split(':')[0]+"[Ii] == ZERO) ? PARAM(fall_delay) : PARAM(rise_delay));\n\
-\t\t\t\t\t}\n\t\t\t\t\telse\n\t\t\t\t\t{\n\
-\t\t\t\t\t\tOUTPUT_CHANGED("+item.split(':')[0]+"[Ii]) = FALSE;\n\t\t\t\t\t}\n\
-\t\t\t\t}\n\t\t\t\tOUTPUT_STRENGTH("+item.split(':')[0]+"[Ii]) = STRONG;\n\
-\t\t\t}\n\
-\t\t\t}\n")
-
-
-els_time_limit='''
-
-        else                                                                                                                                   
-        {                                                                                                                                     
-            char *end_signal="END";                                                                                                            
-            printf("Closing Ngspice Simulation \\n");                                                                                           
-            printf("current time = %g\\n",TIME);                                                                                                
-            fprintf(log_client,"Times : Closing Socket \\n");                                                                                   
-            snprintf(send_data,sizeof(send_data),"%s",end_signal);                                                                             
-            printf("Client-Value of buffer string is for END signal is %s \\n",send_data);                                                      
-            printf("Client-Sending data to server from client for end signal \\n");                                                             
-            
-            if ( send(socket_fd,send_data,sizeof(send_data),0)==-1)                                                                            
-            {                                                                                                                                  
-                printf("Client-Failure Sending Message for END signal \\n");                                                                    
-                close(socket_fd);                                                                                                              
-                exit(1);                                                                                                                       
-            }                                                                                                                                  
-            else                                                                                                                               
-            {                                                                                                                                  
-                printf("Client-Message being sent for END signal : %s\\n",send_data);                                                           
-                fprintf(log_client,"Socket Id : %d & Message sent : %s for END signal \\n",socket_fd,send_data);                                
-            }                                                                                                                                  
-            flag++;                                                                                                                            
-        }    
-
-        close(socket_fd);
-'''
-
+    sch_output_event.append("\t/* Scheduling event and processing them */\n\
+\tif((key_iter=strstr(recv_data, "+'"'+item.split(':')[0]+':"'")) != NULL)\n\
+\t{\n\
+\t\twhile(*key_iter++ != ':');\n\
+\t\tfor(Ii=0;*key_iter != ';';Ii++,key_iter++)\n\
+\t\t{\n\
+\t\t\tprintf(\"Client- Bit val is %c \\n\",*key_iter);\n\
+\t\t\tfprintf(log_client,\"Client-Bit val is %c \\n\",*key_iter);\n\
+\t\t\tif(*key_iter=='0')\n\t\t\t{\n\
+\t\t\t\tprintf(\"Client-Zero Received \");\n\
+\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ZERO;\n\t\t\t}\n\
+\t\t\telse if(*key_iter=='1')\n\t\t\t{\n\
+\t\t\t\tprintf(\"Client-One Received \\n\");\n\
+\t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ONE;\n\
+\t\t\t}\n\t\t\telse\n\t\t\t{\n\
+\t\t\t\tfprintf(log_client,\"Unknow value return from server \\n\");\n\
+\t\t\t\tprintf(\"Client-Unknown value return \\n\");\n\t\t\t}\n\n\
+\t\t\tif(ANALYSIS == DC)\n\t\t\t{\n\
+\t\t\t\tOUTPUT_STATE("+item.split(':')[0]+"[Ii]) = _op_"+item.split(':')[0]+"[Ii];\n\
+\t\t\t}\n\t\t\telse if(_op_"+item.split(':')[0]+"[Ii] != _op_"+item.split(':')[0]+"_old[Ii])\n\
+\t\t\t{\n\t\t\t\tOUTPUT_STATE("+item.split(':')[0]+"[Ii]) = _op_"+item.split(':')[0]+"[Ii];\n\
+\t\t\t\tOUTPUT_DELAY("+item.split(':')[0]+"[Ii]) = ((_op_"+item.split(':')[0]+"[Ii] == ZERO) ? PARAM(fall_delay) : PARAM(rise_delay));\n\
+\t\t\t}\n\t\t\telse\n\t\t\t{\n\
+\t\t\t\tOUTPUT_CHANGED("+item.split(':')[0]+"[Ii]) = FALSE;\n\t\t\t}\n\
+\t\t\tOUTPUT_STRENGTH("+item.split(':')[0]+"[Ii]) = STRONG;\n\
+\t\t}\n\
+\t}\n")
 
 #Writing content in cfunc.mod file 
 cfunc.write(comment)
@@ -529,11 +488,13 @@ for item in els_evt_ptr:
     cfunc.write("\n")
 cfunc.write("\t}")
 cfunc.write("\n\n")
-cfunc.write("\tif(flag==0)\n\t{")
+
 cfunc.write(client_fetch_ip)
 cfunc.write(create_socket)
 cfunc.write(connect_server)
-cfunc.write(time_limit)
+
+cfunc.write("\t//Formating data for sending it to client\n")
+cfunc.write("\tint Ii;\n\n")
 
 for item in assign_data_to_input:
     cfunc.write(item)
@@ -546,14 +507,9 @@ cfunc.write(recv_data)
 
 for item in sch_output_event:
     cfunc.write(item)
-#End of if statement of time limit
-cfunc.write(2*"\t"+"}")
 
-#Else part of time limit -sending END signal
-cfunc.write(els_time_limit)
-
-#Close if of flag==0
-cfunc.write("\t}\n\n")
+#Close socket fd
+cfunc.write("\tclose(socket_fd);\n\n")
 
 #close log_client file
 cfunc.write("\tfclose(log_client);")
@@ -613,34 +569,24 @@ for item in output_port:
 parameter_table='''
 
 PARAMETER_TABLE:
-Parameter_Name:     instance_id
-Description:        "instance_id"
-Data_Type:          real
-Default_Value:      0
-Limits:             -
-Vector:              no
-Vector_Bounds:       -
-Null_Allowed:       yes
+Parameter_Name:     instance_id                  input_load
+Description:        "instance_id"                "input load value (F)"
+Data_Type:          real                         real
+Default_Value:      0                  			 1.0e-12
+Limits:             -                  	         -
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                          yes
 
 PARAMETER_TABLE:                                                                                                                               
-Parameter_Name:     rise_delay                  fall_delay                                                                                     
-Description:        "rise delay"                "fall delay"                                                                                   
-Data_Type:          real                        real                                                                                           
-Default_Value:      1.0e-9                      1.0e-9                                                                                         
-Limits:             [1e-12 -]                   [1e-12 -]                                                                                      
-Vector:              no                          no                                                                                            
-Vector_Bounds:       -                           -                                                                                             
-Null_Allowed:       yes                         yes                                                                                            
-
-PARAMETER_TABLE:                                                                                                                               
-Parameter_Name:     input_load                  stop_time                                                                                      
-Description:        "input load value (F)"      "time at which to shut-down (seconds)"                                                         
-Data_Type:          real                        real                                                                                           
-Default_Value:      1.0e-12                     1.0                                                                                            
-Limits:             -                           [0.0 -]                                                                                        
-Vector:              no                         no                                                                                             
-Vector_Bounds:       -                          -                                                                                              
-Null_Allowed:       yes                         no    
+Parameter_Name:     rise_delay                  fall_delay
+Description:        "rise delay"                "fall delay"
+Data_Type:          real                        real
+Default_Value:      1.0e-9                      1.0e-9
+Limits:             [1e-12 -]                   [1e-12 -]
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
 
 '''
 
