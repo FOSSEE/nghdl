@@ -26,11 +26,11 @@ for that model it will actually call the ghdl to get the result.
 ##How to install?
 1. Clone this repository.
 2. Run `./install-nghdl.sh` It will install ngspice from source code and put it in $HOME.
-3. Set ngspice path in `.bashrc` file. Add `export PATH=/home/{your-username}/ngspice-26/install_dir/bin:$PATH` line in .bashrc
+3. Set ngspice path in `.bashrc` file. Add `export PATH=/home/{your-username}/ngspice-nghdl/install_dir/bin:$PATH` line in .bashrc
 
 
 ##Few words about installed code structure.
-1. Ngspice will be installed in home directory $HOME. If you already have ngspice-26 directory there it will take its backup.
+1. Ngspice will be installed in home directory $HOME. If you already have ngspice-31 directory there it will take its backup.
 2. Source code for all other file will be present in ~/.esim-nghdl
 3. symlink nghdl is stored in /usr/local/bin
 
@@ -38,7 +38,7 @@ for that model it will actually call the ghdl to get the result.
 ##How to use?
 1. Run nghdl in command terminal.
 2. Upload your vhdl file.
-3. Model will be created with name of your vhdl file. It can be seen under (~ngspice-26/src/xspice/icm/ghdl/)
+3. Model will be created with name of your vhdl file. It can be seen under (~/ngspice-nghdl/src/xspice/icm/ghdl/)
 4. You can use this model in your netlist.
 
 
