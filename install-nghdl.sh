@@ -15,7 +15,7 @@
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Wednesday 23 October 2019 14:30
+#       CREATED: Wednesday 26 November 2019 14:30
 #      REVISION:  ---
 #===============================================================================
 
@@ -40,24 +40,25 @@ function installDependency
     echo "Installing dependencies for ghdl-0.36 LLVM......."
     echo "Installing make.................................."
     sudo apt-get install -y make
-    echo "Installing gnat-5.................................."
+    echo "Installing gnat-5................................"
     sudo apt-get install -y gnat-5
     echo "Installing llvm.................................."
     sudo apt-get install -y llvm
-    echo "Installing clang.................................."
+    echo "Installing clang................................."
     sudo apt-get install -y clang
-    echo "Installing zlib1g-dev.................................."
+    echo "Installing zlib1g-dev............................"
     sudo apt-get install -y zlib1g-dev
-    echo "Installing xterm.................................."
+    echo "Installing xterm................................."
     sudo apt-get install -y xterm
 
+    echo "Installing ghdl.................................."
     grep -h "ghdl" /usr/local/bin/ghdl > /dev/null
     if [ $? -ne 0 ]; then
-        tar -xzvf ghdl-0.36.tar.gz -C $HOME
+        tar -xzvf ghdl-0.36.tar.gz
         if [ "$?" == 0 ]; then
             echo "ghdl-0.36 LLVM successfully extracted to $HOME......"
             echo "Changing directory to ghdl-0.36 LLVM installation..."
-            cd $HOME/ghdl-0.36	
+            cd ghdl-0.36/
             echo "Configuring ghdl-0.36 build as per requirements....."
             #Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
             sudo ./configure --with-llvm-config
@@ -66,7 +67,7 @@ function installDependency
             echo "Installing ghdl-0.36 LLVM....."
             sudo make install
             echo "Removing unused part of ghdl-0.36 LLVM....."
-    		  sudo rm -rf ../ghdl-0.36
+    		sudo rm -rf ../ghdl-0.36
         else
             echo "Unable to extract ghdl-0.36 LLVM"
             echo "Exiting installation"
@@ -93,11 +94,11 @@ function installDependency
 
 function installNgspice
 {
-    echo "Installing ngspice..................................."
+    echo "Installing ngspice................................"
     #Checking if ngspice-nghdl directory is already present in Home directory
     if [ -d $HOME/$ngspice ];then
         echo "$ngspice directory already exists at $HOME"
-        echo "Leaving ngspice installation"
+        echo "Leaving ngspice installation.................."
     else
         #Extracting Ngspice to Home Directory
         cd $src_dir
@@ -113,7 +114,7 @@ function installNgspice
             #Change to release directory
             cd release
             echo "Installing Ngspice....."
-            echo "------------------------------------"  
+            echo "-----------------------------------------"  
             sleep 5
             ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/
             
@@ -130,10 +131,10 @@ function installNgspice
                 echo "Adding softlink for the installed ngspice......"
 
                 sudo ln -s $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
-                if [ "$?" == 0 ];then
-                    echo "failed to add softlink"
-                    echo "ngspice already installed at /usr/bin/ngspice..."
-                    echo "Remove earlier installations and try again..."
+                if [ $? -ne 0 ];then
+                    echo "Failed to add ngspice softlink"
+                    echo "Remove earlier installations at /usr/bin/ngspice and try again..."
+                    exit 1
                 else
                     echo "Added softlink for ngspice"
                 fi
@@ -142,24 +143,23 @@ function installNgspice
                 echo "There was some error in installing ngspice"
             fi
 
-
         else 
             echo "Unable to extract ngspice tar file"
             exit 1;
         fi
-
     fi
+
 }
 
 function createConfigFile
 {
+    
     #Creating config.ini file and adding configuration information
     #Check if config file is present
     if [ -d $config_dir ];then
         rm $config_dir/$config_file && touch $config_dir/$config_file
     else
         mkdir $config_dir && touch $config_dir/$config_file
-
     fi
     
     echo "[NGSPICE]" >> $config_dir/$config_file
@@ -174,18 +174,26 @@ function createConfigFile
 
 function createSoftLink
 {
+    
     ## Creating softlink 
     cd /usr/local/bin
     if [[ -L nghdl ]];then
         echo "Symlink was already present"
         sudo unlink nghdl
         sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
-
     else
-        echo "Creating synmlink"
+        echo "Creating symlink"
         sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
+        if [ $? -ne 0 ];then
+            echo "Failed to add nghdl softlink"
+            echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
+            exit 1
+        else
+            echo "Added softlink for nghdl......"
+        fi
     fi
     cd $pwd
+
 }
 
 #####################################################################
@@ -198,67 +206,22 @@ if [ "$#" -eq 1 ];then
     option=$1
 else
     echo "USAGE : "
-    echo "./install.sh --install"
+    echo "./install-nghdl.sh --install"
     exit 1;
 fi
 
 ##Checking flags
-
 if [ $option == "--install" ];then
-    echo "Enter proxy details if you are connected to internet thorugh proxy"
-
-    echo -n "Is your internet connection behind proxy? (y/n): "
-    read getProxy
-    if [ $getProxy == "y" -o $getProxy == "Y" ];then
-            echo -n 'Proxy hostname :'
-            read proxyHostname
-
-            echo -n 'Proxy Port :'
-            read proxyPort
-
-            echo -n username@$proxyHostname:$proxyPort :
-            read username
-
-            echo -n 'Password :'
-            read -s passwd
-
-            unset http_proxy
-            unset https_proxy
-            unset HTTP_PROXY
-            unset HTTPS_PROXY
-            unset ftp_proxy
-            unset FTP_PROXY
-
-            export http_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
-            export https_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
-            export HTTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
-            export HTTPS_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
-            export ftp_proxy=http://$username:$passwd@$proxyHostname:$proxyPort
-            export FTP_PROXY=http://$username:$passwd@$proxyHostname:$proxyPort
-
-            echo "Install with proxy"
-            #Calling functions
-            installDependency
-            if [ $? -ne 0 ];then
-                echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
-                exit 0
-            fi
-            installNgspice
-            createConfigFile
-            createSoftLink
-
-    elif [ $getProxy == "n" -o $getProxy == "N" ];then
-            echo "Install without proxy"
-
-            #Calling functions
-            installDependency
-            if [ $? -ne 0 ];then
-                echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
-                exit 0
-            fi
-            installNgspice
-            createConfigFile
-            createSoftLink
+    
+    #Calling functions
+    installDependency
+    if [ $? -ne 0 ];then
+        echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
+        exit 0
+    fi
+    installNgspice
+    createConfigFile
+    createSoftLink
 
 elif [ $option == "--uninstall" ];then
     echo "Deleting Files............"
