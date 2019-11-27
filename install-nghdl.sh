@@ -54,11 +54,11 @@ function installDependency
     echo "Installing ghdl.................................."
     grep -h "ghdl" /usr/local/bin/ghdl > /dev/null
     if [ $? -ne 0 ]; then
-        tar -xzvf ghdl-0.36.tar.gz -C $HOME
+        tar -xzvf ghdl-0.36.tar.gz
         if [ "$?" == 0 ]; then
             echo "ghdl-0.36 LLVM successfully extracted to $HOME......"
             echo "Changing directory to ghdl-0.36 LLVM installation..."
-            cd $HOME/ghdl-0.36	
+            cd ghdl-0.36/
             echo "Configuring ghdl-0.36 build as per requirements....."
             #Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
             sudo ./configure --with-llvm-config
@@ -131,7 +131,7 @@ function installNgspice
                 echo "Adding softlink for the installed ngspice......"
 
                 sudo ln -s $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
-                if [ "$?" == 0 ];then
+                if [ $? -ne 0 ];then
                     echo "Failed to add ngspice softlink"
                     echo "Remove earlier installations at /usr/bin/ngspice and try again..."
                     exit 1
@@ -184,7 +184,7 @@ function createSoftLink
     else
         echo "Creating symlink"
         sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
-        if [ "$?" == 0 ];then
+        if [ $? -ne 0 ];then
             echo "Failed to add nghdl softlink"
             echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
             exit 1
