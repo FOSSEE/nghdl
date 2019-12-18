@@ -100,7 +100,7 @@ static int get_ngspice_pid(void)
 
     if ((dirp = opendir("/proc/")) == NULL)
     {
-		perror("opendir /proc failed");
+		perror("get_ngspice_pid() - opendir /proc failed ");
 		exit(-1);
     }
 
@@ -112,7 +112,7 @@ static int get_ngspice_pid(void)
 		int tmp = strtol(dir_entry->d_name, &nptr, 10);
 		if ((errno == ERANGE) && (tmp == LONG_MAX || tmp == LONG_MIN))
 		{
-		    perror("strtol"); // Number out of range.
+		    perror("get_ngspice_pid() - strtol"); // Number out of range.
 		    return(-1);
 		}
 		if (dir_entry->d_name == nptr)
@@ -133,7 +133,7 @@ static int get_ngspice_pid(void)
 		}
     }
 
-   if (fp) fclose(fp);
+    if (fp) fclose(fp);
 
    return(pid);
 }
@@ -165,7 +165,7 @@ static void create_pid_file(int sock_port)
 	    fprintf(pid_file,"%d\n", my_pid);
 	    fclose(pid_file);
     } else {
-        perror("fopen() - PID file");
+        perror("create_pid_file() - cannot open PID file ");
 	    syslog(LOG_ERR, "create_pid_file(): Unable to open PID file in /tmp");
         exit(1);
     }
@@ -323,7 +323,7 @@ static void receive_string(int sock_id, char* buffer)
     nbytes = recv(sock_id, buffer, MAX_BUF_SIZE, 0);
     if (nbytes <= 0)
     {
-		perror("READ FAILURE");
+		perror("receive_string() - READ FAILURE ");
         exit(1);
     }
 }
@@ -394,13 +394,13 @@ void Vhpi_Initialize(int sock_port, char sock_ip[])
 
       	if(server_socket_id >= 0)
       	{
-           syslog(LOG_INFO,"Started the server on port %d  SRV:%d",
-		  DEFAULT_SERVER_PORT, server_socket_id);
+            syslog(LOG_INFO,"Started the server on port %d  SRV:%d",
+                    DEFAULT_SERVER_PORT, server_socket_id);
             break;
         }
         
         syslog(LOG_ERR,"Could not start server on port %d,will try again",
-                   DEFAULT_SERVER_PORT);
+                    DEFAULT_SERVER_PORT);
 	    usleep(1000);
 	    try_limit--;
 	        
@@ -408,7 +408,7 @@ void Vhpi_Initialize(int sock_port, char sock_ip[])
 	    {
 	      	syslog(LOG_ERR,
 	           "Error:Tried to start server on port %d, failed..giving up.",
-	                      DEFAULT_SERVER_PORT);
+	                DEFAULT_SERVER_PORT);
 		    exit(1);
         }
     }
