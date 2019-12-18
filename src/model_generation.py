@@ -212,7 +212,7 @@ systime_info='''
         time_t systime;                                                                                                                        
         systime = time(NULL);                                                                                                                  
         printf(ctime(&systime));                                                                                                               
-        printf("Client-Initialising GHDL...");                                                                                              
+        printf("Client-Initialising GHDL...\\n\\n");                                                                                              
         fprintf(log_client,"Setup Client Server Connection at %s \\n",ctime(&systime));                                                         
 '''
 
@@ -266,7 +266,7 @@ client_setup_ip='''
             fprintf(fptr, "%s\\n", my_ip);   
             fclose(fptr);
         } else {
-            perror("fopen() - Common IP");
+            perror("Client - cannot open Common_IP file ");
             exit(1);
         }
 
@@ -279,7 +279,6 @@ client_fetch_ip='''
     char* my_ip = STATIC_VAR(my_ip);
         
     host = gethostbyname(my_ip);
-    printf("\\n\\nClient-Creating Socket \\n");
     fprintf(log_client,"Creating client socket \\n");
 '''
 
@@ -287,13 +286,12 @@ create_socket='''
     //Creating socket for client                                                                                      
     if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        perror("Client-Error while creating client Socket \\n");
+        perror("Client-Error while creating client Socket ");
         fprintf(log_client,"Error while creating client socket \\n");
         exit(1);
     }
 
-    printf("Client-Client Socket created successfully \\n");
-    printf("Client- Socket Id : %d \\n",socket_fd);
+    printf("Client-Socket (Id : %d) created\\n", socket_fd);
     fprintf(log_client,"Client-Client Socket created successfully \\n");
     fprintf(log_client,"Client- Socket Id : %d \\n",socket_fd);
 
@@ -306,7 +304,6 @@ create_socket='''
 '''
 
 connect_server='''
-    printf("Client-Connecting to server \\n");
     fprintf(log_client,"Client-Connecting to server \\n");                                                                                  
     
     //Connecting to server
@@ -368,8 +365,6 @@ for item in input_port:
     else:
         snprintf_stmt.append(",")
 
-snprintf_stmt.append('\n\tprintf("Client-Value of buffer string is %s \\n",send_data);')
-snprintf_stmt.append('\n\tprintf("Client-Sending data to server from client \\n");')
 
 send_data='''
 
@@ -381,7 +376,7 @@ send_data='''
     }                                                                                                                                  
     else                                                                                                                               
     {                                                                                                                                  
-        printf("Client-Message being sent: %s \\n",send_data);                                                                           
+        printf("Client-Message sent: %s \\n",send_data);                                                                           
         fprintf(log_client,"Socket Id : %d & Message sent : %s \\n",socket_fd,send_data);                                               
     }
 
@@ -392,12 +387,12 @@ recv_data='''
     bytes_recieved=recv(socket_fd,recv_data,sizeof(recv_data),0);                                                                      
     if ( bytes_recieved <= 0 )                                                                                                         
     {                                                                                                                                  
-        printf("Client-Either Connection Closed or Error \\n");                                                                          
+        perror("Client-Either Connection Closed or Error ");
         exit(1);                                                                                                                       
     }                                                                                                                                  
     recv_data[bytes_recieved] = '\\0';                                                                                                
             
-    printf("Client-Message Received From Server -  %s\\n",recv_data);                                                                   
+    printf("Client-Message Received -  %s\\n\\n",recv_data);                                                                   
     fprintf(log_client,"Message Received From Server- %s\\n",recv_data);   
 
 '''
@@ -413,13 +408,10 @@ for item in output_port:
 \t\twhile(*key_iter++ != ':');\n\
 \t\tfor(Ii=0;*key_iter != ';';Ii++,key_iter++)\n\
 \t\t{\n\
-\t\t\tprintf(\"Client- Bit val is %c \\n\",*key_iter);\n\
 \t\t\tfprintf(log_client,\"Client-Bit val is %c \\n\",*key_iter);\n\
 \t\t\tif(*key_iter=='0')\n\t\t\t{\n\
-\t\t\t\tprintf(\"Client-Zero Received \");\n\
 \t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ZERO;\n\t\t\t}\n\
 \t\t\telse if(*key_iter=='1')\n\t\t\t{\n\
-\t\t\t\tprintf(\"Client-One Received \\n\");\n\
 \t\t\t\t_op_"+item.split(':')[0]+"[Ii]=ONE;\n\
 \t\t\t}\n\t\t\telse\n\t\t\t{\n\
 \t\t\t\tfprintf(log_client,\"Unknow value return from server \\n\");\n\
@@ -626,9 +618,11 @@ print "Starting with testbench file"
 testbench=open(fname.split('.')[0]+'_tb.vhdl','w')
 print fname.split('.')[0] + '_tb.vhdl'
 #comment
-comment_vhdl="--------------------------------------------------------------------------------\n--This testbench has been created by Ambikeshwar Srivastava, FOSSEE, IIT Bombay\n--------------------------------------------------------------------------------\n"
-comment_vhdl+="--------------------------------------------------------------------------------\n--Modified by Rahul Paknikar, FOSSEE, IIT Bombay\n"
-comment_vhdl+="--retrieves the IP-Addr from sock_pkg and forwards it to the ghdlserver\n--------------------------------------------------------------------------------\n"
+comment_vhdl="--------------------------------------------------------------------------------\n"
+comment_vhdl+="--This testbench has been created by Ambikeshwar Srivastava, Rahul Paknikar \n"
+comment_vhdl+="--------------------------- FOSSEE, IIT Bombay ---------------------------------\n"
+comment_vhdl+="--------------------------------------------------------------------------------\n"
+
 #Adding header, entity and architecture statement
 tb_header='''
 library ieee;                                                                                                                                   
@@ -737,7 +731,8 @@ process_Vhpi=[]
 process_Vhpi.append("\tprocess\n\t\tvariable sock_port : integer;\n\t\ttype string_ptr is access string;\n\t\tvariable sock_ip : string_ptr;\n\t\tbegin\n\t\tsock_port := sock_port_fun;\n\t\tsock_ip := new string'(sock_ip_fun);\n\t\tVhpi_Initialize(sock_port, Pack_String_To_Vhpi_String(sock_ip.all));\n\t\twait until clk_s = '1';\n\t\twhile true loop\n\t\t\twait until clk_s = '0';\n\t\t\tVhpi_Listen;\n\t\t\twait for 1 us;\n\t\t\tVhpi_Send;\n\t\tend loop;\n\t\twait;\n\tend process;\n\n")
 #Adding process block 
 process=[]
-process.append("\tprocess\n\n")
+process.append("\tprocess\n")
+process.append("\t\tvariable count : integer:=0;\n")
 
 for item in input_port:
     process.append("\t\tvariable "+item.split(':')[0]+"_v : VhpiString;\n")
@@ -755,7 +750,6 @@ port_vector_count = 0
 for item in input_port:
     process.append('\t\t\tobj_ref := Pack_String_To_Vhpi_String("'+item.split(':')[0]+'");\n')
     process.append('\t\t\tVhpi_Get_Port_Value(obj_ref,'+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
-    process.append('\t\t\tassert false report "Get port value '+item.split(':')[0]+' returns " &'+item.split(':')[0]+'_v severity note;\n')
     if port_vector_info[port_vector_count]:
         process.append('\t\t\t'+item.split(':')[0]+' <= Unpack_String('+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
     else:
@@ -774,8 +768,10 @@ for item in output_port:
 
     process.append('\t\t\tobj_ref := Pack_String_To_Vhpi_String("'+item.split(':')[0]+'");\n')
     process.append('\t\t\tVhpi_Set_Port_Value(obj_ref,'+item.split(':')[0]+'_v,'+item.split(':')[1]+');\n')
-    process.append('\t\t\tassert false report "Set port value '+item.split(':')[0]+' returns " &'+item.split(':')[0]+'_v severity note;\n')
     process.append("\n")
+
+process.append('\t\t\treport "Iteration - "' + "& integer'image(count) severity note;\n")
+process.append('\t\t\tcount := count + 1;\n')
 process.append("\t\tend loop;\n")
 process.append("\tend process;\n\n")
 process.append("end architecture;")
