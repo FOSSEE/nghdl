@@ -35,6 +35,11 @@ for that model it will actually call the ghdl to get the result.
 3. symlink nghdl is stored in /usr/local/bin
 
 
+##FEATURES:
+1. Support for 512 digital models.
+2. Support for digital models upto 64 output ports/pins.
+3. Multiple instances of same digital model.
+
 ##How to use?
 1. Run nghdl in command terminal.
 2. Upload your vhdl file.
@@ -42,7 +47,10 @@ for that model it will actually call the ghdl to get the result.
 4. You can use this model in your netlist.
 
 
-##FEATURES:
-1. Support for 512 digital models.
-2. Support for digital models upto 64 output ports/pins.
-3. Multiple instances of same digital model.
+##How to use the Examples provided with NGHDL?
+1. Go to eSim main window -> Click on NGHDL icon from the left toolbar, click on the 'browse' button, go to ../nghdl/Example/ and locate which example you wish to simulate.
+2. After opening the directory of desired example, locate the vhdl file , click on the "Open" button at the bottom of "Open File" window.
+3. Click on 'upload' button in the NGHDL pop-up window. File will be processed in the backend for few seconds. Now exit the NGHDL window.
+4. Open the desired example under eSim/Examples/NGHDL_Examples/ using the Open Project button, double click on the project when the project is loaded in the "Projects" window.
+5. Click on the "Simulation" button on eSim Main window.
+
