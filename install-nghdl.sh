@@ -1,6 +1,5 @@
 #!/bin/bash 
 #===============================================================================
-#
 #          FILE: install-nghdl.sh
 # 
 #         USAGE: ./install-nghdl.sh --install
@@ -15,7 +14,7 @@
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Wednesday 26 November 2019 14:30
+#       CREATED: Wednesday 18 December 2019 14:30
 #      REVISION:  ---
 #===============================================================================
 
@@ -38,20 +37,51 @@ function installDependency
     sudo apt-get update
 
     echo "Installing dependencies for ghdl-0.36 LLVM......."
-    echo "Installing make.................................."
+    
+    echo "Installing Make.................................."
     sudo apt-get install -y make
-    echo "Installing gnat-5................................"
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"Make\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
+    
+    echo "Installing GNAT-5................................"
     sudo apt-get install -y gnat-5
-    echo "Installing llvm.................................."
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"GNAT-5\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
+    
+    echo "Installing LLVM.................................."
     sudo apt-get install -y llvm
-    echo "Installing clang................................."
-    sudo apt-get install -y clang
-    echo "Installing zlib1g-dev............................"
-    sudo apt-get install -y zlib1g-dev
-    echo "Installing xterm................................."
-    sudo apt-get install -y xterm
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"LLVM\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
 
-    echo "Installing ghdl.................................."
+    echo "Installing Clang................................."
+    sudo apt-get install -y clang
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"Clang\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
+
+    echo "Installing Zlib1g-dev............................"
+    sudo apt-get install -y zlib1g-dev
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"Zlib1g-dev\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
+
+    echo "Installing Xterm................................."
+    sudo apt-get install -y xterm
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"Xterm\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
+
+
+    echo "Installing GHDL.................................."
     grep -h "ghdl" /usr/local/bin/ghdl > /dev/null
     if [ $? -ne 0 ]; then
         tar -xzvf ghdl-0.36.tar.gz
@@ -74,31 +104,49 @@ function installDependency
             exit 1
         fi
     else
-        echo "ghdl already exists....."
+        echo "GHDL already exists....."
         echo "Leaving ghdl-0.36 LLVM installation"
     fi
     
-    echo "Installing flex.................................."
+    echo "Installing Flex.................................."
     sudo apt-get install -y flex
-    echo "Installing bison................................."
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"Flex\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
+
+    echo "Installing Bison................................."
     sudo apt-get install -y bison
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"Bison\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
 
     # Specific dependency for nvidia graphic cards
     echo "Installing graphics dependency for ngspice souce build"
     echo "Installing libxaw7................................"
     sudo apt-get install libxaw7
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"libxaw7\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
+
     echo "Installing libxaw7-dev............................"
     sudo apt-get install libxaw7-dev
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"libxaw7-dev\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
+        exit 1
+    fi
 }
 
 
 function installNgspice
 {
-    echo "Installing ngspice................................"
+    echo "Installing Ngspice................................"
     #Checking if ngspice-nghdl directory is already present in Home directory
     if [ -d $HOME/$ngspice ];then
         echo "$ngspice directory already exists at $HOME"
-        echo "Leaving ngspice installation.................."
+        echo "Leaving Ngspice installation.................."
     else
         #Extracting Ngspice to Home Directory
         cd $src_dir
@@ -124,27 +172,27 @@ function installNgspice
             make
             make install
             if [ "$?" == 0 ];then
-                echo "Removing previously Installed Ngspice (if any)......"
+                echo "Removing previously installed Ngspice (if any)......"
                 sudo apt-get remove -y ngspice
 
-                echo "Ngspice Installed sucessfully......"
-                echo "Adding softlink for the installed ngspice......"
+                echo "Ngspice installed sucessfully......"
+                echo "Adding softlink for the installed Ngspice......"
 
                 sudo ln -s $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
                 if [ $? -ne 0 ];then
-                    echo "Failed to add ngspice softlink"
+                    echo "Failed to add Ngspice softlink"
                     echo "Remove earlier installations at /usr/bin/ngspice and try again..."
                     exit 1
                 else
-                    echo "Added softlink for ngspice"
+                    echo "Added softlink for Ngspice"
                 fi
 
             else 
-                echo "There was some error in installing ngspice"
+                echo "There was some error while installing Ngspice"
             fi
 
         else 
-            echo "Unable to extract ngspice tar file"
+            echo "Unable to extract Ngspice tar file"
             exit 1;
         fi
     fi
@@ -185,11 +233,11 @@ function createSoftLink
         echo "Creating symlink"
         sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
         if [ $? -ne 0 ];then
-            echo "Failed to add nghdl softlink"
+            echo "Failed to add NGHDL softlink"
             echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
             exit 1
         else
-            echo "Added softlink for nghdl......"
+            echo "Added softlink for NGHDL......"
         fi
     fi
     cd $pwd
@@ -226,11 +274,11 @@ if [ $option == "--install" ];then
 elif [ $option == "--uninstall" ];then
     echo "Deleting Files............"
     sudo rm -rf $HOME/ngspice-nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
-    echo "Removing gnat-5............"
+    echo "Removing GNAT-5............"
     sudo apt-get remove -y gnat-5
-    echo "Removing llvm............"
+    echo "Removing LLVM............"
     sudo apt-get remove -y llvm
-    echo "Removing ghdl............"
+    echo "Removing GHDL............"
     sudo rm -rf /usr/local/bin/ghdl /usr/local/lib/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/libghdlvpi.so
 
 else 
