@@ -1,3 +1,4 @@
+--This file uses combination of std_logic(sl) and std_logic_vector(slv) variable types
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
