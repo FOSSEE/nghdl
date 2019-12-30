@@ -30,7 +30,7 @@ for that model it will actually call the ghdl to get the result.
 
 
 ##Few words about installed code structure.
-1. Ngspice will be installed in home directory $HOME. If you already have ngspice-31 directory there it will take its backup.
+1. Ngspice will be installed in home directory $HOME.
 2. Source code for all other file will be present in ~/.esim-nghdl
 3. symlink nghdl is stored in /usr/local/bin
 
@@ -40,15 +40,9 @@ for that model it will actually call the ghdl to get the result.
 2. Support for digital models upto 64 output ports/pins.
 3. Multiple instances of same digital model.
 
-##How to use?
-1. Run nghdl in command terminal.
-2. Upload your vhdl file.
-3. Model will be created with name of your vhdl file. It can be seen under (~/ngspice-nghdl/src/xspice/icm/ghdl/)
-4. You can use this model in your netlist.
-
 
 ##How to use the Examples provided with NGHDL?
-1. Go to eSim main window -> Click on NGHDL icon from the left toolbar, click on the 'browse' button, go to ../nghdl/Example/ and locate which example you wish to simulate.
+1. Launch eSim-> go to eSim main window -> Click on NGHDL icon from the left toolbar, click on the 'browse' button, go to ../nghdl/Example/ and locate which example you wish to simulate.
 2. After opening the directory of desired example, locate the vhdl file , click on the "Open" button at the bottom of "Open File" window.
 3. Click on 'upload' button in the NGHDL pop-up window. File will be processed in the backend for few seconds. Now exit the NGHDL window.
 4. Open the desired example under eSim/Examples/NGHDL_Examples/ using the Open Project button, double click on the project when the project is loaded in the "Projects" window.
