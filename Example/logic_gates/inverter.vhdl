@@ -1,12 +1,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity inverter_gate is
+entity inverter is
     port ( i: in std_logic;
            o: out std_logic);
-end inverter_gate;
+end inverter;
 
-architecture beh of inverter_gate is
+architecture beh of inverter is
 begin
     o <= not i;
 end beh;
