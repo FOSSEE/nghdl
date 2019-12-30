@@ -33,6 +33,7 @@ class Mainwindow(QtGui.QWidget):
         print fileopen.read()
         fileopen.close()
         self.file_list = []             #to keep the supporting files
+        self.errorFlag = False          #to keep the check of "make install" errors
         self.initUI()
 
     def initUI(self):
@@ -115,7 +116,7 @@ class Mainwindow(QtGui.QWidget):
                 self.file_list.remove(file)
 
         if nonvhdl_count > 0:
-             QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>Supporting files should be <b>.vhdl</b> file ''')
+             QtGui.QMessageBox.critical(self,'Critical','''<b>Important Message.</b><br/><br/>Supporting files should be <b>.vhdl</b> file ''')
 
 
     def createModelDirectory(self):
@@ -128,8 +129,8 @@ class Mainwindow(QtGui.QWidget):
         # Looking if model directory is present or not
         if os.path.isdir(self.modelname):
             print "Model Already present"
-            ret = QtGui.QMessageBox.critical(self, "Critical",'''<b>The Model already exist.Do you want to overwrite it?</b><br/>
-                    <b>If yes press ok else cancel it and change the name of you vhdl file</b>''', QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
+            ret = QtGui.QMessageBox.warning(self, "Warning",'''<b>This model already exist. Do you want to overwrite it?</b><br/>
+                    If yes press ok, else cancel it and change the name of your vhdl file.''', QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel)
             if ret == QtGui.QMessageBox.Ok:
                 print "Overwriting existing model "+self.modelname
                 cmd="rm -rf "+self.modelname
@@ -208,10 +209,14 @@ class Mainwindow(QtGui.QWidget):
         #os.remove("Vhpi_Package.vhdl")
         
     
-    #slot to redirect stdout to window console
+    #slot to redirect stdout and stderr to window console
     @QtCore.pyqtSlot()
-    def readStdOutput(self):
+    def readAllStandard(self):
         self.termedit.append(QtCore.QString(self.process.readAllStandardOutput()))
+        stderror = QtCore.QString(self.process.readAllStandardError())
+        if stderror.contains("ERROR", QtCore.Qt.CaseInsensitive):
+            self.errorFlag = True        
+        self.termedit.append(stderror)
         
 
     def runMake(self):
@@ -224,8 +229,6 @@ class Mainwindow(QtGui.QWidget):
             path = os.getcwd()
             self.process = QtCore.QProcess(self)
             self.process.start(cmd)
-            self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
-            QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readStdOutput()"))
             print "make command process pid ---------- >",self.process.pid()
             
         except:
@@ -247,8 +250,7 @@ class Mainwindow(QtGui.QWidget):
             self.process = QtCore.QProcess(self)
             self.process.start(cmd)
             self.process.finished.connect(self.createSchematicLib)
-            self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
-            QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readStdOutput()"))
+            QtCore.QObject.connect(self.process, QtCore.SIGNAL("readyReadStandardOutput()"), self, QtCore.SLOT("readAllStandard()"))
             os.chdir(self.cur_dir)
 
         except:
@@ -258,9 +260,14 @@ class Mainwindow(QtGui.QWidget):
 
     def createSchematicLib(self):
         if Appconfig.esimFlag == 1:
-            print 'Creating library files.................................'
-            schematicLib = AutoSchematic(self.modelname)
-            schematicLib.createKicadLibrary()
+            if not self.errorFlag:
+                print 'Creating library files.................................'
+                schematicLib = AutoSchematic(self.modelname)
+                schematicLib.createKicadLibrary()
+            else:
+                QtGui.QMessageBox.critical(self,'Error','''Cannot create Schematic Library of your model. Resolve the <b>errors</b> shown on console of NGHDL window. ''')
+        else:
+            QtGui.QMessageBox.information(self,'Message','''<b>Important Message</b><br/><br/>To create Schematic Library of your model, use NGHDL through <b>eSim</b> ''')    
 
 
     def uploadModle(self):
@@ -276,15 +283,16 @@ class Mainwindow(QtGui.QWidget):
             print "Current Working Directory :"+self.cur_dir
             self.checkSupportFiles()
             if self.file_extension == ".vhdl":
+                self.errorFlag = False
                 self.createModelDirectory()
                 self.addingModelInModpath()
                 self.createModelFiles()
                 self.runMake()
                 self.runMakeInstall()
             else:
-                QtGui.QMessageBox.about(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
+                QtGui.QMessageBox.information(self,'Message','''<b>Important Message.</b><br/><br/>This accepts only <b>.vhdl</b> file ''')
         except Exception as e:
-            QtGui.QMessageBox.about(self, 'Message','''<b>Error</b><br/><br/>  ''' + str(e))
+            QtGui.QMessageBox.critical(self, 'Error', str(e))
 
 class FileRemover(QtGui.QWidget):
 
