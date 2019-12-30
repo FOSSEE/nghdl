@@ -1,3 +1,4 @@
+--This file uses structural style and uses only std_logic variable type
 library ieee;
 use ieee.std_logic_1164.all;
 
