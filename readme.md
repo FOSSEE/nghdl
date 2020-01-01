@@ -24,9 +24,8 @@ for that model it will actually call the ghdl to get the result.
 
 
 ##How to install?
-1. Clone this repository.
-2. Run `./install-nghdl.sh` It will install ngspice from source code and put it in $HOME.
-3. Set ngspice path in `.bashrc` file. Add `export PATH=/home/{your-username}/ngspice-nghdl/install_dir/bin:$PATH` line in .bashrc
+This module is made available with eSim (Electronic Circuit Simulation). 
+Refer https://esim.fossee.in/ for more information.
 
 
 ##Few words about installed code structure.

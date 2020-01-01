@@ -55,7 +55,7 @@
 - Generates the `lib` file for the model, to be used by `KiCad`
 - This is generated from a template stored at  `Appconfig.py`
 - The generated `lib` is stored at `~/eSim_kicad.lib`
-- Also creates `xml` file for the model, which is stored at eSim under `eSimLoc/src/modelParamXML/Nghdl
+- Also creates `xml` file for the model, which is stored at eSim under `eSimLoc/src/modelParamXML/Nghdl`
 
 <br/>
 
@@ -88,7 +88,7 @@ Finally all the relevant files are generated, now while executing ngspice, we ne
 
 <br/>
 
-- To install ghdl from source, [this](https://github.com/ghdl/ghdl/issues/550) Github issue might be helpfu, the steps are -
+- To install ghdl from source, [this](https://github.com/ghdl/ghdl/issues/550) Github issue might be helpful, the steps are -
 - - `sudo ./configure --with-llvm-config`
 - - sudo make
 - - sudo make install
@@ -99,4 +99,3 @@ Finally all the relevant files are generated, now while executing ngspice, we ne
 
 - Also once ghdl is installed, to check syntax of your vhdl files use -
 `ghdl -s <vhdl file location>`
-- Note that we need `std_vector_logic` as our ports here
