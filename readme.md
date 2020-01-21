@@ -4,7 +4,7 @@ NGHDL Installers
 It contains all the documenation for making installations on various platforms.
 
 
-##How to package NGHDL with eSim?
+## How to package NGHDL with eSim?
 1. Add GHDL executable and the corresponding installer for the target OS in the `nghdl` folder.
 
 > Note : Instructions on how to generate GHDL executable and distribute it are provided under 

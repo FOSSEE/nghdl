@@ -81,6 +81,8 @@ function installDependency
             cd ghdl-0.36/
             #Copy compiled ghdl to system path
             sudo cp bin/* /usr/local/bin/
+            #Make it executable
+    		sudo chmod 755 /usr/local/bin/ghdl*
             if [ $? -ne 0 ]; then
                 echo "Unable to install ghdl-0.36 LLVM (@bin)"
                 echo "Exiting installation..."
@@ -158,6 +160,8 @@ function installNgspice
                     echo "Remove earlier installations at /usr/bin/ngspice and try again..."
                     exit 1
                 else
+                	#Make it executable
+    				sudo chmod 755 /usr/bin/ngspice
                     echo "Added softlink for Ngspice"
                 fi
 
@@ -213,6 +217,8 @@ function createSoftLink
             echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
             exit 1
         else
+        	#Make it executable
+    		sudo chmod 755 nghdl
             echo "Added softlink for NGHDL..............................."
         fi
     fi

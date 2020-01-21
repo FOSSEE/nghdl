@@ -40,8 +40,8 @@ function installDependency
         exit 1
     fi
     
-    echo "Installing GNAT..........................................."
-    sudo apt install -y gnat
+    echo "Installing GNAT-5........................................."
+    sudo apt install -y gnat-5
     if [ $? -ne 0 ]; then
         echo -e "\n\n\"GNAT\" dependency couldn't be installed.\nKindly resolve above errors and try again."
         exit 1
@@ -54,6 +54,14 @@ function installDependency
         exit 1
     fi
   
+    # Specific dependency for canberra-gtk modules
+    echo "Installing Gtk Canberra modules..........................."
+    sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"canberra-gtk-module\" dependency couldn't be installed.\nKindly resolve above errors and try again."
+        exit 1
+    fi  
+
     # Specific dependency for nvidia graphic cards
     echo "Installing graphics dependency for ngspice souce build"
     echo "Installing libxaw7........................................"
@@ -129,7 +137,7 @@ function installNgspice
         cd $src_dir
         tar -xJf $ngspice.tar.xz -C $HOME 
         if [ "$?" == 0 ];then 
-            echo "Ngspice extracted sucessfuly to $HOME "
+            echo "Ngspice extracted sucessfuly to $HOME"
             #change to ngspice-nghdl directory
             cd $HOME/$ngspice
             #Make local install directory
@@ -218,7 +226,7 @@ function createSoftLink
             exit 1
         else
         	#Make it executable
-    		sudo chmod 755 nghdl
+    		sudo chmod 755 /usr/bin/nghdl
             echo "Added softlink for NGHDL..............................."
         fi
     fi
@@ -261,8 +269,8 @@ elif [ $option == "--uninstall" ];then
     sudo apt purge -y libxaw7-dev
     echo "Removing GHDL............."
     sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
-    echo "Removing GNAT......................"
-    sudo apt purge -y gnat
+    echo "Removing GNAT-5...................."
+    sudo apt purge -y gnat-5
 else 
     echo "Please select the proper operation."
     echo "--install"
