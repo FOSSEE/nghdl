@@ -14,7 +14,7 @@
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Monday 20 January 2020 16:30
+#       CREATED: Wednesday 22 January 2020 16:30
 #      REVISION:  ---
 #===============================================================================
 
@@ -88,18 +88,25 @@ function installDependency
                 echo "Exiting installation..."
                 exit 1
             fi
+
             sudo cp include/* /usr/local/include/
+            #Make it accessible
+            sudo chmod 755 /usr/local/include/vpi_user.h
             if [ $? -ne 0 ]; then
                 echo "Unable to install ghdl-0.36 LLVM (@include)"
                 echo "Exiting installation..."
                 exit 1
             fi
+
             sudo cp -r lib/* /usr/local/lib/
+            #Make it accessible
+            sudo chmod -R 755 /usr/local/lib/ghdl/
             if [ $? -ne 0 ]; then
                 echo "Unable to install ghdl-0.36 LLVM (@lib)"
                 echo "Exiting installation..."
                 exit 1
             fi
+
             echo "Removing unused part of ghdl-0.36 LLVM..."
     		rm -rf ../ghdl-0.36
             echo "GHDL installed successfully......................."
@@ -145,7 +152,7 @@ function installNgspice
             #dirty fix for adding patch to ngspice base code
             cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
 
-            make
+            make -j$(nproc)
             make install
             if [ "$?" == 0 ];then
                 echo "Removing previously installed Ngspice (if any)..."
@@ -154,9 +161,10 @@ function installNgspice
                 echo "Ngspice installed sucessfully................."
                 echo "Adding softlink for the installed Ngspice....."
 
+                sudo rm /usr/bin/ngspice
                 sudo ln -s $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
                 if [ $? -ne 0 ];then
-                    echo "Failed to add Ngspice softlink"
+                    echo "Failed to add Ngspice softlink............"
                     echo "Remove earlier installations at /usr/bin/ngspice and try again..."
                     exit 1
                 else
