@@ -3,21 +3,24 @@ Debian Installer Documentation
 
 
 It contains all the documenation for installers on Debian (Ubuntu 14.04 and above).
+Separate installers are required to resolve dependencies only of GHDL and are mentioned below. 
 
 
 ## Differences in Ubuntu 14.04, Ubuntu 16.04 and Ubuntu 18.04 installers:
 1. Dependency on gnat :
 	- Ubuntu 14.04 : gnat (v4.6)
-	- Ubuntu 16.04+: gnat-5 (v5.4)
+	- Ubuntu 16.04 : gnat-5 (v5.4)
+	- Ubuntu 18.04 : gnat-5 (v5.5)
 2. Dependency on llvm :
 	- Available version on Ubuntu 14.04 : llvm (v3.4)
 	- Available version on Ubuntu 16.04 : llvm (v3.5)
 	- Available version on Ubuntu 18.04 : llvm (v6.0)
 	- Requires llvm version between 3.5 and 3.9 for compilation of GHDL with llvm config
+	- Ubuntu 18.04 requires installation of LLVM on target machine as it is used during runtime of GHDL as shared library.
 3. Dependency on gcc : 
 	- Ubuntu 14.04 and 16.04 : gcc (v5.4.0) is available without pie (i.e. position-independent executable)
 	- Ubuntu 18.04 : gcc (v7.4.0) is available with pie enabled as default option.
-	- Refer [this](https://github.com/ghdl/ghdl/issues/213) Github issue for dependency on gcc GHDL on Ubuntu 18.04 and above.
+	- Refer [this](https://github.com/ghdl/ghdl/issues/213) Github issue for dependency on gcc for Ubuntu 18.04 and above.
 
 
 ## GHDL Compilation:

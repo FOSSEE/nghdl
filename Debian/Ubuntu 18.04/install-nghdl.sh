@@ -43,9 +43,16 @@ function installDependency
     echo "Installing GNAT-5........................................."
     sudo apt install -y gnat-5
     if [ $? -ne 0 ]; then
-        echo -e "\n\n\"GNAT\" dependency couldn't be installed.\nKindly resolve above errors and try again."
+        echo -e "\n\n\"GNAT-5\" dependency couldn't be installed.\nKindly resolve above errors and try again."
         exit 1
     fi
+
+	echo "Installing LLVM-3.9......................................."
+    sudo apt install -y llvm-3.9
+    if [ $? -ne 0 ]; then
+        echo -e "\n\n\"LLVM-3.9\" dependency couldn't be installed.\nKindly resolve above errors and try again."
+        exit 1
+    fi    
 
     echo "Installing Zlib1g-dev....................................."
     sudo apt install -y zlib1g-dev
