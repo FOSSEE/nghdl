@@ -29,8 +29,8 @@ class AutoSchematic(QtGui.QWidget):
         elif (xmlFound == self.xml_loc + '/Nghdl'):
             print('Library already exists...')
             ret = QtGui.QMessageBox.warning(
-                self, "Warning", '''<b>Library files for this model already '''
-                '''exist. Do you want to overwrite it?</b><br/>
+                self, "Warning", '''<b>Library files for this model ''' +
+                '''already exist. Do you want to overwrite it?</b><br/>
                 If yes press ok, else cancel it and ''' +
                 '''change the name of your vhdl file.''',
                 QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel
@@ -251,10 +251,12 @@ class PortInfo:
             if re.match(r'^\s*$', line):
                 pass
             else:
-                in_items = re.findall("IN",
-                                      line, re.MULTILINE | re.IGNORECASE)
-                out_items = re.findall("OUT",
-                                       line, re.MULTILINE | re.IGNORECASE)
+                in_items = re.findall(
+                    "IN", line, re.MULTILINE | re.IGNORECASE
+                )
+                out_items = re.findall(
+                    "OUT", line, re.MULTILINE | re.IGNORECASE
+                )
             if in_items:
                 input_list.append(line.split())
             if out_items:
