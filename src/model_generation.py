@@ -104,10 +104,12 @@ for line in data:
     if re.match(r'^\s*$', line):
         pass
     else:
-        in_items = re.findall("IN", line,
-                              re.MULTILINE | re.IGNORECASE)
-        out_items = re.findall("OUT", line,
-                               re.MULTILINE | re.IGNORECASE)
+        in_items = re.findall(
+            "IN", line, re.MULTILINE | re.IGNORECASE
+        )
+        out_items = re.findall(
+            "OUT", line, re.MULTILINE | re.IGNORECASE
+        )
         if in_items:
             input_list.append(line.split())
         else:

@@ -151,7 +151,7 @@ class Mainwindow(QtGui.QWidget):
                 print("Exiting application")
                 quit()
         else:
-            print("Creating model "+self.modelname+" directory")
+            print("Creating model " + self.modelname + " directory")
             os.mkdir(self.modelname)
 
     def addingModelInModpath(self):
@@ -159,15 +159,13 @@ class Mainwindow(QtGui.QWidget):
               " in Modpath file " + self.digital_home)
         # Adding name of model in the modpath file
         # Check if the string is already in the file
-        with open(self.digital_home + "/modpath.lst", 'a+') as f:
+        with open(self.digital_home + "/modpath.lst", 'r+') as f:
             flag = 0
             for line in f:
                 if line.strip() == self.modelname:
                     print("Found model "+self.modelname+" in the modpath.lst")
                     flag = 1
                     break
-                else:
-                    pass
 
             if flag == 0:
                 print("Adding model name "+self.modelname+" into modpath.lst")
@@ -229,8 +227,7 @@ class Mainwindow(QtGui.QWidget):
     @QtCore.pyqtSlot()
     def readAllStandard(self):
         self.termedit.append(
-            str(self.process.readAllStandardOutput().data(),
-                encoding='utf-8')
+            str(self.process.readAllStandardOutput().data(), encoding='utf-8')
         )
         stderror = self.process.readAllStandardError()
         if stderror.toUpper().contains("ERROR"):
