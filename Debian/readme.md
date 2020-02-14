@@ -1,12 +1,12 @@
-Debian Installer Documentation 
+Ubuntu Installer Documentation 
 ====
 
 
-It contains all the documenation for installers on Debian (Ubuntu 14.04 and above).
+It contains all the documenation for installers on Ubuntu 14.04 and above.
 Separate installers are required to resolve dependencies only of GHDL and are mentioned below. 
 
 
-## Differences in Ubuntu 14.04, Ubuntu 16.04 and Ubuntu 18.04 installers:
+## Differences in Ubuntu 14.04, Ubuntu 16.04 and above installers:
 1. Dependency on gnat :
 	- Ubuntu 14.04 : gnat (v4.6)
 	- Ubuntu 16.04 : gnat-5 (v5.4)
@@ -29,17 +29,11 @@ Separate installers are required to resolve dependencies only of GHDL and are me
 3. For distribution of GHDL (v0.36) on Ubuntu 16.04 and above, follow the steps:
 	a. Download source code (v0.36) from GHDL's Github page.
 	b. Extract the tar file, open a terminal and change directory one-level inside.
-	c. First install gnat dependency as:
+	c. First install gnat(v5) dependency as:
 	
 		$ sudo apt install gnat-5
 
-	d. Install llvm dependency and verify that version of llvm is between 3.5 and 3.9
-
-		- For Ubuntu 16.04 :
-
-			$ sudo apt install llvm
-
-		- For Ubuntu 18.04 :
+	d. Install llvm(v3.9) dependency as:
 
 			$ sudo apt install llvm-3.9
 
@@ -47,28 +41,8 @@ Separate installers are required to resolve dependencies only of GHDL and are me
 
 		$ sudo apt install clang
 
-
 	f. To compile GHDL, type following commands:
 
-		$ mkdir -p install_dir
-		$ mkdir -p release
-		$ cd release/
-
-		- For Ubuntu 16.04 :
-
-			$ ../configure --with-llvm-config --prefix=<absolute_path_to_install_dir>
-
-		- For Ubuntu 18.04 :
-
-			$ ../configure --with-llvm-config=/usr/bin/llvm-config-3.9 --prefix=<absolute_path_to_install_dir>
-
-		$ make
-		$ make install
-
-	f. GHDL executables will be made in install_dir folder which can be used for distribution.
-	g. Note that target machine should have the same version of gnat and OS as that of the source machine on which GHDL was compiled.
-
-
-## How to package GHDL executable with NGHDL?
-1. Rename `install_dir` directory to the `ghdl-<version>` and compress it to `.tar.xz` format.
-2. Place this compressed file along with the installer file (`install-nghdl.sh`) in the `nghdl` folder.
+		$ sudo ./configure --with-llvm-config=/usr/bin/llvm-config-3.9
+		$ sudo make
+		$ sudo make install
