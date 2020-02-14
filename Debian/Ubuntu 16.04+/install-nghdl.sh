@@ -270,7 +270,7 @@ elif [ $option == "--uninstall" ];then
     echo "Removing GHDL......................"
     sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
     echo "Removing LLVM......................"
-    sudo apt-get remove -y llvm-3.9
+    sudo apt-get purge -y llvm-3.9
     echo "Removing GNAT-5...................."
     sudo apt purge -y gnat-5
 else 
