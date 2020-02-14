@@ -35,7 +35,7 @@ Separate installers are required to resolve dependencies only of GHDL and are me
 
 	d. Install llvm(v3.9) dependency as:
 
-			$ sudo apt install llvm-3.9
+		$ sudo apt install llvm-3.9
 
 	e. Install clang dependency:
 
