@@ -12,6 +12,7 @@ from PyQt4 import QtCore
 from configparser import SafeConfigParser
 from Appconfig import Appconfig
 from createKicadLibrary import AutoSchematic
+from model_generation import ModelGeneration
 
 
 class Mainwindow(QtGui.QWidget):
@@ -20,7 +21,6 @@ class Mainwindow(QtGui.QWidget):
         # super(Mainwindow, self).__init__()
         QtGui.QMainWindow.__init__(self)
         print("Initializing..........")
-        print("running with Python version:", sys.version_info[0])
 
         self.home = os.path.expanduser("~")
         # Reading all variables from config.ini
@@ -86,7 +86,7 @@ class Mainwindow(QtGui.QWidget):
         except BaseException:
             pass
         print("Close button clicked")
-        quit()
+        sys.exit()
 
     def browseFile(self):
         print("Browse button clicked")
@@ -149,7 +149,7 @@ class Mainwindow(QtGui.QWidget):
                 os.mkdir(self.modelname)
             else:
                 print("Exiting application")
-                quit()
+                sys.exit()
         else:
             print("Creating model " + self.modelname + " directory")
             os.mkdir(self.modelname)
@@ -177,11 +177,16 @@ class Mainwindow(QtGui.QWidget):
         print("Create Model Files Called")
         os.chdir(self.cur_dir)
         print("Current Working directory changed to " + self.cur_dir)
-        cmd = ("python3 " + self.src_home +
-               "/src/model_generation.py " + str(self.ledit.text()))
-        stdouterr = subprocess.Popen(cmd, shell=True)
-        stdouterr.wait()
-        print(stdouterr)
+
+        # Generate model corresponding to the uploaded VHDL file
+        model = ModelGeneration(str(self.ledit.text()))
+        model.readPortInfo()
+        model.createCfuncModFile()
+        model.createIfSpecFile()
+        model.createTestbench()
+        model.createServerScript()
+        model.createSockScript()
+
         # Moving file to model directory
         path = os.path.join(self.digital_home, self.modelname)
         shutil.move("cfunc.mod", path)
@@ -247,7 +252,7 @@ class Mainwindow(QtGui.QWidget):
             print("make command process pid ---------- >", self.process.pid())
         except BaseException:
             print("There is error in 'make' ")
-            quit()
+            sys.exit()
 
     def runMakeInstall(self):
         print("run Make Install Called")
@@ -271,7 +276,7 @@ class Mainwindow(QtGui.QWidget):
 
         except BaseException:
             print("There is error in 'make install' ")
-            quit()
+            sys.exit()
 
     def createSchematicLib(self):
         if Appconfig.esimFlag == 1:
