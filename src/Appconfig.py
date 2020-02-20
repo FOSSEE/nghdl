@@ -9,7 +9,7 @@ class Appconfig:
     parser_esim.read(os.path.join(home, os.path.join('.esim', 'config.ini')))
     try:
         src_home = parser_esim.get('eSim', 'eSim_HOME')
-        xml_loc = os.path.join(src_home, 'src/modelParamXML')
+        xml_loc = os.path.join(src_home, 'library/modelParamXML')
         lib_loc = os.path.expanduser('~')
     except BaseException:
         pass
