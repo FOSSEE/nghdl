@@ -164,7 +164,7 @@ function installNgspice
                 echo "Adding softlink for the installed Ngspice....."
 
                 sudo rm /usr/bin/ngspice
-                sudo ln -s $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
+                sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
                 if [ $? -ne 0 ];then
                     echo "Failed to add Ngspice softlink............"
                     echo "Remove earlier installations at /usr/bin/ngspice and try again..."
@@ -216,10 +216,10 @@ function createSoftLink
     if [[ -L nghdl ]];then
         echo "Symlink was already present"
         sudo unlink nghdl
-        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
+        sudo ln -sf $src_dir/src/nghdl nghdl
     else
         echo "Creating symlink"
-        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
+        sudo ln -sf $src_dir/src/nghdl nghdl
         if [ $? -ne 0 ];then
             echo "Failed to add NGHDL softlink"
             echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
@@ -263,7 +263,6 @@ if [ $option == "--install" ];then
     createSoftLink
 
 elif [ $option == "--uninstall" ];then
-    echo "Removing NGHDL....................."
     sudo rm -rf $HOME/ngspice-nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
     echo "Removing libxaw7-dev..............."
     sudo apt purge -y libxaw7-dev

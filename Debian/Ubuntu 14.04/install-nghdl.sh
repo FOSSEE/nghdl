@@ -14,7 +14,7 @@
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Wednesday 22 January 2020 16:30
+#       CREATED: Friday 14 February 2020 16:30
 #      REVISION:  ---
 #===============================================================================
 
@@ -32,6 +32,8 @@ timestamp=`echo $sysdate|awk '{print $3"_"$2"_"$6"_"$4 }'`
 #All functions goes here
 function installDependency
 {
+
+    echo "Installing dependencies for ghdl-0.36 LLVM................"
 
     echo "Installing Make..........................................."
     sudo apt install -y make
@@ -116,7 +118,7 @@ function installDependency
             exit 1
         fi
     else
-        echo "GHDL already exists..."
+        echo "GHDL already exists....."
         echo "Leaving ghdl-0.36 LLVM installation"
     fi
     
@@ -136,7 +138,7 @@ function installNgspice
         cd $src_dir
         tar -xJf $ngspice.tar.xz -C $HOME 
         if [ "$?" == 0 ];then 
-            echo "Ngspice extracted sucessfuly to $HOME "
+            echo "Ngspice extracted sucessfuly to $HOME"
             #change to ngspice-nghdl directory
             cd $HOME/$ngspice
             #Make local install directory
@@ -162,7 +164,7 @@ function installNgspice
                 echo "Adding softlink for the installed Ngspice....."
 
                 sudo rm /usr/bin/ngspice
-                sudo ln -s $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
+                sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
                 if [ $? -ne 0 ];then
                     echo "Failed to add Ngspice softlink............"
                     echo "Remove earlier installations at /usr/bin/ngspice and try again..."
@@ -172,11 +174,9 @@ function installNgspice
     				sudo chmod 755 /usr/bin/ngspice
                     echo "Added softlink for Ngspice"
                 fi
-
             else 
                 echo "There was some error while installing Ngspice"
             fi
-
         else 
             echo "Unable to extract Ngspice tar file"
             exit 1;
@@ -216,10 +216,10 @@ function createSoftLink
     if [[ -L nghdl ]];then
         echo "Symlink was already present"
         sudo unlink nghdl
-        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
+        sudo ln -sf $src_dir/src/nghdl nghdl
     else
         echo "Creating symlink"
-        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
+        sudo ln -sf $src_dir/src/nghdl nghdl
         if [ $? -ne 0 ];then
             echo "Failed to add NGHDL softlink"
             echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
@@ -263,11 +263,10 @@ if [ $option == "--install" ];then
     createSoftLink
 
 elif [ $option == "--uninstall" ];then
-    echo "Removing NGHDL....................."
     sudo rm -rf $HOME/ngspice-nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
     echo "Removing libxaw7-dev..............."
     sudo apt purge -y libxaw7-dev
-    echo "Removing GHDL............."
+    echo "Removing GHDL......................"
     sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
     echo "Removing GNAT......................"
     sudo apt purge -y gnat
