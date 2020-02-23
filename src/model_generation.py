@@ -987,7 +987,8 @@ class ModelGeneration:
         )
         start_server.write("chmod 775 sock_pkg_create.sh &&\n")
         start_server.write("./sock_pkg_create.sh $1 $2 &&\n")
-        start_server.write("ghdl -a sock_pkg.vhdl &&\n")
+        start_server.write("ghdl -i *.vhdl &&\n")
+        start_server.write("ghdl -a *.vhdl &&\n")
         start_server.write("ghdl -a "+self.fname+" &&\n")
         start_server.write(
             "ghdl -a "+self.fname.split('.')[0]+"_tb.vhdl  &&\n"
