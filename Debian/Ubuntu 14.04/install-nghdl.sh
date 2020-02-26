@@ -163,17 +163,17 @@ function installNgspice
                 echo "Ngspice installed sucessfully................."
                 echo "Adding softlink for the installed Ngspice....."
 
+                #Make it executable
+    			sudo chmod 755 $HOME/$ngspice/install_dir/bin/ngspice
+
                 sudo rm /usr/bin/ngspice
                 sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
                 if [ $? -ne 0 ];then
                     echo "Failed to add Ngspice softlink............"
                     echo "Remove earlier installations at /usr/bin/ngspice and try again..."
-                    exit 1
-                else
-                	#Make it executable
-    				sudo chmod 755 /usr/bin/ngspice
-                    echo "Added softlink for Ngspice"
+                    exit 1                    
                 fi
+                echo "Added softlink for Ngspice...................."
             else 
                 echo "There was some error while installing Ngspice"
             fi
@@ -210,7 +210,9 @@ function createConfigFile
 
 function createSoftLink
 {
-    
+    #Make it executable
+    sudo chmod 755 $src_dir/src/nghdl
+
     ## Creating softlink 
     cd /usr/local/bin
     if [[ -L nghdl ]];then
@@ -224,12 +226,10 @@ function createSoftLink
             echo "Failed to add NGHDL softlink"
             echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
             exit 1
-        else
-        	#Make it executable
-    		sudo chmod 755 nghdl
-            echo "Added softlink for NGHDL..............................."
         fi
     fi
+    echo "Added softlink for NGHDL..............................."
+
     cd $pwd
 
 }
