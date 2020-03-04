@@ -1,6 +1,9 @@
--- By Ashutosh Jha
+--	This helper function was written by Ashutosh Jha
+--	Latest edit - 3:27 AM, 4/3/2020
 
 package ghdl_access is
+
+
   -- Defines a pointer to an integer:
 type int_access is access integer;
 
@@ -29,9 +32,6 @@ function get_ptr5 return int_access;
 	attribute foreign of get_ptr5 :
 		function is "VHPIDIRECT get_ptr5";
 
-function get_ptr6 return int_access;
-	attribute foreign of get_ptr6 :
-		function is "VHPIDIRECT get_ptr6";
 
   -- declaration of functions in C
 procedure output(f : integer);
@@ -50,7 +50,6 @@ procedure MapToRam(f : integer);
 	shared variable var3 : int_access := get_ptr3;
 	shared variable var4 : int_access := get_ptr4;
 	shared variable var5 : int_access := get_ptr5;
-	shared variable var6 : int_access := get_ptr6;
 
 end ghdl_access;
 
@@ -84,11 +83,6 @@ package body ghdl_access is
 	begin
 		assert false report "VHPI" severity failure;
 	end get_ptr5;
-
-	function get_ptr6 return int_access is
-	begin
-		assert false report "VHPI" severity failure;
-	end get_ptr6;
   
 	procedure output(f : integer) is
 	begin

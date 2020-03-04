@@ -1,6 +1,6 @@
 /* This C Code for ATTINY series (specifically ATTINY85) was developed by ASHUTOSH JHA
 
-   Latest edit - 9:24 AM, 3/3/2020
+   Latest edit - 3:22 AM, 4/3/2020
 
    NOTE :- The function MapToRam and output are linked to the VHDL code of ATTINY85
    		   by "ghdl_access.vhdl" file.	*/ 
@@ -9,9 +9,9 @@
 #include<math.h>
 #define size 8192		//8kb ram size for attiny 85
 
-int chg_Pc=0,debugMode=1;
+int debugMode=1;
 int PB0,PB1,PB2,PB3,PB4,PB5;
-
+char chg_Pc=0;
 struct memory			//Structure to store RAM and other registers
 {
 	unsigned char data;
@@ -53,10 +53,6 @@ int * get_ptr5() {
   return &PB5;
 }
 
-int * get_ptr6() {
-  return &chg_Pc;
-}
-
 
 void ClearBins(int binSel)
 {
@@ -92,7 +88,7 @@ void SetRam(int lb, int ub,char val)
 void PrintSREG()
 {
 	printf("\nStatus Register:- \n");
-	printf("\nI: %d ,T: %d ,H: %d ,S: %d ,V: %d ,N: %d ,Z: %d ,C: %d \n",SREG[7].data,SREG[6].data,SREG[5].data,SREG[4].data,SREG[3].data,SREG[2].data,SREG[1].data,SREG[0].data);
+	printf("I: %d ,T: %d ,H: %d ,S: %d ,V: %d ,N: %d ,Z: %d ,C: %d \n",SREG[7].data,SREG[6].data,SREG[5].data,SREG[4].data,SREG[3].data,SREG[2].data,SREG[1].data,SREG[0].data);
 
 }
 
@@ -104,7 +100,7 @@ void PrintRam(int lb, int ub)
 	for(i=lb;i<ub;i+=4)
 		{
 			b1=ram[i+0x2].data,b2=ram[i+0x3].data,b3=ram[i].data,b4=ram[i+0x1].data;
-			printf("instruction %d: %X%X%X%X\n",i,b1,b2,b3,b4);
+			printf("instruction %X: %X%X%X%X\n",i,b1,b2,b3,b4);
 		}
 	printf("\n************************\n");
 }
@@ -387,7 +383,7 @@ void Compute(char pc)			//Function that performs main computation based on curre
 
 		printf("\nAfter Operation - \n");
 		PrintReg(15,32);
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 	}
 
 /************************************************************************************************/	
@@ -412,7 +408,7 @@ void Compute(char pc)			//Function that performs main computation based on curre
 
 		printf("\nAfter Operation - \n");
 		PrintReg(15,32);
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 	}
 
 /************************************************************************************************/
@@ -436,7 +432,7 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		reg[b3+16].data -= reg[b4+16].data;
 		printf("\nAfter Operation - \n");
 		PrintReg(15,32);
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 	}
 
 /************************************************************************************************/
@@ -461,7 +457,7 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		reg[b3+16].data -= a;
 		printf("\nAfter Operation - \n");
 		PrintReg(15,32);
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 
 	}
 
@@ -487,7 +483,7 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		reg[b3+16].data -= a - SREG[0].data;
 		printf("\nAfter Operation - \n");
 		PrintReg(15,32);
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 	}
 
 /************************************************************************************************/
@@ -496,7 +492,7 @@ void Compute(char pc)			//Function that performs main computation based on curre
 	{
 		printf("LDI instruction decoded\n");
 		reg[b3+16].data = b2*16 + b4;
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 	}
 
 /************************************************************************************************/	
@@ -506,14 +502,17 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		printf("OUT instruction decoded\n");
 		if(b4==0x8)									//Setting PORTB out pins
 			SetPins(reg[b3+16].data);				//Setting DDRB
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 	}
 
 /************************************************************************************************/	
 
 	else if(b1==0xC)								//RJMP
 	{
-		int bin[16]={0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1};
+		int bin[16]={0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},carr;
+		int temp[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    	int temp2[16]={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    	char jump;
 		printf("RJMP instruction decoded");
 
 		i=8;
@@ -539,7 +538,22 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		}
 	    
 		for(i=0;i<16;i++)
-			   bin[i] = !bin[i];
+		{
+			bin[i] = !bin[i];
+			temp[i] = bin[i];
+		}
+
+		t=0;
+		carr=0;
+		for(i=0;i<16;i++)
+	    	{
+		        t = temp[i] + temp2[i] + carr;
+		        bin[i] = temp[i] ^ temp2[i] ^ carr;
+		        if(t<=1)
+		        carr = 0;
+		        else
+		        carr = 1;
+		    }
 
 		j=0;
 		for(i=0;i<16;i++)
@@ -547,8 +561,10 @@ void Compute(char pc)			//Function that performs main computation based on curre
 			j += bin[i]*pow(2,i);
 		}
 
-		printf("\nJumping back: %d instructions\n",j);
-		chg_Pc = -4*j;
+		jump = j;
+
+		printf("\nJumping back: %X instructions\n",jump-1);
+		chg_Pc += -2*(jump-1);
 	}
 
 /************************************************************************************************/
@@ -597,10 +613,10 @@ void Compute(char pc)			//Function that performs main computation based on curre
 			}
 
 			printf("\nJumping back: %d instructions\n",j);
-			chg_Pc = -4*j;
+			chg_Pc += -4*j;
 		}
 		else
-			chg_Pc = 4;
+			chg_Pc += 0x4;
 
 	}
 
@@ -609,13 +625,16 @@ void Compute(char pc)			//Function that performs main computation based on curre
 	else if(b1==0x0 && b2==0x0)						//NOP
 	{
 		printf("NOP instruction decoded");
-		chg_Pc = 4;
+		chg_Pc += 0x4;
 	}
 }
 
-void output(int pc_vhdl)			//Functoin to compute output for current instruction
+void output(int flag)			//Functoin to compute output for current instruction
 {
-	printf("\nPC: %d\n",pc_vhdl);
-	Compute(pc_vhdl);
-	PrintSREG();
+	if(flag == 1)
+	{
+		printf("\nPC: %X\n",chg_Pc);
+		Compute(chg_Pc);
+		PrintSREG();
+	}
 }
