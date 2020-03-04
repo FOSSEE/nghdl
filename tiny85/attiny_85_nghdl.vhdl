@@ -3,7 +3,6 @@
 -- NOTE :- The function MapToRam and output are linked to the C code of ATTINY85
 -- by "ghdl_access.vhdl" file 
 
-
 library ieee;
 use ieee.std_logic_1164.all; 
 use ieee.numeric_std.all;
