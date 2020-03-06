@@ -12,5 +12,4 @@ Things updated -
 3. VHDL, ghdl_access and C files.
 
 Things to be updated - 
-1. Documentation (Since PC implemented in C insted aof VHDL.
-2. RJMP needs to be debugged. (giving wrong value at C000)
+1. Documentation (Since PC implemented in C insted of VHDL).
