@@ -1,8 +1,8 @@
 /* This C Code for ATTINY series (specifically ATTINY85) was developed by ASHUTOSH JHA
 
-   Latest edit - 1:49 PM, 5/3/2020
+   Latest edit - 11:42 PM, 6/3/2020
 
-   NOTE :- The function MapToRam and output are linked to the VHDL code of ATTINY85
+   **NOTE :- The functions MapToRam and output are linked to the VHDL code of ATTINY85
    		   by "ghdl_access.vhdl" file.	*/ 
 
 #include<stdio.h>
@@ -528,13 +528,14 @@ void Compute()			//Function that performs main computation based on current inst
 			printf("SBIW instruction decoded\n");
 			PrintReg(15,32);
 		}
-	    char a=0,b=0,c=0;
-	    int rd1,rd2,carr;
+	    char b=0;
+	    int rd1,rd2;
 	    int arr2[16];
 	    for(i=0;i<16;i++)
 	        arr2[i]=0;
 	    
 	    // for selecting rd
+	    ClearBins(0);
 	    Hex2Bin(0,b3);
 	    i = bin[0].arr[1];
 	    j = bin[0].arr[0];
@@ -563,6 +564,7 @@ void Compute()			//Function that performs main computation based on current inst
 	    }
 	    
 	    //storing k values into arr2
+	    ClearBins(1);
 	    Hex2Bin(1,b4);
 	    for(i=0;i<4;i++)
 	        arr2[i] = bin[1].arr[i];
@@ -572,24 +574,34 @@ void Compute()			//Function that performs main computation based on current inst
 	    arr2[5] = i;
 	    
 	    //subtracting k value from register pair data
-	    b=0;
-	    if(reg[rd1].data!=0 || reg[rd2].data!=0)
-	    {
-	    	for(i=0;i<16;i++)
-	        b += arr2[i]*pow(2,i);
-		    if(b<reg[rd1].data)
-		    {
-		    	reg[rd1].data -= b;
-		    }
-		    else
-		    {
-		    	reg[rd2].data -= 0x1;
-		    	t = reg[rd1].data - b;
-		    	reg[rd2].data = 0xFF + t;
-		    }
-	    }
+
+	    if(reg[rd1].data== 0 && reg[rd2].data==0)
+	    	{
+	    		SREG[1].data = 1;
+	    		SREG[1].data = 0;
+	    	}
 	    else
-	    	SREG[1].data=1;
+	    	{	
+	    		b=0;
+	    		for(i=0;i<16;i++)
+		        	b += arr2[i]*pow(2,i);
+
+			    if(b <= reg[rd1].data)
+			    {
+			    	reg[rd1].data -= b;
+			    }
+			    else if(b>reg[rd1].data && reg[rd2].data>0)
+			    {
+			    	reg[rd2].data -= 0x1;
+			    	t = reg[rd1].data - b;
+			    	reg[rd1].data = 0xFF + t;
+			    }
+
+			    if(reg[rd1].data==0 && reg[rd2].data==0)
+			    	SREG[1].data = 1;
+			    else
+			    	SREG[1].data = 0;
+			}
 
 	    if(debugMode==1)
 		{
@@ -680,10 +692,15 @@ void Compute()			//Function that performs main computation based on current inst
 		}
 
 		jump = j;
+		if (jump > 0)
+			jump--;
 
 		if(debugMode==1)
-			printf("\nJumping back: %X instructions\n",jump-1);
-		PC += -2*(jump-1);
+			printf("\nJumping back: %X instructions\n",jump);
+		if(jump == 0)
+			PC += 0x4;
+		else
+			PC += -4*jump;
 	}
 
 /************************************************************************************************/
