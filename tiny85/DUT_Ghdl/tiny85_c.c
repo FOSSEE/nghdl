@@ -1,17 +1,17 @@
 /* This C Code for ATTINY series (specifically ATTINY85) was developed by ASHUTOSH JHA
 
-   Latest edit - 9:24 AM, 3/3/2020
+   Latest edit - 11:42 PM, 6/3/2020
 
-   NOTE :- The function MapToRam and output are linked to the VHDL code of ATTINY85
+   **NOTE :- The functions MapToRam and output are linked to the VHDL code of ATTINY85
    		   by "ghdl_access.vhdl" file.	*/ 
 
 #include<stdio.h>
 #include<math.h>
 #define size 8192		//8kb ram size for attiny 85
 
-int chg_Pc=0,debugMode=1;
+int debugMode=1;
 int PB0,PB1,PB2,PB3,PB4,PB5;
-
+char PC=0;
 struct memory			//Structure to store RAM and other registers
 {
 	unsigned char data;
@@ -53,10 +53,6 @@ int * get_ptr5() {
   return &PB5;
 }
 
-int * get_ptr6() {
-  return &chg_Pc;
-}
-
 
 void ClearBins(int binSel)
 {
@@ -92,7 +88,7 @@ void SetRam(int lb, int ub,char val)
 void PrintSREG()
 {
 	printf("\nStatus Register:- \n");
-	printf("\nI: %d ,T: %d ,H: %d ,S: %d ,V: %d ,N: %d ,Z: %d ,C: %d \n",SREG[7].data,SREG[6].data,SREG[5].data,SREG[4].data,SREG[3].data,SREG[2].data,SREG[1].data,SREG[0].data);
+	printf("I: %d ,T: %d ,H: %d ,S: %d ,V: %d ,N: %d ,Z: %d ,C: %d \n",SREG[7].data,SREG[6].data,SREG[5].data,SREG[4].data,SREG[3].data,SREG[2].data,SREG[1].data,SREG[0].data);
 
 }
 
@@ -104,7 +100,7 @@ void PrintRam(int lb, int ub)
 	for(i=lb;i<ub;i+=4)
 		{
 			b1=ram[i+0x2].data,b2=ram[i+0x3].data,b3=ram[i].data,b4=ram[i+0x1].data;
-			printf("instruction %d: %X%X%X%X\n",i,b1,b2,b3,b4);
+			printf("instruction %X: %X%X%X%X\n",i,b1,b2,b3,b4);
 		}
 	printf("\n************************\n");
 }
@@ -326,7 +322,8 @@ void MapToRam(int flag)				//Function to map the external hex file contents into
 	for(i=0;i<8;i++)
 		SREG[i].data = 0;
 
-	PrintRam(0,filesize+5);
+	if(debugMode==1)
+		PrintRam(0,filesize+5);
 }
 
 void UpdateSreg()			//Function to update Zero and Signed bit of SREG
@@ -361,17 +358,21 @@ void UpdateSreg()			//Function to update Zero and Signed bit of SREG
 
 }
 
-void Compute(char pc)			//Function that performs main computation based on current instruction
+void Compute()			//Function that performs main computation based on current instruction
 {
 	int i,j,t;
-	unsigned b1=ram[pc+0x2].data,b2=ram[pc+0x3].data,b3=ram[pc].data,b4=ram[pc+0x1].data;
+	unsigned b1=ram[PC+0x2].data,b2=ram[PC+0x3].data,b3=ram[PC].data,b4=ram[PC+0x1].data;
+	if (debugMode==1)
 	printf("instruction:%X%X%X%X\n",b1,b2,b3,b4);
 
 	if(b1==0x0 && b2>=12 && b2<=15)					//ADD
-	{
-		printf("ADD instruction decoded\n");
+	{	
 		int a=reg[b3+16].data,b=reg[b4+16].data;
-		PrintReg(15,32);
+		if(debugMode==1)
+		{
+			PrintReg(15,32);
+			printf("ADD instruction decoded\n");
+		}
 
 		ClearBins(0);
 		Hex2Bin(0,a); 
@@ -385,18 +386,25 @@ void Compute(char pc)			//Function that performs main computation based on curre
 
 		reg[b3+16].data += reg[b4+16].data;
 
-		printf("\nAfter Operation - \n");
-		PrintReg(15,32);
-		chg_Pc = 4;
+		if(debugMode==1)
+		{
+			printf("\nAfter Operation - \n");
+			PrintReg(15,32);
+		}
+		PC += 0x4;
 	}
 
 /************************************************************************************************/	
 
 	else if(b1==0x1 && b2>=12 && b2<=15)			//ADC
 	{
-		printf("ADC instruction decoded\n");
+		
 		int a=reg[b3+16].data,b=reg[b4+16].data;
-		PrintReg(15,32);
+		if(debugMode==1)
+		{
+			PrintReg(15,32);
+			printf("ADC instruction decoded\n");
+		}
 
 		ClearBins(0);
 		Hex2Bin(0,a); 
@@ -410,18 +418,24 @@ void Compute(char pc)			//Function that performs main computation based on curre
 
 		reg[b3+16].data += reg[b4+16].data + SREG[0].data;
 
-		printf("\nAfter Operation - \n");
-		PrintReg(15,32);
-		chg_Pc = 4;
+		if(debugMode==1)
+		{
+			printf("\nAfter Operation - \n");
+			PrintReg(15,32);
+		}
+		PC += 0x4;
 	}
 
 /************************************************************************************************/
 
 	else if(b1==0x1 && b2 >= 8 && b2 <= 11)			//SUB
 	{
-		printf("SUB instruction decoded\n");
 		int a=reg[b3+16].data,b=reg[b4+16].data;
-		PrintReg(15,32);
+		if(debugMode==1)
+		{
+			PrintReg(15,32);
+			printf("SUB instruction decoded\n");
+		}
 		ClearBins(0);
 		Hex2Bin(0,a); 
 		ClearBins(1);
@@ -434,18 +448,24 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		UpdateSreg();
 
 		reg[b3+16].data -= reg[b4+16].data;
-		printf("\nAfter Operation - \n");
-		PrintReg(15,32);
-		chg_Pc = 4;
+		if(debugMode==1)
+		{
+			printf("\nAfter Operation - \n");
+			PrintReg(15,32);
+		}
+		PC += 0x4;
 	}
 
 /************************************************************************************************/
 
 	else if(b1==0x5)								//SUBI
 	{
-		printf("SUBI instruction decoded\n");
 		int a=b2*16 + b4,b=reg[b3+16].data;
-		PrintReg(15,32);
+		if(debugMode==1)
+		{
+			printf("SUBI instruction decoded\n");
+			PrintReg(15,32);
+		}
 
 		ClearBins(0);
 		Hex2Bin(0,a); 
@@ -454,14 +474,17 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		TwosComp(0);
 		ClearBins(2);
 
-		Bin_Add(1,0,2,1,1);
+		Bin_Add(1,0,2,1,0);
 
 		UpdateSreg();
 
 		reg[b3+16].data -= a;
-		printf("\nAfter Operation - \n");
-		PrintReg(15,32);
-		chg_Pc = 4;
+		if(debugMode==1)
+		{
+			printf("\nAfter Operation - \n");
+			PrintReg(15,32);
+		}
+		PC += 0x4;
 
 	}
 
@@ -469,9 +492,12 @@ void Compute(char pc)			//Function that performs main computation based on curre
 
 	else if(b1==0x4)								//SBCI
 	{
-		printf("SBCI instruction decoded\n");
 		int a=b2*16 + b4,b=reg[b3+16].data;
-		PrintReg(15,32);
+		if(debugMode==1)
+		{
+			printf("SBCI instruction decoded\n");
+			PrintReg(15,32);
+		}
 
 		ClearBins(0);
 		Hex2Bin(0,a); 
@@ -485,36 +511,139 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		UpdateSreg();
 
 		reg[b3+16].data -= a - SREG[0].data;
-		printf("\nAfter Operation - \n");
-		PrintReg(15,32);
-		chg_Pc = 4;
+		if(debugMode==1)
+		{
+			printf("\nAfter Operation - \n");
+			PrintReg(15,32);
+		}
+		PC += 0x4;
+	}
+
+/************************************************************************************************/
+
+	else if(b1==0x9 && b2==7)
+	{
+		if(debugMode==1)							//SBIW
+		{
+			printf("SBIW instruction decoded\n");
+			PrintReg(15,32);
+		}
+	    char b=0;
+	    int rd1,rd2;
+	    int arr2[16];
+	    for(i=0;i<16;i++)
+	        arr2[i]=0;
+	    
+	    // for selecting rd
+	    ClearBins(0);
+	    Hex2Bin(0,b3);
+	    i = bin[0].arr[1];
+	    j = bin[0].arr[0];
+	    
+	    t = i*2 + j;
+	    
+	    if(t==0)
+	    {
+	        rd1 = 24;
+	        rd2 = rd1 + 1;
+	    }
+	    else if(t==1)
+	    {
+	        rd1 = 26;
+	        rd2 = rd1 + 1;
+	    }
+	    else if(t==2)
+	    {
+	        rd1 = 28;
+	        rd2 = rd1 + 1;
+	    }
+	    else if(t==3)
+	    {
+	        rd1 = 30;
+	        rd2 = rd1 + 1;
+	    }
+	    
+	    //storing k values into arr2
+	    ClearBins(1);
+	    Hex2Bin(1,b4);
+	    for(i=0;i<4;i++)
+	        arr2[i] = bin[1].arr[i];
+	    i = bin[0].arr[3];
+	    j = bin[0].arr[2];
+	    arr2[4] = j;
+	    arr2[5] = i;
+	    
+	    //subtracting k value from register pair data
+
+	    if(reg[rd1].data== 0 && reg[rd2].data==0)
+	    	{
+	    		SREG[1].data = 1;
+	    		SREG[1].data = 0;
+	    	}
+	    else
+	    	{	
+	    		b=0;
+	    		for(i=0;i<16;i++)
+		        	b += arr2[i]*pow(2,i);
+
+			    if(b <= reg[rd1].data)
+			    {
+			    	reg[rd1].data -= b;
+			    }
+			    else if(b>reg[rd1].data && reg[rd2].data>0)
+			    {
+			    	reg[rd2].data -= 0x1;
+			    	t = reg[rd1].data - b;
+			    	reg[rd1].data = 0xFF + t;
+			    }
+
+			    if(reg[rd1].data==0 && reg[rd2].data==0)
+			    	SREG[1].data = 1;
+			    else
+			    	SREG[1].data = 0;
+			}
+
+	    if(debugMode==1)
+		{
+			printf("\nAfter Operation - \n");
+			PrintReg(15,32);
+		}
+		PC += 0x4;
 	}
 
 /************************************************************************************************/
 
 	else if(b1==0xE)								//LDI
 	{
-		printf("LDI instruction decoded\n");
+		if(debugMode==1)
+			printf("LDI instruction decoded\n");
 		reg[b3+16].data = b2*16 + b4;
-		chg_Pc = 4;
+		PC += 0x4;
 	}
 
 /************************************************************************************************/	
 
 	else if(b1==0xB && b2==0xB)						//OUT
 	{
-		printf("OUT instruction decoded\n");
+		if(debugMode==1)
+			printf("OUT instruction decoded\n");
 		if(b4==0x8)									//Setting PORTB out pins
 			SetPins(reg[b3+16].data);				//Setting DDRB
-		chg_Pc = 4;
+		else if(b4==0x7)
+		{}				
+		PC += 0x4;
 	}
 
 /************************************************************************************************/	
 
 	else if(b1==0xC)								//RJMP
 	{
-		int bin[16]={0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1};
-		printf("RJMP instruction decoded");
+		int bin[16]={0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},carr;
+		int temp[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    	int temp2[16]={1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    	char jump;
+    	if(debugMode==1)
+			printf("RJMP instruction decoded");
 
 		i=8;
 		while(b2!=0 && i<12)
@@ -539,7 +668,22 @@ void Compute(char pc)			//Function that performs main computation based on curre
 		}
 	    
 		for(i=0;i<16;i++)
-			   bin[i] = !bin[i];
+		{
+			bin[i] = !bin[i];
+			temp[i] = bin[i];
+		}
+
+		t=0;
+		carr=0;
+		for(i=0;i<16;i++)
+	    	{
+		        t = temp[i] + temp2[i] + carr;
+		        bin[i] = temp[i] ^ temp2[i] ^ carr;
+		        if(t<=1)
+		        carr = 0;
+		        else
+		        carr = 1;
+		    }
 
 		j=0;
 		for(i=0;i<16;i++)
@@ -547,8 +691,16 @@ void Compute(char pc)			//Function that performs main computation based on curre
 			j += bin[i]*pow(2,i);
 		}
 
-		printf("\nJumping back: %d instructions\n",j);
-		chg_Pc = -4*j;
+		jump = j;
+		if (jump > 0)
+			jump--;
+
+		if(debugMode==1)
+			printf("\nJumping back: %X instructions\n",jump);
+		if(jump == 0)
+			PC += 0x4;
+		else
+			PC += -4*jump;
 	}
 
 /************************************************************************************************/
@@ -556,7 +708,8 @@ void Compute(char pc)			//Function that performs main computation based on curre
 	else if(b1==0xf && b2>=4 && b2<=7)				//BRNE
 	{
 		int brne[8],carr=0;
-		printf("BRNE instruction decoded");
+		if(debugMode==1)
+			printf("BRNE instruction decoded");
 		if(SREG[1].data==0)
 		{
 			ClearBins(0);
@@ -596,11 +749,12 @@ void Compute(char pc)			//Function that performs main computation based on curre
 				j += brne[i]*pow(2,i);
 			}
 
-			printf("\nJumping back: %d instructions\n",j);
-			chg_Pc = -4*j;
+			if(debugMode==1)
+				printf("\nJumping back: %X instructions\n",j-1);
+			PC += -4*(j-1);
 		}
 		else
-			chg_Pc = 4;
+			PC += 0x4;
 
 	}
 
@@ -609,13 +763,17 @@ void Compute(char pc)			//Function that performs main computation based on curre
 	else if(b1==0x0 && b2==0x0)						//NOP
 	{
 		printf("NOP instruction decoded");
-		chg_Pc = 4;
+		PC += 0x4;
 	}
 }
 
-void output(int pc_vhdl)			//Functoin to compute output for current instruction
+void output(int flag)			//Functoin to compute output for current instruction
 {
-	printf("\nPC: %d\n",pc_vhdl);
-	Compute(pc_vhdl);
-	PrintSREG();
+	if(flag == 1)
+	{
+		printf("\nPC: %X\n",PC);
+		Compute();
+		if(debugMode==1)
+			PrintSREG();
+	}
 }

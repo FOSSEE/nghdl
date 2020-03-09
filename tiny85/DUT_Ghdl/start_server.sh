@@ -7,11 +7,20 @@ chmod 775 sock_pkg_create.sh &&
 ./sock_pkg_create.sh $1 $2 &&
 ghdl -a sock_pkg.vhdl &&
 
-gcc -c tiny85_c.c -o tiny85_c.o &&           					#Added by Ashutosh Jha
-ghdl -a ghdl_access.vhdl attiny_85_nghdl.vhdl &&    			#Added by Ashutosh Jha
-mv attiny_85_nghdl.o attiny_85_nghdl1.o                        	#Added by Ashutosh Jha
-ld -r -o attiny_85_nghdl.o tiny85_c.o attiny_85_nghdl1.o &&		#Added by Ashutosh Jha
-rm attiny_85_nghdl1.o &&                           				#Added by Ashutosh Jha
+### The following lines (till line 23) are added by Ashutosh Jha
+### Date - 3/3/2020
+
+gcc -c tiny85_c.c -o tiny85_c.o &&  
+# Compiles and generates object file of microcontroller C code
+
+ghdl -a ghdl_access.vhdl attiny_85_nghdl.vhdl &&
+# Compiles and generates object files of VHDL code of helper function and the main model respectively
+
+mv attiny_85_nghdl.o attiny_85_nghdl1.o &&
+ld -r -o attiny_85_nghdl.o tiny85_c.o attiny_85_nghdl1.o &&
+rm attiny_85_nghdl1.o &&
+# The object files of main VHDL and microcontroller C code need to be linked.
+# The above three commands do that
 
 ghdl -a attiny_85_nghdl_tb.vhdl  &&
 ghdl -e -Wl,ghdlserver.o attiny_85_nghdl_tb &&
