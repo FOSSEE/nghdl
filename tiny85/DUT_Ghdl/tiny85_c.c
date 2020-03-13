@@ -2,7 +2,8 @@
 
    Latest edit - 11:42 PM, 6/3/2020
 
-   **NOTE :- The functions MapToRam and output are linked to the VHDL code of ATTINY85
+   **NOTE :- The functions MapToRam and 
+put are linked to the VHDL code of ATTINY85
    		   by "ghdl_access.vhdl" file.	*/ 
 
 #include<stdio.h>
@@ -623,7 +624,7 @@ void Compute()			//Function that performs main computation based on current inst
 
 /************************************************************************************************/	
 
-	else if(b1==0xB && b2==0xB)						//OUT
+	else if(b1==0xB && b2>8)						//OUT
 	{
 		if(debugMode==1)
 			printf("OUT instruction decoded\n");
