@@ -1,31 +1,27 @@
-Ngspice Ghdl Interfacing Documentation 
+Ngspice GHDL Interfacing Documentation 
 ====
 
-It contains all the documenation for Ngspice and Ghdl related work.
+It contains all the documenation for Ngspice and GHDL related work.
 
 > Note: This project is in beta version and has been tested for rings, counters and PWM controllers.
 
 
-## What exactly interfacing of ngspice ghdl do?
-Ngspice support mixed mode simulation. It can simulate both digital and analog component. 
+## How is Ngspice interfaced with GHDL?
+Ngspice supports mixed mode simulation. It can simulate both digital and analog components.
 
-Ngspice has something called model which define the functionality of your circuit,which can be used in the netlist. For example you can create adder model in ngspice and use it in any circuit netlist of ngspice.
+Ngspice has something called code-model which defines the behavior of your component and can be used in the netlist. For example you can create a full-adder's code-model in Ngspice and use it in any circuit netlist of Ngspice.
 
-Now the question is if we already have digital model in ngspice why this interfacing ?
-Well in ngspice it is little tediouse to write your digital model. But many people are familiar with ghdl and can easily write the vhdl code.
-So the idea of interfacing is just to write ghdl code for a model and install it as dummy model in ngspice. So whenever ngspice look 
-for that model it will actually call the ghdl to get the result.
+Now the question is if we already have digital model creation in Ngspice, then why this interfacing?
+
+Well, in Ngspice, it is difficult to write your own digital code-models. Though, many people are familiar with GHDL and can easily write the VHDL code. So the idea of interfacing is just to write VHDL code for a model and use it as a dummy model in Ngspice. Thus, whenever Ngspice looks for that model, it will actually call GHDL to get the results. GHDL's foreign language interface is used for this inter-process communication.
 
 
 ##Pre-requisites
-1. Ubuntu 12.04-16.04 (You can try it on other version and let us know)
-2. Python 2.7
-3. PyQt4
+1. Ubuntu 16.04-18.04 (You can try it on other version and let us know)
+2. GHDL (LLVM)-0.36
+3. Ngspice-31
 
-
-##How to install?
-This module is made available with eSim (Electronic Circuit Simulation). 
-Refer https://esim.fossee.in/ for more information.
+##How to install? This module is made available with eSim (Electronic Circuit Simulation). Refer https://esim.fossee.in/ for more information.
 
 
 ##Few words about installed code structure.
