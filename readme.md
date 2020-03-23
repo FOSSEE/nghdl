@@ -17,33 +17,33 @@ So the idea of interfacing is just to write ghdl code for a model and install it
 for that model it will actually call the ghdl to get the result.
 
 
-##Pre-requisites
+## Pre-requisites
 1. Ubuntu 12.04-16.04 (You can try it on other version and let us know)
 2. Python 2.7
 3. PyQt4
 
 
-##How to install?
+## How to install?
 This module is made available with eSim (Electronic Circuit Simulation). 
 Refer https://esim.fossee.in/ for more information.
 
 
-##Few words about installed code structure.
+## Installed Structure
 1. Ngspice will be installed in home directory $HOME.
 2. Source code for all other file will be present in ~/.esim-nghdl
 3. symlink nghdl is stored in /usr/local/bin
 
 
-##FEATURES:
+## FEATURES
 1. Support for 512 digital models.
 2. Support for digital models upto 64 output ports/pins.
 3. Multiple instances of same digital model.
 
 
-##How to use the Examples provided with NGHDL?
-1. Launch eSim-> go to eSim main window -> Click on NGHDL icon from the left toolbar, click on the 'browse' button, go to ../nghdl/Example/ and locate which example you wish to simulate.
-2. After opening the directory of desired example, locate the vhdl file , click on the "Open" button at the bottom of "Open File" window.
-3. Click on 'upload' button in the NGHDL pop-up window. File will be processed in the backend for few seconds. Now exit the NGHDL window.
-4. Open the desired example under eSim/Examples/NGHDL_Examples/ using the Open Project button, double click on the project when the project is loaded in the "Projects" window.
+## How to use the Examples provided with NGHDL?
+1. Launch eSim --> Click on "NGHDL" icon from the left toolbar --> Click on "Browse" button --> Go to ../nghdl/Example/
+2. Locate the example you wish to simulate, find the VHDL file within that example and click on "Open" button at the bottom of "Open File" window.
+3. Click on "Upload" button in the NGHDL window. File will be processed in the backend for few seconds. Now exit the NGHDL window.
+4. Open the desired example under eSim/Examples/NGHDL_Examples/ using the "Open Project" button, double click on the project when the project is loaded in the "Projects" window.
 5. Click on the "Simulation" button on eSim Main window.
 
