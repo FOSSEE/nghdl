@@ -613,8 +613,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-
-	else if(b1==0xE)								//LDI
+//LDI : AJ 3/3/2020 
+	else if(b1==0xE)								
 	{
 		if(debugMode==1)
 			printf("LDI instruction decoded\n");
@@ -623,6 +623,24 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/	
+// CLC - AJ and SB - 14/03/20
+  else if(b1==0x9 && b2==4 && b3==8 && b4==8)
+{
+   if(debugMode==1)
+    printf("CLC instruction decoded\n");
+    sreg[0].data = 0;
+    PC += 0x4;
+}
+/************************************************************************************************/	
+//SEC - SB and AJ - 14/03/2020
+  else if(b1==0x9 && b2==4 && b3==0 && b4==8)
+{
+   if(debugMode==1)
+    printf("SEC instruction decoded\n");
+    sreg[0].data = 1;
+    PC += 0x4;
+}
+/***********************************************************************************************/	
 
 	else if(b1==0xB && b2>8)						//OUT
 	{
@@ -766,6 +784,7 @@ void Compute()			//Function that performs main computation based on current inst
 		printf("NOP instruction decoded");
 		PC += 0x4;
 	}
+
 }
 
 void output(int flag)			//Functoin to compute output for current instruction

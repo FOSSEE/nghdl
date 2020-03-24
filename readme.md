@@ -1,7 +1,7 @@
-Ngspice Ghdl Interfacing Documentation 
+Ngspice GHDL Interfacing Documentation 
 ====
 
-It contains all the documenation for Ngspice and Ghdl related work.
+It contains all the documenation for Ngspice and GHDL related work.
 
 > Note: This project is in beta version and has been tested for rings, counters and PWM controllers.
 
