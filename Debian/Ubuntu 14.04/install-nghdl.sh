@@ -6,15 +6,15 @@
 #                 or
 #                ./install-nghdl.sh --uninstall
 # 
-#   DESCRIPTION: It is installation script for ngspice and ghdl work (nghdl). 
-# 
+#   DESCRIPTION: It is installation script for Ngspice and GHDL simulators 
+#				 (NGHDL) 
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Friday 14 February 2020 16:30
+#       CREATED: Tuesday 31 March 2020 16:30
 #      REVISION:  ---
 #===============================================================================
 
@@ -24,12 +24,12 @@ config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
 
-#Will be used to take backup of any file
+# Will be used to take backup of any file
 sysdate="$(date)"
 timestamp=`echo $sysdate|awk '{print $3"_"$2"_"$6"_"$4 }'`
 
 
-#All functions goes here
+# All functions goes here
 function installDependency
 {
 
@@ -78,47 +78,47 @@ function installDependency
     if [ $? -ne 0 ]; then
         tar -xJf ghdl-0.36.tar.xz
         if [ "$?" == 0 ]; then
-            echo "ghdl-0.36 successfully extracted.................."
-            echo "Changing directory to ghdl-0.36 installation......"
+            echo "ghdl-0.36 successfully extracted"
+            echo "Changing directory to ghdl-0.36 installation"
             cd ghdl-0.36/
-            #Copy compiled ghdl to system path
+            # Copy compiled ghdl to system path
             sudo cp bin/* /usr/local/bin/
-            #Make it executable
+            # Make it executable
     		sudo chmod 755 /usr/local/bin/ghdl*
             if [ $? -ne 0 ]; then
                 echo "Unable to install ghdl-0.36 LLVM (@bin)"
-                echo "Exiting installation..."
+                echo "Exiting installation"
                 exit 1
             fi
 
             sudo cp include/* /usr/local/include/
-            #Make it accessible
+            # Make it accessible
             sudo chmod 755 /usr/local/include/vpi_user.h
             if [ $? -ne 0 ]; then
                 echo "Unable to install ghdl-0.36 LLVM (@include)"
-                echo "Exiting installation..."
+                echo "Exiting installation"
                 exit 1
             fi
 
             sudo cp -r lib/* /usr/local/lib/
-            #Make it accessible
+            # Make it accessible
             sudo chmod -R 755 /usr/local/lib/ghdl/
             if [ $? -ne 0 ]; then
                 echo "Unable to install ghdl-0.36 LLVM (@lib)"
-                echo "Exiting installation..."
+                echo "Exiting installation"
                 exit 1
             fi
 
             echo "Removing unused part of ghdl-0.36 LLVM..."
     		rm -rf ../ghdl-0.36
-            echo "GHDL installed successfully......................."
+            echo "GHDL installed successfully"
         else
             echo "Unable to extract ghdl-0.36 LLVM"
             echo "Exiting installation"
             exit 1
         fi
     else
-        echo "GHDL already exists....."
+        echo "GHDL already exists......................................."
         echo "Leaving ghdl-0.36 LLVM installation"
     fi
     
@@ -129,39 +129,39 @@ function installNgspice
 {
 
     echo "Installing Ngspice........................................"
-    #Checking if ngspice-nghdl directory is already present in Home directory
+    # Checking if ngspice-nghdl directory is already present in Home directory
     if [ -d $HOME/$ngspice ];then
-        echo "$ngspice directory already exists at $HOME"
-        echo "Leaving Ngspice installation..."
+        echo "$ngspice directory already exists at $HOME................"
+        echo "Leaving Ngspice installation"
     else
-        #Extracting Ngspice to Home Directory
+        # Extracting Ngspice to Home Directory
         cd $src_dir
         tar -xJf $ngspice.tar.xz -C $HOME 
         if [ "$?" == 0 ];then 
             echo "Ngspice extracted sucessfuly to $HOME"
-            #change to ngspice-nghdl directory
+            # Change to ngspice-nghdl directory
             cd $HOME/$ngspice
-            #Make local install directory
+            # Make local install directory
             mkdir -p install_dir
-            #Make release directory for build
+            # Make release directory for build
             mkdir -p release
-            #Change to release directory
+            # Change to release directory
             cd release
-            echo "Configuring Ngspice..."
+            echo "Configuring Ngspice"
             sleep 2
             ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/
             
-            #dirty fix for adding patch to ngspice base code
+            # Temp fix for adding patch to ngspice base code
             cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
 
             make -j$(nproc)
             make install
             if [ "$?" == 0 ];then
-                echo "Removing previously installed Ngspice (if any)..."
+                echo "Removing previously installed Ngspice (if any)"
                 sudo apt-get purge -y ngspice
 
-                echo "Ngspice installed sucessfully................."
-                echo "Adding softlink for the installed Ngspice....."
+                echo "Ngspice installed sucessfully"
+                echo "Adding softlink for the installed Ngspice"
 
                 #Make it executable
     			sudo chmod 755 $HOME/$ngspice/install_dir/bin/ngspice
@@ -169,11 +169,11 @@ function installNgspice
                 sudo rm /usr/bin/ngspice
                 sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
                 if [ $? -ne 0 ];then
-                    echo "Failed to add Ngspice softlink............"
-                    echo "Remove earlier installations at /usr/bin/ngspice and try again..."
+                    echo "Failed to add Ngspice softlink"
+                    echo "Remove earlier installations at /usr/bin/ngspice and try again"
                     exit 1                    
                 fi
-                echo "Added softlink for Ngspice...................."
+                echo "Added softlink for Ngspice................................"
             else 
                 echo "There was some error while installing Ngspice"
             fi
@@ -189,8 +189,8 @@ function installNgspice
 function createConfigFile
 {
     
-    #Creating config.ini file and adding configuration information
-    #Check if config file is present
+    # Creating config.ini file and adding configuration information
+    # Check if config file is present
     if [ -d $config_dir ];then
         rm $config_dir/$config_file && touch $config_dir/$config_file
     else
@@ -210,25 +210,25 @@ function createConfigFile
 
 function createSoftLink
 {
-    #Make it executable
-    sudo chmod 755 $src_dir/src/nghdl
+    # Make it executable
+    sudo chmod 755 $src_dir/src/ngspice_ghdl.py
 
-    ## Creating softlink 
+    # Creating softlink 
     cd /usr/local/bin
     if [[ -L nghdl ]];then
         echo "Symlink was already present"
         sudo unlink nghdl
-        sudo ln -sf $src_dir/src/nghdl nghdl
+        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
     else
         echo "Creating symlink"
-        sudo ln -sf $src_dir/src/nghdl nghdl
+        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
         if [ $? -ne 0 ];then
             echo "Failed to add NGHDL softlink"
-            echo "Remove earlier installations at /usr/local/bin/nghdl and try again..."
+            echo "Remove earlier installations at /usr/local/bin/nghdl and try again"
             exit 1
         fi
     fi
-    echo "Added softlink for NGHDL..............................."
+    echo "Added softlink for NGHDL.................................."
 
     cd $pwd
 
@@ -239,7 +239,7 @@ function createSoftLink
 #       Script start from here                                     #
 #####################################################################
 
-###Checking if file is passsed as argument to script
+### Checking if file is passsed as argument to script
 
 if [ "$#" -eq 1 ];then
     option=$1
@@ -249,10 +249,10 @@ else
     exit 1;
 fi
 
-##Checking flags
+## Checking flags
 if [ $option == "--install" ];then
     
-    #Calling functions
+    # Calling functions
     installDependency
     if [ $? -ne 0 ];then
         echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
