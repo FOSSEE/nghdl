@@ -2,9 +2,10 @@
    Further modifications by Saurabh Bansode
    Latest edit - 6:34 PM, 30/3/2020
 
-   **NOTE :- The functions MapToRam and 
-put are linked to the VHDL code of ATTINY85
-   		   by "ghdl_access.vhdl" file.	*/ 
+   **NOTE	:-	The functions "MapToRam" and "output" &
+   				the variables PB0 ... PB5 
+   				linked to the VHDL code of ATTINY85
+   				by "ghdl_access.vhdl" file.	*/ 
 
 #include<stdio.h>
 #include<math.h>
@@ -63,21 +64,6 @@ void ClearBins(int binSel)
         	bin[binSel].arr[i]=0;
     	}
 }
-
-/*void Change_PC(char op, char val)
-{
-	if(op==45 && pc < val)		// ASCI of '-' is 45
-		printf("\n*****PC value went negative*****\n");
-	else if(op==43 && pc==0xFF)		// ASCI of '+' is 43
-		printf("\n*****PC value went above RAM size*****\n");
-	else
-		{
-			if(op==43)		// ASCI of '+' is 43	
-				pc += val;
-			else if(op==45)		// ASCI of '-' is 45
-				pc -= val;
-		}
-}*/
 
 void SetRam(int lb, int ub,char val)
 {
@@ -366,7 +352,8 @@ void Compute()			//Function that performs main computation based on current inst
 	if (debugMode==1)
 	printf("instruction:%X%X%X%X\n",b1,b2,b3,b4);
 
-	if(b1==0x0 && b2>=12 && b2<=15)					//ADD
+//	ADD by AJ		date
+	if(b1==0x0 && b2>=12 && b2<=15)
 	{	
 		int a=reg[b3+16].data,b=reg[b4+16].data;
 		if(debugMode==1)
@@ -396,8 +383,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/	
-
-	else if(b1==0x1 && b2>=12 && b2<=15)			//ADC
+//	ADC by AJ		date
+	else if(b1==0x1 && b2>=12 && b2<=15)
 	{
 		
 		int a=reg[b3+16].data,b=reg[b4+16].data;
@@ -428,8 +415,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-
-	else if(b1==0x1 && b2 >= 8 && b2 <= 11)			//SUB
+//	SUB by AJ		date
+	else if(b1==0x1 && b2 >= 8 && b2 <= 11)
 	{
 		int a=reg[b3+16].data,b=reg[b4+16].data;
 		if(debugMode==1)
@@ -458,8 +445,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-
-	else if(b1==0x5)								//SUBI
+//	SUBI by AJ		date
+	else if(b1==0x5)
 	{
 		int a=b2*16 + b4,b=reg[b3+16].data;
 		if(debugMode==1)
@@ -490,8 +477,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-
-	else if(b1==0x4)								//SBCI
+//	SBCI by AJ		date
+	else if(b1==0x4)
 	{
 		int a=b2*16 + b4,b=reg[b3+16].data;
 		if(debugMode==1)
@@ -521,10 +508,10 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-
+//	SBIW by AJ		date
 	else if(b1==0x9 && b2==7)
 	{
-		if(debugMode==1)							//SBIW
+		if(debugMode==1)
 		{
 			printf("SBIW instruction decoded\n");
 			PrintReg(15,32);
@@ -613,7 +600,7 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//LDI : AJ 3/3/2020 
+//	LDI by AJ		date
 	else if(b1==0xE)								
 	{
 		if(debugMode==1)
@@ -623,113 +610,118 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/	
-// CLC - AJ and SB - 14/03/20
-  else if(b1==0x9 && b2==4 && b3==8 && b4==8)
-{
-   if(debugMode==1)
-    printf("CLC instruction decoded\n");
-    sreg[0].data = 0;
-    PC += 0x4;
-}
+//	CLC by AJ & SB	14/03/20
+	else if(b1==0x9 && b2==4 && b3==8 && b4==8)
+	{
+		if(debugMode==1)
+	    printf("CLC instruction decoded\n");
+	    SREG[0].data = 0;
+	    PC += 0x4;
+	}
 /************************************************************************************************/	
-// CP - SB - 27/03/20
-  else if(b1==0x1 && b2==4 && b3==8 && b4==8)
-{
-   if(debugMode==1)
-    printf("CP instruction decoded\n");
-    sreg[0].data = 0;
-    PC += 0x4;
-}
+//	CP by SB		27/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x1 && b2>=4 && b2<=7)
+	{
+		if(debugMode==1)
+	    	printf("CP instruction decoded\n");
+	    //Comparing Rd and Rr (Reg data doesn't have to be modified)
+	    if(reg[b3+16].data - reg[b4+16].data == 0)
+	    	SREG[0].data = 0;
+
+	    PC += 0x4;
+	}
 /************************************************************************************************/	
-/************************************************************************************************/	
-// CLH - SB - 30/03/20
-  else if(b1==0x9 && b2==4 && b3==0xD && b4==8)
-{
-   if(debugMode==1)
-    printf("CLH instruction decoded\n");
-    sreg[5].data = 0;
-    PC += 0x4;
-}
-/************************************************************************************************/	
+//	CLH by SB		30/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x9 && b2==4 && b3==0xD && b4==8)
+	{
+		if(debugMode==1)
+	    printf("CLH instruction decoded\n");
+	    SREG[5].data = 0;
+	    PC += 0x4;
+	}	
 
 /************************************************************************************************/	
-// CLI - SB - 30/03/20
-  else if(b1==0x9 && b2==4 && b3==0xF && b4==8)
-{
-   if(debugMode==1)
-    printf("CLI instruction decoded\n");
-    sreg[7].data = 0;
-    PC += 0x4;
-}
-/************************************************************************************************/	
+//	CLI by SB		30/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x9 && b2==4 && b3==0xF && b4==8)
+	{
+	if(debugMode==1)
+		printf("CLI instruction decoded\n");
+	SREG[7].data = 0;
+	PC += 0x4;
+	}	
 
 /************************************************************************************************/	
-// CLN - SB - 30/03/20
-  else if(b1==0x9 && b2==4 && b3==0xA && b4==8)
-{
-   if(debugMode==1)
-    printf("CLN instruction decoded\n");
-    sreg[5].data = 0;
-    PC += 0x4;
-}
-/************************************************************************************************/	
+//	CLN by SB		30/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x9 && b2==4 && b3==0xA && b4==8)
+	{
+		if(debugMode==1)
+	    	printf("CLN instruction decoded\n");
+	    SREG[5].data = 0;
+	    PC += 0x4;
+	}	
 
 /************************************************************************************************/	
-// CLZ - SB - 30/03/20
-  else if(b1==0x9 && b2==4 && b3==0x9 && b4==8)
-{
-   if(debugMode==1)
-    printf("CLZ instruction decoded\n");
-    sreg[1].data = 0;
-    PC += 0x4;
-}
-/************************************************************************************************/	
+//	CLZ by SB		30/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x9 && b2==4 && b3==0x9 && b4==8)
+	{
+		if(debugMode==1)
+	    printf("CLZ instruction decoded\n");
+	    sreg[1].data = 0;
+	    PC += 0x4;
+	}	
 
 /************************************************************************************************/	
-// CLS - SB - 30/03/20
-  else if(b1==0x9 && b2==4 && b3==0xC && b4==8)
-{
-   if(debugMode==1)
-    printf("CLS instruction decoded\n");
-    sreg[4].data = 0;
-    PC += 0x4;
-}
+//	CLS by SB 		30/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x9 && b2==4 && b3==0xC && b4==8)
+	{
+		if(debugMode==1)
+	    	printf("CLS instruction decoded\n");
+	    SREG[4].data = 0;
+	    PC += 0x4;
+	}
+
+/************************************************************************************************/	
+//	CLT by SB		30/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x9 && b2==4 && b3==0xE && b4==8)
+	{
+		if(debugMode==1)
+	    	printf("CLT instruction decoded\n");
+	    SREG[6].data = 0;
+	    PC += 0x4;
+	}
+
+/************************************************************************************************/	
+//	CLV by SB		30/03/20
+//	Modified by AJ	5/4/20
+	else if(b1==0x9 && b2==4 && b3==0xB && b4==8)
+	{
+		if(debugMode==1)
+	    	printf("CLV instruction decoded\n");
+	    SREG[3].data = 0;
+	    PC += 0x4;
+	}
+
+
 /************************************************************************************************/
+//	SEC by SB & AJ	14/03/2020
+	else if(b1==0x9 && b2==4 && b3==0 && b4==8)
+	{
+	   if(debugMode==1)
+	    printf("SEC instruction decoded\n");
+	    sreg[0].data = 1;
+	    PC += 0x4;
+	}
 
-/************************************************************************************************/	
-// CLT - SB - 30/03/20
-  else if(b1==0x9 && b2==4 && b3==0xE && b4==8)
-{
-   if(debugMode==1)
-    printf("CLT instruction decoded\n");
-    sreg[6].data = 0;
-    PC += 0x4;
-}
-/************************************************************************************************/
-
-/************************************************************************************************/	
-// CLV - SB - 30/03/20
-  else if(b1==0x9 && b2==4 && b3==0xB && b4==8)
-{
-   if(debugMode==1)
-    printf("CLV instruction decoded\n");
-    sreg[3].data = 0;
-    PC += 0x4;
-}
-/************************************************************************************************/
-
-
-//SEC - SB and AJ - 14/03/2020
-  else if(b1==0x9 && b2==4 && b3==0 && b4==8)
-{
-   if(debugMode==1)
-    printf("SEC instruction decoded\n");
-    sreg[0].data = 1;
-    PC += 0x4;
-}
 /***********************************************************************************************/	
-
-	else if(b1==0xB && b2>8)						//OUT
+//	OUT by AJ		date
+	else if(b1==0xB && b2>8)
 	{
 		if(debugMode==1)
 			printf("OUT instruction decoded\n");
@@ -741,8 +733,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/	
-
-	else if(b1==0xC)								//RJMP
+//	RJMP by AJ		date
+	else if(b1==0xC)
 	{
 		int bin[16]={0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},carr;
 		int temp[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -810,8 +802,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-
-	else if(b1==0xf && b2>=4 && b2<=7)				//BRNE
+//	BRNE by AJ		date
+	else if(b1==0xf && b2>=4 && b2<=7)
 	{
 		int brne[8],carr=0;
 		if(debugMode==1)
@@ -865,8 +857,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-
-	else if(b1==0x0 && b2==0x0)						//NOP
+//	NOP by AJ		date
+	else if(b1==0x0 && b2==0x0)
 	{
 		printf("NOP instruction decoded");
 		PC += 0x4;
@@ -874,7 +866,7 @@ void Compute()			//Function that performs main computation based on current inst
 
 }
 
-void output(int flag)			//Functoin to compute output for current instruction
+void output(int flag)			//Function to compute output for current instruction
 {
 	if(flag == 1)
 	{
