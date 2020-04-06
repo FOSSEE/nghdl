@@ -1,11 +1,10 @@
 /* This C Code for ATTINY series (specifically ATTINY85) was developed by ASHUTOSH JHA
-   Further modifications by Saurabh Bansode
-   Latest edit - 6:34 PM, 30/3/2020
 
-   **NOTE	:-	The functions "MapToRam" and "output" &
-   				the variables PB0 ... PB5 
-   				linked to the VHDL code of ATTINY85
-   				by "ghdl_access.vhdl" file.	*/ 
+   Latest edit - 9:17 PM, 16/3/2020
+
+   **NOTE :- The functions MapToRam and 
+put are linked to the VHDL code of ATTINY85
+   		   by "ghdl_access.vhdl" file.	*/ 
 
 #include<stdio.h>
 #include<math.h>
@@ -66,6 +65,10 @@ void ClearBins(int binSel)
 }
 
 void SetRam(int lb, int ub,char val)
+//This function puts the a hex value in all RAM locations from a specified lower to upper bound
+//Parameters - lb	(lower bound)			: int
+//			   ub	(upper bound)			: int
+//	           val  (hex value to be put)	: char
 {
 	int i;
 	for(i=lb;i<ub;i++)
@@ -73,6 +76,7 @@ void SetRam(int lb, int ub,char val)
 }
 
 void PrintSREG()
+//This function prints the Status Register
 {
 	printf("\nStatus Register:- \n");
 	printf("I: %d ,T: %d ,H: %d ,S: %d ,V: %d ,N: %d ,Z: %d ,C: %d \n",SREG[7].data,SREG[6].data,SREG[5].data,SREG[4].data,SREG[3].data,SREG[2].data,SREG[1].data,SREG[0].data);
@@ -80,6 +84,9 @@ void PrintSREG()
 }
 
 void PrintRam(int lb, int ub)
+//This function prints the value stored in RAM locations from a specified lower to upper bound
+//Parameters - lb	(lower bound)			: int
+//			   ub	(upper bound)			: int
 {
 	int i=0;
 	unsigned char b1,b2,b3,b4;
@@ -93,6 +100,9 @@ void PrintRam(int lb, int ub)
 }
 
 void PrintReg(int lb, int ub)
+//This function prints the value stored in REGISTER block from a specified lower to upper bound
+//Parameters - lb	(lower bound)			: int
+//			   ub	(upper bound)			: int
 {
 	int i;
 	printf("\n***********Register File*************\n");
@@ -101,43 +111,11 @@ void PrintReg(int lb, int ub)
 	printf("\n************************\n");
 }
 
-int Rjump_Cal(char b2,char b3,char b4)
-{
-	int bin[16]={0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},i;
-	i=8;
-	while(b2!=0 && i<12)
-	{
-		bin[i] = b2%2;
-		i++;
-		b2 /= 2;
-	}
-	i=4;
-	while(b3!=0 && i<8)
-	{
-		bin[i] = b3%2;
-		i++;
-		b3 /= 2;
-	}
-	i=0;
-	while(b4!=0 && i<4)
-	{
-		bin[i] = b4%2;
-		i++;
-		b4 /= 2;
-	}
-    
-	for(i=0;i<16;i++)
-		   bin[i] = !bin[i];
 
-	int a=0;
-	for(i=0;i<16;i++)
-	{
-		a += bin[i]*pow(2,i);
-	}
-	return a;
-}
-
-void Hex2Bin(int binSel,int hex)			//Function to convert hex number to binary array
+void Hex2Bin(int binSel,int hex)
+//Function to convert hex number to binary array of size 8 bit
+//Parameters - binSel	(select the binary array to store the hex value[from 0-2])	: int
+//			   hex		(hex value)													: int
 {
         int i=0,a,b,t=hex;
 
@@ -162,7 +140,9 @@ void Hex2Bin(int binSel,int hex)			//Function to convert hex number to binary ar
 	    }
 }
 
-void TwosComp(int binSel)			//Function to get 2's complement
+void TwosComp(int binSel)
+//Function to get 2's complement of the specified binary array
+//Parameter - binSel	(select the binary array to store the hex value[from 0-2])	: int
 {
 
     int i,t,carry=0;
@@ -189,7 +169,14 @@ void TwosComp(int binSel)			//Function to get 2's complement
     
 }
 
-void Bin_Add(int a, int b, int c,int select,int withCarry)			//Function to perform binary addition
+void Bin_Add(int a, int b, int c,int select,int withCarry)
+//Function to perform binary addition of two specified binary arrays and store result in another array
+//array c = array a + array b
+//Parameters - a			(first binary array)										: int
+//			   b			(second binary array)										: int
+//			   c    		(binary array where result is stored)						: int
+//			   select   	(if one of the operand arrays is in 2's complement form)	: int
+//			   withCarry	(if addition is to be performed with Carry)					: int
 {
     int i,t;
     for(i=0;i<8;i++)
@@ -248,7 +235,8 @@ void Bin_Add(int a, int b, int c,int select,int withCarry)			//Function to perfo
 
 
 
-void SetPins(char val)			//Function to set/reset the I/O pins
+void SetPins(char val)
+//Function to set/reset the I/O pins
 {
 	int bin[6]={0,0,0,0,0,0},i=0; 
     while(val!=0)
@@ -267,7 +255,10 @@ void SetPins(char val)			//Function to set/reset the I/O pins
 
 }
 
-void MapToRam(int flag)				//Function to map the external hex file contents into this C code
+void MapToRam(int flag)
+//Function gets input from VHDL code to map the external hex file contents
+//into data structure inside this C code 
+//Parameters - flag	(if flag is SET, execute function)	: int
 {
 	int i=0,filesize;
 	SetRam(0,size,0x0);
@@ -313,7 +304,8 @@ void MapToRam(int flag)				//Function to map the external hex file contents into
 		PrintRam(0,filesize+5);
 }
 
-void UpdateSreg()			//Function to update Zero and Signed bit of SREG
+void UpdateSreg()
+//Function to update Zero and Signed bit of Status Register
 {
 	int i,t=0;
 	for(i=0;i<8;i++)
@@ -345,15 +337,17 @@ void UpdateSreg()			//Function to update Zero and Signed bit of SREG
 
 }
 
-void Compute()			//Function that performs main computation based on current instruction
+void Compute()
+//Function that performs main computation based on current instruction
+//Compares the current instruction via else if ladder
 {
 	int i,j,t;
 	unsigned b1=ram[PC+0x2].data,b2=ram[PC+0x3].data,b3=ram[PC].data,b4=ram[PC+0x1].data;
 	if (debugMode==1)
 	printf("instruction:%X%X%X%X\n",b1,b2,b3,b4);
 
-//	ADD by AJ		date
-	if(b1==0x0 && b2>=12 && b2<=15)
+	//ADD instruction added by Ashutosh Jha 6/3/2020
+	if(b1==0x0 && b2>=12 && b2<=15)					
 	{	
 		int a=reg[b3+16].data,b=reg[b4+16].data;
 		if(debugMode==1)
@@ -383,8 +377,9 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/	
-//	ADC by AJ		date
-	else if(b1==0x1 && b2>=12 && b2<=15)
+
+	//ADC instruction added by Ashutosh Jha 6/3/2020
+	else if(b1==0x1 && b2>=12 && b2<=15)			
 	{
 		
 		int a=reg[b3+16].data,b=reg[b4+16].data;
@@ -415,7 +410,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	SUB by AJ		date
+
+	//SUB instruction added by Ashutosh Jha 6/3/2020	
 	else if(b1==0x1 && b2 >= 8 && b2 <= 11)
 	{
 		int a=reg[b3+16].data,b=reg[b4+16].data;
@@ -445,7 +441,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	SUBI by AJ		date
+	
+	//SUBI instruction added by Ashutosh Jha 6/3/2020
 	else if(b1==0x5)
 	{
 		int a=b2*16 + b4,b=reg[b3+16].data;
@@ -477,7 +474,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	SBCI by AJ		date
+
+	//SBCI instruction added by Ashutosh Jha 6/3/2020	
 	else if(b1==0x4)
 	{
 		int a=b2*16 + b4,b=reg[b3+16].data;
@@ -508,7 +506,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	SBIW by AJ		date
+
+	//SBIW instruction added by Ashutosh Jha 6/3/2020
 	else if(b1==0x9 && b2==7)
 	{
 		if(debugMode==1)
@@ -600,7 +599,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	LDI by AJ		date
+
+	//LDI instruction added by Ashutosh Jha on 6/03/2020
 	else if(b1==0xE)								
 	{
 		if(debugMode==1)
@@ -609,118 +609,29 @@ void Compute()			//Function that performs main computation based on current inst
 		PC += 0x4;
 	}
 
-/************************************************************************************************/	
-//	CLC by AJ & SB	14/03/20
-	else if(b1==0x9 && b2==4 && b3==8 && b4==8)
+/************************************************************************************************/
+
+	//CLC instruction added by Ashutosh Jha & Saurabh Bansode on 14/03/2020
+  	else if(b1==0x9 && b2==4 && b3==8 && b4==8)
 	{
-		if(debugMode==1)
+	   if(debugMode==1)
 	    printf("CLC instruction decoded\n");
 	    SREG[0].data = 0;
 	    PC += 0x4;
 	}
 /************************************************************************************************/	
-//	CP by SB		27/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x1 && b2>=4 && b2<=7)
-	{
-		if(debugMode==1)
-	    	printf("CP instruction decoded\n");
-	    //Comparing Rd and Rr (Reg data doesn't have to be modified)
-	    if(reg[b3+16].data - reg[b4+16].data == 0)
-	    	SREG[0].data = 0;
 
-	    PC += 0x4;
-	}
-/************************************************************************************************/	
-//	CLH by SB		30/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x9 && b2==4 && b3==0xD && b4==8)
-	{
-		if(debugMode==1)
-	    printf("CLH instruction decoded\n");
-	    SREG[5].data = 0;
-	    PC += 0x4;
-	}	
-
-/************************************************************************************************/	
-//	CLI by SB		30/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x9 && b2==4 && b3==0xF && b4==8)
-	{
-	if(debugMode==1)
-		printf("CLI instruction decoded\n");
-	SREG[7].data = 0;
-	PC += 0x4;
-	}	
-
-/************************************************************************************************/	
-//	CLN by SB		30/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x9 && b2==4 && b3==0xA && b4==8)
-	{
-		if(debugMode==1)
-	    	printf("CLN instruction decoded\n");
-	    SREG[5].data = 0;
-	    PC += 0x4;
-	}	
-
-/************************************************************************************************/	
-//	CLZ by SB		30/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x9 && b2==4 && b3==0x9 && b4==8)
-	{
-		if(debugMode==1)
-	    printf("CLZ instruction decoded\n");
-	    sreg[1].data = 0;
-	    PC += 0x4;
-	}	
-
-/************************************************************************************************/	
-//	CLS by SB 		30/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x9 && b2==4 && b3==0xC && b4==8)
-	{
-		if(debugMode==1)
-	    	printf("CLS instruction decoded\n");
-	    SREG[4].data = 0;
-	    PC += 0x4;
-	}
-
-/************************************************************************************************/	
-//	CLT by SB		30/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x9 && b2==4 && b3==0xE && b4==8)
-	{
-		if(debugMode==1)
-	    	printf("CLT instruction decoded\n");
-	    SREG[6].data = 0;
-	    PC += 0x4;
-	}
-
-/************************************************************************************************/	
-//	CLV by SB		30/03/20
-//	Modified by AJ	5/4/20
-	else if(b1==0x9 && b2==4 && b3==0xB && b4==8)
-	{
-		if(debugMode==1)
-	    	printf("CLV instruction decoded\n");
-	    SREG[3].data = 0;
-	    PC += 0x4;
-	}
-
-
-/************************************************************************************************/
-//	SEC by SB & AJ	14/03/2020
+	//SEC instruction added by Ashutosh Jha & Saurabh Bansode on 14/03/2020
 	else if(b1==0x9 && b2==4 && b3==0 && b4==8)
 	{
 	   if(debugMode==1)
 	    printf("SEC instruction decoded\n");
-	    sreg[0].data = 1;
+	    SREG[0].data = 1;
 	    PC += 0x4;
 	}
-
 /***********************************************************************************************/	
-//	OUT by AJ		date
+
+	//OUT instruction added by Ashutosh Jha on 6/03/2020	
 	else if(b1==0xB && b2>8)
 	{
 		if(debugMode==1)
@@ -733,7 +644,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/	
-//	RJMP by AJ		date
+
+	//RJMP instruction added by Ashutosh Jha on 6/03/2020
 	else if(b1==0xC)
 	{
 		int bin[16]={0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1},carr;
@@ -802,7 +714,8 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	BRNE by AJ		date
+
+	//BRNE instruction added by Ashutosh Jha on 6/03/2020
 	else if(b1==0xf && b2>=4 && b2<=7)
 	{
 		int brne[8],carr=0;
@@ -857,16 +770,22 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	NOP by AJ		date
+
+	//NOP instruction added by Ashutosh Jha on 6/03/2020
 	else if(b1==0x0 && b2==0x0)
 	{
 		printf("NOP instruction decoded");
 		PC += 0x4;
 	}
 
+
+	else
+		PC += 0x4;
+
 }
 
-void output(int flag)			//Function to compute output for current instruction
+void output(int flag)
+//Function gets input from VHDL code to fetch and execute current instruction
 {
 	if(flag == 1)
 	{
