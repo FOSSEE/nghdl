@@ -2,7 +2,7 @@
 
 ###This server run ghdl testebench for infinite time till ngspice send END signal to stop it
 
-cd /home/fossee/ngspice-nghdl/src/xspice/icm/ghdl/attiny_85_nghdl/DUTghdl/
+cd ~/ngspice-nghdl/src/xspice/icm/ghdl/attiny_85_nghdl/DUTghdl/
 chmod 775 sock_pkg_create.sh &&
 ./sock_pkg_create.sh $1 $2 &&
 ghdl -a sock_pkg.vhdl &&

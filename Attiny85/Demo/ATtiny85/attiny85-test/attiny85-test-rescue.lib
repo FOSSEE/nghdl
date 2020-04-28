@@ -1,24 +1,20 @@
 EESchema-LIBRARY Version 2.3
 #encoding utf-8
 #
-# attiny_85_nghdl-RESCUE-attiny85-test
+# DC-RESCUE-attiny85-test
 #
-DEF attiny_85_nghdl-RESCUE-attiny85-test U 0 40 Y Y 1 F N
-F0 "U" 0 50 60 H V C CNN
-F1 "attiny_85_nghdl-RESCUE-attiny85-test" 0 550 60 H V C CNN
-F2 "" 50 550 60 H V C CNN
-F3 "" 50 550 60 H V C CNN
+DEF DC-RESCUE-attiny85-test v 0 40 Y Y 1 F N
+F0 "v" -200 100 60 H V C CNN
+F1 "DC-RESCUE-attiny85-test" -200 -50 60 H V C CNN
+F2 "R1" -300 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+$FPLIST
+ 1_pin
+$ENDFPLIST
 DRAW
-S -250 450 250 -350 0 1 0 N
-X PB5 1 -450 350 200 R 50 50 1 1 P
-X PB3 2 -450 150 200 R 50 50 1 1 P
-X PB4 3 -450 -50 200 R 50 50 1 1 P
-X Gnd 4 -450 -250 200 R 50 50 1 1 P
-X PB0 5 450 -250 200 L 50 50 1 1 P
-X PB1 6 450 -50 200 L 50 50 1 1 P
-X PB2 7 450 150 200 L 50 50 1 1 P
-X Vcc 8 450 350 200 L 50 50 1 1 P
-X clk ~ 0 -600 200 U 50 50 1 1 P C
+C 0 0 150 0 1 0 N
+X + 1 0 450 300 D 50 50 1 1 P
+X - 2 0 -450 300 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #

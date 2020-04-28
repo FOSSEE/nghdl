@@ -147,7 +147,7 @@ void Hex2Bin(int binSel,int hex)			//Function to convert hex number to binary ar
 	        i++;
 	        hex /= 2;
 	    }
-	    if(t > 15)
+	    /*if(t > 15)
 	    {
 	        int t0=bin[binSel].arr[0],t1=bin[binSel].arr[1],t2=bin[binSel].arr[2],t3=bin[binSel].arr[3];
 	        for(i=0;i<4;i++)
@@ -159,7 +159,7 @@ void Hex2Bin(int binSel,int hex)			//Function to convert hex number to binary ar
 	        bin[binSel].arr[5]=t1;
 	        bin[binSel].arr[6]=t2;
 	        bin[binSel].arr[7]=t3;
-	    }
+	    }*/
 }
 
 void TwosComp(int binSel)			//Function to get 2's complement
@@ -606,6 +606,9 @@ void Compute()			//Function that performs main computation based on current inst
 		if(debugMode==1)
 			printf("LDI instruction decoded\n");
 		reg[b3+16].data = b2*16 + b4;
+
+		if(debugMode==1)
+			printf("\nR[%d] = %X\n",b3+16,reg[b3+16].data);
 		PC += 0x4;
 	}
 
@@ -671,7 +674,7 @@ void Compute()			//Function that performs main computation based on current inst
 	{
 		if(debugMode==1)
 	    printf("CLZ instruction decoded\n");
-	    sreg[1].data = 0;
+	    SREG[1].data = 0;
 	    PC += 0x4;
 	}	
 
@@ -715,7 +718,7 @@ void Compute()			//Function that performs main computation based on current inst
 	{
 	   if(debugMode==1)
 	    printf("SEC instruction decoded\n");
-	    sreg[0].data = 1;
+	    SREG[0].data = 1;
 	    PC += 0x4;
 	}
 
@@ -724,7 +727,7 @@ void Compute()			//Function that performs main computation based on current inst
 	else if(b1==0xB && b2>8)
 	{
 		if(debugMode==1)
-			printf("OUT instruction decoded\n");
+			printf("\nOUT instruction decoded\n");
 		if(b4==0x8)									//Setting PORTB out pins
 			SetPins(reg[b3+16].data);				//Setting DDRB
 		else if(b4==0x7)
@@ -860,7 +863,7 @@ void Compute()			//Function that performs main computation based on current inst
 //	NOP by AJ		date
 	else if(b1==0x0 && b2==0x0)
 	{
-		printf("NOP instruction decoded");
+		printf("\nNOP instruction decoded\n");
 		PC += 0x4;
 	}
 

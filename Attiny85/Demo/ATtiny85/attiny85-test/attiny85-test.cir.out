@@ -12,34 +12,18 @@ a1 [net-_u3-pad1_ ] [net-_u3-pad2_ ] u3
 a2 [net-_u4-pad4_ ] [pb0 ] u5
 a3 [net-_u1-pad1_ gnd ] [net-_u1-pad3_ net-_u1-pad4_ ] u1
 a4 [net-_u1-pad3_ ] [net-_u1-pad4_ ] [net-_u3-pad2_ ] [net-_u4-pad4_ ] [? ] [? ] [? ] [? ] [? ] u4
-* Schematic Name:                             adc_bridge_1, NgSpice Name: adc_bridge
-.model u3 adc_bridge(rise_delay=1.0e-9 fall_delay=1.0e-9 in_high=2.0 in_low=1.0 ) 
-* Schematic Name:                             dac_bridge_1, NgSpice Name: dac_bridge
-.model u5 dac_bridge(out_undef=0.5 input_load=1.0e-12 t_fall=1.0e-9 out_high=5.0 t_rise=1.0e-9 out_low=0.0 ) 
-* Schematic Name:                             adc_bridge_2, NgSpice Name: adc_bridge
-.model u1 adc_bridge(rise_delay=1.0e-9 fall_delay=1.0e-9 in_high=2.0 in_low=1.0 ) 
-* Schematic Name:                             attiny_85_nghdl, NgSpice Name: attiny_85_nghdl
-.model u4 attiny_85_nghdl(input_load=1.0e-12 rise_delay=1.0e-9 fall_delay=1.0e-9 instance_id=1 ) 
-.tran 0.01e-06 11e-03 0e-00
+* Schematic Name: adc_bridge_1, NgSpice Name: adc_bridge
+.model u3 adc_bridge(fall_delay=1.0e-9 in_high=2.0 rise_delay=1.0e-9 in_low=1.0 ) 
+* Schematic Name: dac_bridge_1, NgSpice Name: dac_bridge
+.model u5 dac_bridge(out_undef=0.5 out_low=0.0 out_high=5.0 t_rise=1.0e-9 t_fall=1.0e-9 input_load=1.0e-12 ) 
+* Schematic Name: adc_bridge_2, NgSpice Name: adc_bridge
+.model u1 adc_bridge(fall_delay=1.0e-9 in_high=2.0 rise_delay=1.0e-9 in_low=1.0 ) 
+* Schematic Name: attiny_85_nghdl, NgSpice Name: attiny_85_nghdl
+.model u4 attiny_85_nghdl(fall_delay=1.0e-9 input_load=1.0e-12 rise_delay=1.0e-9 instance_id=1 ) 
+.tran 0.5e-06 10e-06 0e-00
 
 * Control Statements 
 .control
-
-*******Style Parameters******
-set hcopydevtype=postscript
-set color0 = rgb:f/f/e
-set xfont 20
-*background
-set color1 = rgb:/f/f/f
-set xbrushwidth 10
-*grid and text
-set color2 = rgb:f/0/0  
-*vector0
-set color3 = rgb:0/0/f  
-*vector1
-set color4 = rgb:f/0/0
-*vector2 
-
 run
 print allv > plot_data_v.txt
 print alli > plot_data_i.txt
