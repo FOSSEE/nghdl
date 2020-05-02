@@ -1,0 +1,5144 @@
+Setup Client Server Connection at Fri May  1 08:04:51 2020
+ 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Connect- Error:Tried to connect server on port , failed..giving up 
+Setup Client Server Connection at Fri May  1 08:05:17 2020
+ 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:0,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:0,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:0;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:0 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Creating client socket 
+Client-Client Socket created successfully 
+Client- Socket Id : 5 
+Client-Connecting to server 
+Client-Connected to server 
+Socket Id : 5 & Message sent : VCC:1,GND:0,clk:1 
+Message Received From Server- PB0:1;PB1:0;PB2:0;PB3:0;PB4:0;PB5:0;
+Client-Bit val is 1 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 
+Client-Bit val is 0 

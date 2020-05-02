@@ -135,7 +135,7 @@ F 3 "" H 4150 2950 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L DC v1
+L DC-RESCUE-attiny85-test v1
 U 1 1 5E55FCA0
 P 2450 3700
 F 0 "v1" H 2250 3800 60  0000 C CNN
