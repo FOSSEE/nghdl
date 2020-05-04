@@ -45,9 +45,10 @@ procedure input(f : integer);
 	attribute foreign of input :
         	procedure is "VHPIDIRECT input";
 
-procedure SetPins(f : integer);
-	attribute foreign of SetPins :
-        	procedure is "VHPIDIRECT SetPins";
+--procedure SetPins(f : integer);
+--	attribute foreign of SetPins :
+--        	procedure is "VHPIDIRECT SetPins";
+
   
 
   -- create variables aliased to the variable in C 
@@ -106,9 +107,9 @@ package body ghdl_access is
 		assert false report "VHPI" severity failure;
 	end input;
 
-	procedure SetPins(f : integer) is
-	begin
-		assert false report "VHPI" severity failure;
-	end SetPins;
+	--procedure SetPins(f : integer) is
+	--begin
+	--	assert false report "VHPI" severity failure;
+	--end SetPins;
   
 end ghdl_access;
