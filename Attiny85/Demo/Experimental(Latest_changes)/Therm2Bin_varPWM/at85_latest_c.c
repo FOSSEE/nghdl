@@ -11,17 +11,19 @@
    				linked to the VHDL code of ATTINY85
    				by "ghdl_access.vhdl" file.	*/ 
 
+// ************!!    LATEST    ************!!    
+
 #include<stdio.h>
 #include<math.h>
-#define size 8192		//8kb ram size for Attiny85
+#define size 8192		//8kb ram size for attiny 85
 
-int debugMode=1;
+int debugMode=1,zero_flag=0;
 int PB0,PB1,PB2,PB3,PB4,PB5,wait_Clocks=0;
 char PC=0;
 struct memory			//Structure to store RAM and other registers
 {
 	unsigned char data;
-}prog_mem[size],GPR[32],SREG[8],IOREG[64],PORTB,DDRB;
+}prog_mem[size],GPR[32],SREG[8],IOREG[64];
 
 /* SREG MAP :- 
 
@@ -77,6 +79,8 @@ void SetRam(int lb, int ub,char val)
 	int i;
 	for(i=lb;i<ub;i++)
 		prog_mem[i].data = val;
+	for(i=0;i<64;i++)
+		IOREG[i].data = val;
 }
 
 void PrintSREG()
@@ -225,12 +229,12 @@ void Bin_Add(int a, int b, int c,int select,int withCarry)			//Function to perfo
 
 
 
-void SetPins(char flag)			//Function to set/reset the I/O pins
+void SetPins(int flag)			//Function to set/reset the I/O pins
 {
 	if(flag == 1)
 	{
-		int bin[8],i;
-		unsigned char val = IOREG[0x18].data; 
+		int val = IOREG[0x18].data;
+		int bin[6]={0,0,0,0,0,0},i=0; 
 	    while(val!=0)
 	    {
 	        bin[i] = val % 2;
@@ -245,6 +249,7 @@ void SetPins(char flag)			//Function to set/reset the I/O pins
 	    PB4 = bin[4];
 	    PB5 = bin[5];
 	}
+	
 
 }
 
@@ -334,21 +339,81 @@ void input(int in_Val)
 		printf("\nPINB = %X\n",IOREG[0x16].data);
 }
 
+void timer(int flag)
+{
+// TIMER0 by AJ		03/05/20
+	unsigned char temp = 0x0;	
+	if(IOREG[0x2A].data >= 0x01)
+	{
+		if(debugMode == 1)
+			printf("\n**!!TIMER 0 operation detected!!**\n");
+		int FastMode = 0,OC0A_Con = 0;
+		Hex2Bin(3,IOREG[0x2A].data);
+
+		//If TOV0 is set, reset counter TCNT0
+		temp = IOREG[0x38].data & 0x02;
+		if(temp == 0x02)
+			{
+				printf("\n**!!TOV0 overflow!!**\n");
+				IOREG[0x32].data = 0;
+				IOREG[0x38].data = IOREG[0x38].data ^ 0x02;
+				printf("\nTIFR after toggling TOV0: %X\n",IOREG[0x38].data);
+				IOREG[0x38].data = IOREG[0x38].data & 0xEF;
+				printf("\nTIFR after resetting OCF0A: %X\n",IOREG[0x38].data);
+			}
+
+		if(bin[3].arr[0] == 1 && bin[3].arr[0]==1)
+			FastMode = 1;
+		else
+			FastMode = 0;
+
+		if(bin[3].arr[7] == 1 && bin[3].arr[6] == 0)
+			OC0A_Con = 1;
+		else
+			OC0A_Con = 0;
+
+		// Incrementing counter TCNT0
+		if(IOREG[0x32].data < 255)
+			IOREG[0x32].data += 0x01;
+		else if(IOREG[0x32].data == 255)
+			{
+				IOREG[0x38].data = IOREG[0x38].data | 0x02;
+				printf("\nTOV0 set, TIFR: %X\n",IOREG[0x38].data);
+			}
+		// Setting Timer0 overflow flag == 0
+
+		// IF TCNT0 == OCR0A
+		if(IOREG[0x32].data == IOREG[0x29].data)
+			{
+				IOREG[0x38].data = IOREG[0x38].data | 0x10;
+				printf("\n**!!TCNT0 = OCR0A!!**\n");
+				printf("\nTIFR: %X\n",IOREG[0x38].data);
+			}
+
+		temp = IOREG[0x38].data & 0x10;
+		if(OC0A_Con == 1 && temp == 0x10)
+			{
+				IOREG[0x18].data = IOREG[0x18].data | 0x01;
+				printf("\nPORTB: %X\n",IOREG[0x18].data);
+			}
+		else if(OC0A_Con == 1 && temp != 0x10)
+			IOREG[0x18].data = IOREG[0x18].data & 0xFE;
+
+		printf("\nTCCNT0 : %X ,OCR0A: %X\n",IOREG[0x32].data,IOREG[0x29].data);
+		SetPins(1);
+
+	}
+}
+
+
 void Compute()			//Function that performs main computation based on current instruction
 {
 	int i,j,t;
 	unsigned a1=prog_mem[PC+0x1].data,a2=prog_mem[PC].data,b1,b2,b3,b4;
 	b1 = a1/16;
 	b2 = a1%16;
-	if(a2/16 > 0)
-		b3 = a2/16;
-	else
-		b3 = 0x0;
-	if(a2%16 > 0)
-		b4 = a2%16;
-	else
-		b4 = 0x0;
-	
+	b3 = a2/16;
+	b4 = a2%16;
 	if (debugMode==1)
 		printf("instruction:%X%X%X%X\n",b1,b2,b3,b4);
 
@@ -599,7 +664,7 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	ORI by AJ		02/04/20
+//	ORI by AJ		02/05/20
 	else if(b1==0x06)
 	{
 		unsigned char k = b2*16 + b4;
@@ -613,7 +678,7 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	ANDI by AJ		02/04/20
+//	ANDI by AJ		02/05/20
 	else if(b1==0x07)
 	{
 		unsigned char k = b2*16 + b4;
@@ -627,11 +692,14 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
+
+
+/************************************************************************************************/
 //	LDI by AJ		date
 	else if(b1==0xE)								
 	{
 		if(debugMode==1)
-			printf("\nLDI instruction decoded\n");
+			printf("LDI instruction decoded\n");
 		GPR[b3+16].data = b2*16 + b4;
 		PC += 0x2;
 	}
@@ -641,7 +709,7 @@ void Compute()			//Function that performs main computation based on current inst
 	else if(b1==0x9 && b2==4 && b3==8 && b4==8)
 	{
 		if(debugMode==1)
-	    printf("\nCLC instruction decoded\n");
+	    printf("CLC instruction decoded\n");
 	    SREG[0].data = 0;
 	    PC += 0x2;
 	}
@@ -741,9 +809,47 @@ void Compute()			//Function that performs main computation based on current inst
 	else if(b1==0x9 && b2==4 && b3==0 && b4==8)
 	{
 	   if(debugMode==1)
-	    printf("SEC instruction decoded\n");
-	    SREG[0].data = 1;
-	    PC += 0x2;
+	   		printf("\nSEC instruction decoded\n");
+	   SREG[0].data = 1;
+	   PC += 0x2;
+	}
+
+/************************************************************************************************/
+//	SBI by AJ	2/05/2020
+	else if(b1==0x09 && b2==0x0A)
+	{
+		if(debugMode == 1)
+	    	printf("\nSBI instruction decoded\n");
+	    int Abits[5],Bbits[3];
+	    Hex2Bin(0,b3);
+	    Hex2Bin(1,b4);
+	    for(i=0;i<4;i++)
+	    	Abits[i+1] = bin[0].arr[i];
+	    Abits[0] = bin[1].arr[3];
+	    for(i=0;i<3;i++)
+	    	Bbits[i] = bin[1].arr[i];
+
+	    j=0;
+	    for(i=0;i<3;i++)
+	    	j += Bbits[i]*pow(2,i);
+	    t=0;
+	    for(i=0;i<5;i++)
+	    	t += Abits[i]*pow(2,i);
+
+	    if(debugMode == 1)
+	    	printf("\nBefore execution: IOREG[%X]: %X",t,IOREG[t].data);
+
+	    Hex2Bin(2,IOREG[t].data);
+	    bin[2].arr[j] = 1;
+	    j=0;
+	    for(i=0;i<8;i++)
+	    	j += bin[2].arr[i]*pow(2,i);
+	    IOREG[t].data = j;
+
+	    if(debugMode == 1)
+	    	printf("\nAfter execution: IOREG[%X]: %X",t,IOREG[t].data);
+
+	    PC += 0x02;
 	}
 
 /************************************************************************************************/
@@ -751,28 +857,30 @@ void Compute()			//Function that performs main computation based on current inst
 	else if(b1==0x03)
 	{
 	   if(debugMode==1)
-	    printf("CPI instruction decoded\n");
+	    printf("\nCPI instruction decoded\n");
 		unsigned char k = b2*16 + b4;
 		if(debugMode == 1)
-				printf("\n%X - %X = %X\n",GPR[b3+16].data,k,GPR[b3+16].data - k);
+				printf("\n%X - %X = %d\n",GPR[b3+16].data,k,GPR[b3+16].data - k);
 
-		if(GPR[b3+16].data - k == 0)
-			SREG[1].data = 1;
-		else
-			SREG[1].data = 0;
-
+		if(GPR[b3+16].data == k)
+			{
+				zero_flag = 1;
+				printf("\nZero flag set: %d\n",SREG[1].data);
+			}
+		else if(GPR[b3+16].data != k)
+			{
+				zero_flag = 0;
+				printf("\nZero flag reset\n");
+			}
 	    PC += 0x2;
 	}
 
 /***********************************************************************************************/	
-//	OUT by AJ		date
-	else if(b1==0xB && (b2>=0x08 || b2<=0x0F))
+//	OUT by AJ		03/05/20
+	else if(b1==0x0B && (b2>=0x08 && b2<= 0x0F))
 	{
 		if(debugMode==1)
 			printf("\nOUT instruction decoded\n");
-		if(debugMode == 1)
-		printf("\nBefore execution: IOREG[%X] = %X\n",t,IOREG[t].data);
-
 		int Abits[6];
 		Hex2Bin(0,b2);
 		Hex2Bin(1,b4);
@@ -780,47 +888,43 @@ void Compute()			//Function that performs main computation based on current inst
 		Abits[4] = bin[0].arr[1];
 		for(i=0;i<4;i++)
 			Abits[i] = bin[1].arr[i];
+
 		t=0;
 		for(i=0;i<6;i++)
 			t += Abits[i]*pow(2,i);
 
 		IOREG[t].data = GPR[b3+16].data;
-
 		if(debugMode == 1)
-			printf("\nAfter execution: IOREG[%X] = %X\n",t,IOREG[t].data);
-
+			printf("\nIOREG[%X] = %X",t,IOREG[t].data);
+		ClearBins(0);
+		ClearBins(1);			
 		PC += 0x2;
 	}
 
 /***********************************************************************************************/	
 //	IN by AJ		27/04/20
-	else if(b1==0xB && (b2 <= 0x07 || b2 >= 0x0))
+	else if(b1==0x0B && b2 <= 0x07)
 	{
 			if(debugMode==1)
 				printf("\nIN instruction decoded\n");
-
 			int Abits[6];
 			Hex2Bin(0,b2);
 			Hex2Bin(1,b4);
-			Abits[5]=bin[0].arr[2];
-			Abits[4]=bin[0].arr[1];
+			Abits[5] = bin[0].arr[2];
+			Abits[4] = bin[0].arr[1];
 			for(i=0;i<4;i++)
-				Abits[i]=bin[1].arr[i];
-
-			for(i=5;i>=0;i--)
-				printf("%d ",Abits[i]);
+				Abits[i] = bin[1].arr[i];
 
 			t=0;
 			for(i=0;i<6;i++)
 				t += Abits[i]*pow(2,i);
 
-			GPR[b3+16].data = IOREG[t].data;
-			if(debugMode==1)
-				printf("\nR[%d]: %X\n",b3+16,GPR[b3+16].data);
+			if(debugMode == 1)
+				printf("\n Reg[%d] = %X",b3+16,IOREG[t].data);
 
+			GPR[b3+16].data = IOREG[t].data;
 			ClearBins(0);
 			ClearBins(1);
-
 			PC += 0x2;
 	}
 
@@ -872,7 +976,7 @@ void Compute()			//Function that performs main computation based on current inst
 			printf("\nJumping to PC: %X",PC+jump+0x02);
 
 		PC += jump + 0x02;
-		wait_Clocks = 1;
+		//wait_Clocks = 1;
 	}
 
 
@@ -884,7 +988,7 @@ void Compute()			//Function that performs main computation based on current inst
 		char temp=0x0;
 		if(debugMode==1)
 			printf("\nBRNE instruction decoded\n");
-		if(SREG[1].data == 0)
+		if(zero_flag == 0)
 		{
 			//For getting Kbits
 			Hex2Bin(0,b2);
@@ -994,7 +1098,10 @@ void Compute()			//Function that performs main computation based on current inst
 		PC += 0x2;
 	}
 
+	timer(1);
+	SetPins(1);
 }
+
 
 void output(int flag)			//Function to compute output for current instruction
 {

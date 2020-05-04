@@ -49,11 +49,11 @@ X OUT3 6 550 -150 200 L 50 50 1 1 O
 ENDDRAW
 ENDDEF
 #
-# attiny85_exp
+# at85_latest
 #
-DEF attiny85_exp U 0 40 Y Y 1 F N
+DEF at85_latest U 0 40 Y Y 1 F N
 F0 "U" 2850 1800 60 H V C CNN
-F1 "attiny85_exp" 2850 2000 60 H V C CNN
+F1 "at85_latest" 2850 2000 60 H V C CNN
 F2 "" 2850 1950 60 H V C CNN
 F3 "" 2850 1950 60 H V C CNN
 DRAW
