@@ -153,65 +153,6 @@ void TwosComp(int binSel)			//Function to get 2's complement
     
 }
 
-void Bin_Add(int a, int b, int c,int select,int withCarry)			//Function to perform binary addition
-{
-    int i,t;
-    for(i=0;i<8;i++)
-	    {
-	    	if(i==0 && withCarry == 0)
-	    	{
-	    		t = bin[b].arr[i] + bin[a].arr[i];
-	        	bin[c].arr[i] = bin[a].arr[i] ^ bin[b].arr[i];	
-	    	}
-	    	else
-	    	{
-	    		t = bin[b].arr[i] + bin[a].arr[i] + SREG[0].data;
-	        	bin[c].arr[i] = bin[a].arr[i] ^ bin[b].arr[i] ^ SREG[0].data;
-	    	}
-	        
-	        if(t<=1)
-	        {
-	            SREG[0].data = 0;
-	            printf("\nCarry bit is reset\n");
-	        }
-	        else
-	        {
-	        	SREG[0].data = 1;
-	        	printf("\nCarry bit is set\n");
-	        	if(i==3)
-	        		{
-	        			SREG[5].data = 1;
-	        			printf("\nHalf Carry bit is set\n");
-	        		}
-	        	else if(i==7)
-	        		{
-	        			SREG[2].data = 0;
-	        			//printf("\nNegative bit is reset\n");
-	        		}
-	        }
-	    }
-	    
-	int t0=bin[c].arr[0],t1=bin[c].arr[1],t2=bin[c].arr[2],t3=bin[c].arr[3];
-	for(i=0;i<4;i++)
-	{
-	    bin[c].arr[i]=bin[c].arr[4+i];
-	}
-
-	bin[c].arr[4]=t0;
-	bin[c].arr[5]=t1;
-	bin[c].arr[6]=t2;
-	bin[c].arr[7]=t3;
-	    
-	    if(select == 1)
-	    {
-	        SREG[5].data = !SREG[5].data;
-	        SREG[2].data = !SREG[0].data;
-	        SREG[0].data = !SREG[0].data;
-	    }
-}
-
-
-
 void SetPins(int flag)			//Function to set/reset the I/O pins
 {
 	if(flag == 1)
@@ -231,9 +172,7 @@ void SetPins(int flag)			//Function to set/reset the I/O pins
 	    PB3 = bin[3];
 	    PB4 = bin[4];
 	    PB5 = bin[5];
-	}
-	
-
+	}	
 }
 
 void MapToRam(int flag)				//Function to map the external hex file contents into this C code
@@ -281,38 +220,6 @@ void MapToRam(int flag)				//Function to map the external hex file contents into
 
 	if(debugMode==1)
 		PrintRam(0,filesize);
-}
-
-void UpdateSreg()			//Function to update Zero and Signed bit of SREG
-{
-	int i,t=0;
-	for(i=0;i<8;i++)
-	{
-	    if(bin[2].arr[i]==0)
-	        	t++;
-	}
-	if(t == 8)
-	{
-	    SREG[1].data = 1;
-	    //printf("\nZero bit is set\n");	
-	}
-	else
-	{
-	    SREG[1].data = 0;
-	    //printf("\nZero bit is set\n");	
-	}
-
-	SREG[4].data = SREG[2].data ^ SREG[3].data;
-	//Signed bit is exor of Negative and Overflow bits
-	if(SREG[4].data == 1)
-	{
-		//printf("\nSigned bit is set\n");
-	}
-	else
-	{
-		//printf("\nSigned bit is reset\n");
-	}
-
 }
 
 void input(int in_Val)
