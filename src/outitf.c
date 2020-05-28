@@ -147,7 +147,7 @@ static void close_server(void)
 				   
 				    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
 				    { 
-					printf("\nConnection Failed \n");
+					printf("\nConnection Failed\n");
 				    } 
 				    send(sock , message , strlen(message) , 0 );
 				    close(sock);
