@@ -135,7 +135,7 @@ static void close_server(void)
 			    {	    printf("\nIPaddr - %s portno - %d", IPaddr_file, PORT_file);
 		                    int sock = 0; 
 				    struct sockaddr_in serv_addr; 
-				    char *hello = "CLOSE_FROM_NGSPICE"; 
+				    char *message = "CLOSE_FROM_NGSPICE"; 
 				    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
 				    { 
 					printf("\n Socket creation error \n");
@@ -149,7 +149,7 @@ static void close_server(void)
 				    { 
 					printf("\nConnection Failed \n");
 				    } 
-				    send(sock , hello , strlen(hello) , 0 );
+				    send(sock , message , strlen(message) , 0 );
 				    close(sock);
 		            }
 		        }
