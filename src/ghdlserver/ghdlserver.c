@@ -89,89 +89,6 @@ struct my_struct {
 static struct my_struct *s, *users, *tmp = NULL;
 
 
-/* 17.Mar.2017 - RM - Get the process id of ngspice program.*/
-static int get_ngspice_pid(void)
-{
-    DIR* dirp;
-    FILE* fp = NULL;
-    struct dirent* dir_entry;
-    char path[1024], rd_buff[1024];
-    pid_t pid = -1;
-
-    if ((dirp = opendir("/proc/")) == NULL)
-    {
-		perror("get_ngspice_pid() - opendir /proc failed ");
-		exit(-1);
-    }
-
-    while ((dir_entry = readdir(dirp)) != NULL)
-    {
-		char* nptr;
-	    int valid_num = 0;
-
-		int tmp = strtol(dir_entry->d_name, &nptr, 10);
-		if ((errno == ERANGE) && (tmp == LONG_MAX || tmp == LONG_MIN))
-		{
-		    perror("get_ngspice_pid() - strtol"); // Number out of range.
-		    return(-1);
-		}
-		if (dir_entry->d_name == nptr)
-		{
-		    continue; // No digits found.
-		}
-		if (tmp)
-		{
-		    sprintf(path, "/proc/%s/comm", dir_entry->d_name);
-		    if ((fp = fopen(path, "r")) != NULL)
-		    {
-  				fscanf(fp, "%s", rd_buff);
-  				if (strcmp(rd_buff, NGSPICE) == 0)
-  				{
-  				    pid = (pid_t)tmp;             // 5.July.2019 - RP - Kludge
-  				}
-		    }
-		}
-    }
-
-    if (fp) fclose(fp);
-
-   return(pid);
-}
-
-
-/* 23.Mar.2017 - RM - Pass the sock_port argument. We need this if a netlist
- * uses more than one instance of the same test bench, so that we can uniquely
- * identify the PID files.
- */
-/* 10.Mar.2017 - RM - Create PID file for the test bench in /tmp. */
-static void create_pid_file(int sock_port)
-{
-    pid_t my_pid = getpid();
-    pid_t ngspice_pid = get_ngspice_pid();
-    
-    if (ngspice_pid == -1)
-    {
-      	fprintf(stderr, "create_pid_file() Failed to get ngspice PID");
-      	syslog(LOG_ERR,  "create_pid_file() Failed to get ngspice PID");
-      	exit(1);
-    }
-
-    sprintf(pid_filename, "/tmp/NGHDL_%d_%s_%d", ngspice_pid, __progname, sock_port);
-    pid_file = fopen(pid_filename, "a");	// 26.Sept.2019 - RP - Open file in append mode
-    
-    if (pid_file)
-    {
-    	pid_file_created = 1;
-	    fprintf(pid_file,"%d\n", my_pid);
-	    fclose(pid_file);
-    } else {
-        perror("create_pid_file() - cannot open PID file ");
-	    syslog(LOG_ERR, "create_pid_file(): Unable to open PID file in /tmp");
-        exit(1);
-    }
-}
-
-
 #ifdef DEBUG
 static char* curtim(void)
 {
@@ -316,16 +233,23 @@ static int connect_to_client(int server_fd)
 
 //Receive string from socket and put it inside buffer.
 static void receive_string(int sock_id, char* buffer)                                   
-{                                                                               
+{                                                                       
   	int nbytes = 0;
 
 	/* 08.Nov.2019 - RP - Blocking Socket - Receive */    
     nbytes = recv(sock_id, buffer, MAX_BUF_SIZE, 0);
     if (nbytes <= 0)
     {
-		perror("receive_string() - READ FAILURE ");
+	perror("receive_string() - READ FAILURE ");
         exit(1);
     }
+
+    //28.May.2020 - BM - Added method to close server by NGSPICE after simulation
+    char *exitstr = "CLOSE_FROM_NGSPICE";  
+    if (strcmp(buffer, exitstr)==0)
+	{
+	    Vhpi_Exit(0);
+	}
 }
 
 
@@ -447,7 +371,6 @@ void Vhpi_Initialize(int sock_port, char sock_ip[])
     nanosleep(&ts, NULL);
 
 	// 10.Mar.2017 - RM - Create PID file for the test bench.
-    create_pid_file(sock_port);
 }
 
 
