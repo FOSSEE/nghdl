@@ -268,7 +268,8 @@ class ModelGeneration:
                 if (fptr)
                 {
                     char line[20];
-                    while(fscanf(fptr, "%s", line) == 1) {
+		    int line_port;
+                    while(fscanf(fptr, "%s %d\\n", line, &line_port) == 2) {
                         ip_count++;
                     }
 
@@ -284,7 +285,7 @@ class ModelGeneration:
                 fptr = fopen(ip_filename, "a");
                 if (fptr)
                 {
-                    fprintf(fptr, "%s\\n", my_ip);
+                    fprintf(fptr, "%s %d\\n", my_ip, sock_port);
                     fclose(fptr);
                 } else {
                     perror("Client - cannot open Common_IP file ");
