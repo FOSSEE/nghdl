@@ -267,9 +267,9 @@ class ModelGeneration:
                 fptr = fopen(ip_filename, "r");
                 if (fptr)
                 {
-                    char line[20];
-		    int line_port;
-                    while(fscanf(fptr, "%s %d\\n", line, &line_port) == 2) {
+                    char line_ip[20];
+                    int line_port;
+                    while(fscanf(fptr, "%s %d", line_ip, &line_port) == 2) {
                         ip_count++;
                     }
 
