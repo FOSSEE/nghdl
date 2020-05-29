@@ -3,23 +3,18 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 **********/
-/**************************************************************************
- * 10.Mar.2017 - RM - Added a dirty fix to handle orphan FOSSEE test bench 
- * processes. The following static functions were added in the process:
- *             o nghdl_orphan_tb()
- *             o nghdl_tb_SIGUSR1()
- **************************************************************************/
-/**************************************************************************
- * 22.Oct.2019 - RP - Read all the PIDs and send kill signal to all those
- * processes. Also, Remove the common file of used IPs and PIDs for this 
- * Ngspice's instance rather than depending on GHDLServer to do the same. 
- **************************************************************************/
 /*
  * This module replaces the old "writedata" routines in nutmeg.
  * Unlike the writedata routines, the OUT routines are only called by
  * the simulator routines, and only call routines in nutmeg.  The rest
  * of nutmeg doesn't deal with OUT at all.
  */
+
+/**************************************************************************
+ * 29.May.2020 - RP, BM - Read all the IPs and ports from NGHDL_COMMON_IP
+ * file from /tmp folder. It connects to each of the ghdlserver and sends 
+ * CLOSE_FROM_NGSPICE message to terminate themselves
+ **************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
@@ -34,7 +29,6 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "circuits.h"
 #include "outitf.h"
 #include "variable.h"
-#include <fcntl.h>
 #include "ngspice/cktdefs.h"
 #include "ngspice/inpdefs.h"
 #include "breakp2.h"
@@ -43,18 +37,19 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "../misc/misc_time.h"
 
 /* 10.Mar.2917 - RM - Added the following #include */
-#include <dirent.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-// 27.May.2020 - BM - Added the following #include
+
+/* 27.May.2020 - BM - Added the following #include */
 #include <stdio.h> 
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
 #include <unistd.h> 
-#include <string.h> 
+
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
@@ -102,7 +97,7 @@ int fixme_onoise_type = SV_NOTYPE;
 int fixme_inoise_type = SV_NOTYPE;
 
 
-#define DOUBLE_PRECISION    15
+#define DOUBLE_PRECISION 15
 
 
 static clock_t lastclock, currclock;
@@ -119,40 +114,75 @@ static bool savenone = FALSE;
 #endif
 
 
-//28.May.2020 - BM - Closing the GHDL server after simulation is over
-
-static void close_server(void)
+/* 28.May.2020 - RP, BM - Closing the GHDL server after simulation is over */
+static void close_server()
 {	
 	FILE *fptr;
 	char ip_filename[48];
 	sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
-		fptr = fopen(ip_filename, "r");
-		        if (fptr)
-		        {
-			    char IPaddr_file[20];
-			    int  PORT_file;
-		            while(fscanf(fptr, "%s %d\n", IPaddr_file, &PORT_file) == 2) 
-			    {	    printf("\nIPaddr - %s portno - %d", IPaddr_file, PORT_file);
-		                    int sock = 0; 
-				    struct sockaddr_in serv_addr; 
-				    char *message = "CLOSE_FROM_NGSPICE"; 
-				    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
-				    { 
-					printf("\n Socket creation error \n");
-				    } 
+	fptr = fopen(ip_filename, "r");
+	
+    if(fptr)
+	{
+		char server_ip[20], *message = "CLOSE_FROM_NGSPICE";
+		int port = -1, sock = -1, try_limit = 0, skip_flag = 0;
+	    struct sockaddr_in serv_addr;
+        serv_addr.sin_family = AF_INET;
+
+        /* scan server ip and port to send close message */
+        while(fscanf(fptr, "%s %d\n", server_ip, &port) == 2) 
+		{	
+            /* Create socket descriptor */
+            try_limit = 10, skip_flag = 0;
+            while(try_limit > 0)
+            {
+    			if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    			{ 
+                    sleep(0.2);
+                    try_limit--;
+                    if(try_limit == 0)
+                    {
+    				    perror("\nClient Termination - Socket Failed: ");
+                        skip_flag = 1;
+    			    }
+                }
+                else
+                    break;
+            }
+
+            if (skip_flag)
+                continue;
 				   
-				    serv_addr.sin_family = AF_INET; 
-				    serv_addr.sin_port = htons(PORT_file);
-				    serv_addr.sin_addr.s_addr = inet_addr(IPaddr_file); 
-				   
-				    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
-				    { 
-					printf("\nConnection Failed\n");
-				    } 
-				    send(sock , message , strlen(message) , 0 );
-				    close(sock);
-		            }
-		        }
+			serv_addr.sin_port = htons(port);
+			serv_addr.sin_addr.s_addr = inet_addr(server_ip); 
+
+            /* connect with the server */
+            try_limit = 10, skip_flag = 0;
+			while(try_limit > 0)
+            {
+    			if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+    			{ 
+    				sleep(0.2);
+                    try_limit--;
+                    if(try_limit == 0)
+                    {
+                        perror("\nClient Termination - Connection Failed: ");
+                        skip_flag = 1;
+                    }
+    			}
+                else
+                    break;
+            }
+			
+            if (skip_flag)
+                continue;
+
+            /* send close message to the server */
+            send(sock, message, strlen(message), 0);
+			close(sock);
+		}
+	}
+
 	remove(ip_filename);
 }
 
@@ -1083,15 +1113,13 @@ fileEndPoint(FILE *fp, bool bin)
 static void
 fileEnd(runDesc *run)
 {
-    /* 10.Mar.2017 - RM - Check if any orphan test benches are running. If any are
+    /* 28.May.2020 - RP, BM - Check if any orphan test benches are running. If any are
      * found, force them to exit.
      */
-    //nghdl_orphan_tb();
-    /* End 10.Mar.2017 */
 
-    /* 28.MaY.2020 - BM */
-    close_server;
-    /* End 28.MaY.2020 */
+    /* 28.May.2020 - BM */
+    close_server();
+    /* End 28.May.2020 */
 
 
     if (run->fp != stdout) {
@@ -1246,13 +1274,9 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 static void
 plotEnd(runDesc *run)
 {
-    /* 10.Mar.2017 - RM */
-    //nghdl_orphan_tb();
-    /* End 10.Mar.2017 */
-
-    /* 28.MaY.2020 - BM */
-    close_server;
-    /* End 28.MaY.2020 */
+    /* 28.May.2020 - BM, RP */
+    close_server();
+    /* End 28.May.2020 */
 
 
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
