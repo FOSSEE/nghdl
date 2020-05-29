@@ -1,38 +1,21 @@
-/**********************************************************************************
- * <ghdlserver.c>  FOSSEE, IIT-Bombay
- **********************************************************************************
+/************************************************************************************
+ * <ghdlserver.c>  eSim Team, FOSSEE, IIT-Bombay
+ ************************************************************************************
+ * 28.May.2020 - Bladen Martin   - Termination of testbench: Replaced Process ID
+ *                                 mechanism with socket connection from client
+ *                                 receiving the special close message
+ ************************************************************************************
+ ************************************************************************************
  * 08.Nov.2019 - Rahul Paknikar  - Switched to blocking sockets from non-blocking
- *								 - Close previous used socket to prevent from   
- *								   generating too many socket descriptors
- *								 - Enabled SO_REUSEPORT, SO_DONTROUTE socket options
- * 26.Sept.2019 - Rahul Paknikar - Added reading of IP from a file to 
- *                                 support multiple digital models
- *                               - On exit, the test bench removes the
- *                                 NGHDL_COMMON_IP_<ngspice_pid> file, shared by all
- *                                 nghdl digital models and is stored in /tmp
- *                                 directory. It tracks the used IPs for existing
- *                                 digital models in current simulation.
- *              				 - Writes PID file in append mode.
+ *								               - Close previous used socket to prevent from   
+ *								                 generating too many socket descriptors
+ *              								 - Enabled SO_REUSEPORT, SO_DONTROUTE socket options
  * 5.July.2019 - Rahul Paknikar  - Added loop to send all port values for 
  *                                 a given event.
- *                               - Removed bug to terminate multiple testbench
- *                                 instances in ngpsice windows.
- **********************************************************************************
- **********************************************************************************
- * 24.Mar.2017 - Raj Mohan - Added signal handler for SIGUSR1, to handle an 
- *                           orphan test bench process.
- *                           The test bench will now create a PID file in
- *                           /tmp directory with the name 
- *                           NGHDL_<ngspice pid>_<test bench>_<instance_id>
- *                           This file contains the PID of the test bench .
- *                           On exit, the test bench removes this file.
- *                           The SIGUSR1 signal serves the same purpose as the 
- *                           "End" signal.
- *                         - Added syslog interface for logging.
+ ************************************************************************************
+ ************************************************************************************
+ * 24.Mar.2017 - Raj Mohan - Added syslog interface for logging.
  *                         - Enabled SO_REUSEADDR socket option.
- *                         - Added the following functions:
- *                             o create_pid_file()
- *                             o get_ngspice_pid()
  * 22.Feb.2017 - Raj Mohan - Implemented a kludge to fix a problem in the
  *                           test bench VHDL code.
  *                         - Changed sleep() to nanosleep().
@@ -40,7 +23,7 @@
  *                           Added the following functions:
  *                             o curtim()
  *                             o print_hash_table()
- *********************************************************************************/
+ ***********************************************************************************/
 
 #include <string.h>
 #include "ghdlserver.h"
@@ -60,7 +43,6 @@
 #include <limits.h>
 #include <time.h>
 #include <errno.h>
-#include <dirent.h>
 #include <syslog.h>
 
 #define _XOPEN_SOURCE 500
@@ -240,13 +222,13 @@ static void receive_string(int sock_id, char* buffer)
     nbytes = recv(sock_id, buffer, MAX_BUF_SIZE, 0);
     if (nbytes <= 0)
     {
-	perror("receive_string() - READ FAILURE ");
+		perror("receive_string() - READ FAILURE ");
         exit(1);
     }
 
-    //28.May.2020 - BM - Added method to close server by NGSPICE after simulation
+    // 28.May.2020 - BM - Added method to close server by Ngspice after simulation
     char *exitstr = "CLOSE_FROM_NGSPICE";  
-    if (strcmp(buffer, exitstr)==0)
+    if (strcmp(buffer, exitstr) == 0)
 	{
 	    Vhpi_Exit(0);
 	}
