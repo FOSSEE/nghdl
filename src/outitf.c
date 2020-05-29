@@ -49,6 +49,12 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+// 27.May.2020 - BM - Added the following #include
+#include <stdio.h> 
+#include <sys/socket.h> 
+#include <arpa/inet.h> 
+#include <unistd.h> 
+#include <string.h> 
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
@@ -112,102 +118,46 @@ static double *valueold, *valuenew;
 static bool savenone = FALSE;
 #endif
 
-/* 10.Mar.2017 - RM - Added nghdl_tb_SIGUSR1().*/
-static void nghdl_tb_SIGUSR1(char* pid_file)
-{
-    int ret;
-    char line[80];
-    char* nptr;
-    pid_t pid[256], tmp;
-    int count=0, i;
 
-    FILE* fp = fopen(pid_file, "r");
+//28.May.2020 - BM - Closing the GHDL server after simulation is over
 
-    if (fp)
-    {
-        /* 22.Oct.2019 - RP - Scan and store all the PIDs in this file */
-        while (fscanf(fp, "%s", line) == 1)
-        {   
-            // PID is converted to a decimal value.
-            tmp = (pid_t) strtol(line, &nptr, 10);
-            if ((errno != ERANGE) && (errno!= EINVAL))
-            {
-                pid[count++] = tmp;
-            }
-        }
-
-        fclose(fp);
-    }
-
-    /* 22.Oct.2019 - RP - Kill all the active PIDs */
-    for(i=0; i<count; i++)
-    {
-        if (pid[i])      
-        {
-            // Check if a process with this pid really exists.
-            ret = kill(pid[i], 0);
-            if (ret == 0)
-            {
-                kill(pid[i], SIGUSR1);
-            }
-        }
-    }
-
-    // 22.Oct.2019 - RP
-    remove(pid_file);
+static void close_server(void)
+{	
+	FILE *fptr;
+	char ip_filename[48];
+	sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+		fptr = fopen(ip_filename, "r");
+		        if (fptr)
+		        {
+			    char IPaddr_file[20];
+			    int  PORT_file;
+		            while(fscanf(fptr, "%s %d\n", IPaddr_file, &PORT_file) == 2) 
+			    {	    printf("\nIPaddr - %s portno - %d", IPaddr_file, PORT_file);
+		                    int sock = 0; 
+				    struct sockaddr_in serv_addr; 
+				    char *message = "CLOSE_FROM_NGSPICE"; 
+				    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
+				    { 
+					printf("\n Socket creation error \n");
+				    } 
+				   
+				    serv_addr.sin_family = AF_INET; 
+				    serv_addr.sin_port = htons(PORT_file);
+				    serv_addr.sin_addr.s_addr = inet_addr(IPaddr_file); 
+				   
+				    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+				    { 
+					printf("\nConnection Failed\n");
+				    } 
+				    send(sock , message , strlen(message) , 0 );
+				    close(sock);
+		            }
+		        }
+	remove(ip_filename);
 }
 
-/* 10.Mar.2017 - RM - Added nghdl_orphan_tb().*/
-static void nghdl_orphan_tb(void)
-{
-    struct dirent* dirp;
-    DIR* dirfd;
-    char* dir = "/tmp";
-    char filename_tmp[1024];
-    char pid_file_prefix[256];
-        
-    sprintf(pid_file_prefix, "NGHDL_%d", getpid()); 
 
-    if ((dirfd = opendir(dir)) == NULL)
-    {
-    fprintf(stderr, "nghdl_orphan_tb(): Cannot open /tmp\n");
-        return;
-    }
-
-    /* Loop through /tmp directories looking for "NGHDL_<my pid>*" files.*/
-    while ((dirp = readdir(dirfd)) != NULL)
-    {
-    struct stat stbuf;
-    sprintf(filename_tmp, "/tmp/%s", dirp->d_name);
-    if (strstr(filename_tmp, pid_file_prefix)) 
-    {
-        if (stat(filename_tmp, &stbuf) == -1)
-        {
-        fprintf(stderr,
-                  "nghdl_orphan_tb: stat() failed; ERRNO=%d on file:%s\n",
-                        errno, filename_tmp);
-        continue;
-        }
-
-        if ((stbuf.st_mode & S_IFMT) == S_IFDIR)
-        {
-        continue;
-        }
-        else
-        {
-        nghdl_tb_SIGUSR1(filename_tmp);
-        }
-    }
-    }
-
-    // 22.Oct.2019 - RP
-    char ip_filename[40];
-    sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
-    remove(ip_filename);
-}
-/* End 10.Mar.2017 - RM */
-
-/* The two "begin plot" routines share all their internals... */
+// The two "begin plot" routines share all their internals... 
 
 int
 OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
@@ -1136,9 +1086,12 @@ fileEnd(runDesc *run)
     /* 10.Mar.2017 - RM - Check if any orphan test benches are running. If any are
      * found, force them to exit.
      */
-    nghdl_orphan_tb();    
-
+    //nghdl_orphan_tb();
     /* End 10.Mar.2017 */
+
+    /* 28.MaY.2020 - BM */
+    close_server;
+    /* End 28.MaY.2020 */
 
 
     if (run->fp != stdout) {
@@ -1294,8 +1247,13 @@ static void
 plotEnd(runDesc *run)
 {
     /* 10.Mar.2017 - RM */
-    nghdl_orphan_tb();
+    //nghdl_orphan_tb();
     /* End 10.Mar.2017 */
+
+    /* 28.MaY.2020 - BM */
+    close_server;
+    /* End 28.MaY.2020 */
+
 
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 }
