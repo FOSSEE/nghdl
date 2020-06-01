@@ -1,7 +1,6 @@
 /* This C Code for ATTINY series (specifically ATTINY85) was developed by ASHUTOSH JHA
-   Further modifications by Saurabh Bansode
 
-				****!!! LATEST EDIT - 12:12 PM, 22/5/2020 by AJ ****!!! 
+				****!!! LATEST EDIT - 5:44 PM, 31/5/2020 by AJ ****!!! 
 
 	1. Combined instructions given by SM,VY,SK
 	2. Following instructions were having clashes with other instructions -
@@ -21,9 +20,15 @@
 		ii)		BRSH == BRCC
 		iii)	CBR  == ANDI
 
-		For the above, BRCS,BRCC, ANDI are used and BRLO,BRSH,CBR are deprecated for use. 
+		For the above, BRCS,BRCC, ANDI are used and BRLO,BRSH,CBR are deprecated for use.
+	4. Wait clocks functionality added. Now instruction which require multiple clock cycles for execution
+	   will be executed in multiple clock cycles (as opposed to every instruction being executed in a single
+	   clock cycle earlier) and output will be reflected at the end of required
+	   cycles. (eg RJMP takes 2 clock cycles so, output of RJMP will be reflected after 2 clock
+	   			cycles instead of 1) 
+	5. Current clock will be shown in terminal alongwith PC for better debugging/testing of point 4.
 
-   **NOTE	:-	The functions "MapToRam" and "output" &
+   **NOTE	:-	The functions "MapToRam", "output" and "input" &
    				the variables PB0 ... PB5 
    				linked to the VHDL code of ATTINY85
    				by "ghdl_access.vhdl" file.	*/ 
@@ -35,7 +40,7 @@
 #define size 4096		//4kb program memory for attiny85
 
 int debugMode=1;
-int PB0,PB1,PB2,PB3,PB4,PB5,wait_Clocks=0;
+int PB0,PB1,PB2,PB3,PB4,PB5,wait_Clocks=0,clk_Count=1;
 int PC = 0;                      // changed PC to int
 int SP = 512;                	//IOREG[29]+IOREG[30]*256;
 struct memory					//Structure to store RAM and other registers
@@ -265,10 +270,10 @@ void MapToRam(int flag)				//Function to map the external hex file contents into
 		char * line = NULL;
     	size_t len = 0;
     	ssize_t read;
-    	fptr = fopen("pwm_var.hex", "r");	
+    	fptr = fopen("firmware.hex", "r");	
 		while ((read = getline(&line, &len, fptr)) != -1) 
 		{
-	        printf("\nLine: %s\n", line);
+	        //printf("\nLine: %s\n", line);
 	        for(i=9;i<strlen(line)-4;i++)
 	        	{
 	        		c = line[i];
@@ -289,7 +294,7 @@ void MapToRam(int flag)				//Function to map the external hex file contents into
 			        	c-=87;
 			        c += temp;
 			        prog_mem[adr].data = c;
-			        printf("\nRam[%X]: %X",adr,c);
+			        //printf("\nRam[%X]: %X",adr,c);
 			        adr++;
 	        	}
 	        	lineCount++;
@@ -1017,44 +1022,6 @@ void Compute()			//Function that performs main computation based on current inst
 	}*/
 
 /************************************************************************************************/
-//	SBI by AJ	2/05/2020
-	else if(b1==0x09 && b2==0x0A)
-	{
-		if(debugMode == 1)
-	    	printf("\nSBI instruction decoded\n");
-	    int Abits[5],Bbits[3];
-	    Hex2Bin(0,b3);
-	    Hex2Bin(1,b4);
-	    for(i=0;i<4;i++)
-	    	Abits[i+1] = bin[0].arr[i];
-	    Abits[0] = bin[1].arr[3];
-	    for(i=0;i<3;i++)
-	    	Bbits[i] = bin[1].arr[i];
-
-	    j=0;
-	    for(i=0;i<3;i++)
-	    	j += Bbits[i]*pow(2,i);
-	    t=0;
-	    for(i=0;i<5;i++)
-	    	t += Abits[i]*pow(2,i);
-
-	    if(debugMode == 1)
-	    	printf("\nBefore execution: IOREG[%X]: %X",t,IOREG[t].data);
-
-	    Hex2Bin(2,IOREG[t].data);
-	    bin[2].arr[j] = 1;
-	    j=0;
-	    for(i=0;i<8;i++)
-	    	j += bin[2].arr[i]*pow(2,i);
-	    IOREG[t].data = j;
-
-	    if(debugMode == 1)
-	    	printf("\nAfter execution: IOREG[%X]: %X",t,IOREG[t].data);
-
-	    PC += 0x02;
-	}
-
-/************************************************************************************************/
 //	CPI by AJ	27/04/2020
 //  Modified by SM   11/05/2020
 	else if(b1==0x03)
@@ -1206,10 +1173,20 @@ void Compute()			//Function that performs main computation based on current inst
 //	RJMP by AJ		30/4/20
 	else if(b1==0x0C)
 	{
+		if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
+	main_prog:
+
     	if(debugMode==1)
 			printf("\nRJMP instruction decoded\n");
 		int i,j=0,kbits[12];
-		char jump=0x0;
+		int jump=0x0;
 		Hex2Bin(0,b2);
 		Hex2Bin(1,b3);
 		Hex2Bin(2,b4);
@@ -1250,7 +1227,6 @@ void Compute()			//Function that performs main computation based on current inst
 			printf("\nJumping to PC: %X",PC+jump+0x02);
 
 		PC += jump + 0x02;
-		//wait_Clocks = 1;
 	}
 
 
@@ -1407,6 +1383,14 @@ void Compute()			//Function that performs main computation based on current inst
 
 	else if(b1==0x9 && b2==0x5 && b3==0 && b4==0x9)
 	{	
+		if(wait_Clocks < 2)		//Requires 3 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
         if(debugMode==1)
            	printf("\nICALL instruction decoded\n");
 
@@ -1423,6 +1407,14 @@ void Compute()			//Function that performs main computation based on current inst
 //  IJMP BY SM   on  14/05/20 
 	else if(b1==0x9 && b2==0x4 && b3==0 && b4==0x9)
 	{
+			if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+			{
+				wait_Clocks++;
+				goto EOC;			//End Of Computation
+			}
+		else
+			wait_Clocks = 0;
+
         if(debugMode==1)
            	printf("\nIJMP instruction decoded\n");
 
@@ -1434,6 +1426,14 @@ void Compute()			//Function that performs main computation based on current inst
 //	SBI by SM 	07/05/20
 	else if(b1==0x9 && b2==0xA)
 	{	
+		if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
 		char b,bits; 
 	    if (b4>7)
 			b=b4-8;
@@ -1473,6 +1473,14 @@ void Compute()			//Function that performs main computation based on current inst
 //	CBI by SM 	07/05/20
 	else if(b1==0x9 && b2==8)
 	{	 
+		if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
 		char b,bits;
 	    if (b4>7)
 			b=b4-8;
@@ -2459,6 +2467,14 @@ void Compute()			//Function that performs main computation based on current inst
 //	PUSH by VY		14/05/20
 	else if(b1==0x09 && (b2==0x02 || b2== 0x03) && b4==0x0F)
 	{
+		if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
 		if(debugMode==1)
 			printf("\nPUSH instruction decoded\n");
         unsigned char k=(b2&1)*16+b3;
@@ -2475,6 +2491,14 @@ void Compute()			//Function that performs main computation based on current inst
 //	POP by VY		14/05/20
 	else if(b1==0x09 && (b2==0x00 || b2== 0x01) && b4==0x0F)
 	{
+		if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
 		if(debugMode==1)
 			printf("\nPOP instruction decoded\n");
         unsigned char k=(b2&1)*16+b3;
@@ -2491,7 +2515,15 @@ void Compute()			//Function that performs main computation based on current inst
 /***********************************************************************************************/	
 //	RCALL by VY		14/05/20
 	else if(b1==0x0D)
-	{       
+	{   
+		if(wait_Clocks < 2)		//Requires 3 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
 		if(debugMode==1)
 			printf("\nRCALL instruction decoded\n");
         int k=b2*256+b3*16+b4;
@@ -2509,6 +2541,14 @@ void Compute()			//Function that performs main computation based on current inst
 //	RET by VY		14/05/20
 	else if(b1==0x09 && b2==0x05 && b3== 0x00 && b4== 0x08)
 	{
+		if(wait_Clocks < 3)		//Requires 4 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
 		if(debugMode==1)
 			printf("\nRET instruction decoded\n");
 
@@ -2914,9 +2954,17 @@ void Compute()			//Function that performs main computation based on current inst
 	}
 
 /************************************************************************************************/
-//	RETI by SK, modified by SK on 13/5/2020
+//	RETI by SK 		 on 13/5/2020
 	else if(b1==0x9 && b2==0x5 && b3==0x1 && b4==0x8)
 	{	
+		if(wait_Clocks < 3)		//Requires 4 clock cycles for execution
+		{
+			wait_Clocks++;
+			goto EOC;			//End Of Computation
+		}
+		else
+			wait_Clocks = 0;
+
 		if(debugMode==1)
 			printf("\nRETI instruction decoded\n");
 		
@@ -3007,6 +3055,14 @@ void Compute()			//Function that performs main computation based on current inst
 //	ST by SK 13/05/2020
 	else if(b1==0x9 && (b2==0x3 || b2==0x2))								
 	{
+		if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+			{
+				wait_Clocks++;
+				goto EOC;			//End Of Computation
+			}
+		else
+			wait_Clocks = 0;
+
 		int x;
 		if(debugMode==1)
 		{	
@@ -3234,6 +3290,14 @@ void Compute()			//Function that performs main computation based on current inst
 		}
 		if(SREG[l].data == 0)
 		{
+			if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+			{
+				wait_Clocks++;
+				goto EOC;			//End Of Computation
+			}
+			else
+				wait_Clocks = 0;
+
 			//For getting Kbits
 			Hex2Bin(0,b2);
 			Hex2Bin(1,b3);
@@ -3366,6 +3430,14 @@ void Compute()			//Function that performs main computation based on current inst
 		}
 		if(SREG[l].data == 1)
 		{
+			if(wait_Clocks < 1)		//Requires 2 clock cycles for execution
+			{
+				wait_Clocks++;
+				goto EOC;			//End Of Computation
+			}
+			else
+				wait_Clocks = 0;
+
 			//For getting Kbits
 			Hex2Bin(0,b2);
 			Hex2Bin(1,b3);
@@ -3490,6 +3562,7 @@ void Compute()			//Function that performs main computation based on current inst
 		PC += 0x2;
 	}
 
+	EOC:
 	timer(1);
 	SetPins(1);
 }
@@ -3499,9 +3572,10 @@ void output(int flag)			//Function to compute output for current instruction
 {
 	if(flag == 1)
 	{
-		printf("\nPC: %X\n",PC);
+		printf("\nPC: %X\tClocks: %d\n",PC,clk_Count);
 		Compute();
 		if(debugMode==1)
 			PrintSREG();
+		clk_Count++;
 	}
 }
