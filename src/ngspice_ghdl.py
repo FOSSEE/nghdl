@@ -2,14 +2,15 @@
 
 
 # This file create the gui to install code model in the ngspice.
+#08.June.2020 - Bladen Martin - Added if-else constructs to make code OS independent#
 
 import os
-import sys
 import shutil
 import subprocess
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+import sys
 from configparser import SafeConfigParser
+from PyQt4 import QtCore
+from PyQt4 import QtGui
 from Appconfig import Appconfig
 from createKicadLibrary import AutoSchematic
 from model_generation import ModelGeneration
@@ -91,7 +92,7 @@ class Mainwindow(QtGui.QWidget):
     def browseFile(self):
         print("Browse button clicked")
         self.filename = QtGui.QFileDialog.getOpenFileName(
-                                self, 'Open File', '.')
+            self, 'Open File', '.')
         self.ledit.setText(self.filename)
         print("Vhdl file uploaded to process :", self.filename)
 
@@ -140,7 +141,11 @@ class Mainwindow(QtGui.QWidget):
             )
             if ret == QtGui.QMessageBox.Ok:
                 print("Overwriting existing model " + self.modelname)
-                cmd = "rm -rf " + self.modelname
+                #08.June.2020 - BM - Delete existing model directory
+                if os.name == 'nt':
+                    cmd = "rmdir " + self.modelname + "/s /q"
+                else:
+                    cmd = "rm -rf " + self.modelname
                 # process = subprocess.Popen(
                 #     cmd, stdout=subprocess.PIPE,
                 #     stderr=subprocess.PIPE, shell=True
@@ -214,14 +219,26 @@ class Mainwindow(QtGui.QWidget):
                     "/src/ghdlserver/Utility_Package.vhdl", path + "/DUTghdl/")
         shutil.copy(os.path.join(self.home, self.src_home) +
                     "/src/ghdlserver/Vhpi_Package.vhdl", path + "/DUTghdl/")
-
+        #08.June.2020 - BM - If OS is Windows, copy C library libws2_32.a to DUTghl be linked with server by GHDL            
+        if os.name == 'nt':
+            shutil.copy(os.path.join(self.home, self.src_home) +
+                        "/src/ghdlserver/libws2_32.a", path + "/DUTghdl/")
         for file in self.file_list:
             shutil.copy(str(file), path + "/DUTghdl/")
-
         os.chdir(path + "/DUTghdl")
-        subprocess.call("bash " + path + "/DUTghdl/compile.sh", shell=True)
-        subprocess.call("chmod a+x start_server.sh", shell=True)
-        subprocess.call("chmod a+x sock_pkg_create.sh", shell=True)
+        #08.June.2020 - BM - Run following commands as per OS. Use bash.exe provided by MSYS for Windows         
+        if os.name == 'nt':
+            self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME') #path to msys bin directory where bash is located
+            subprocess.call(self.msys_bin+"/bash.exe " +
+                            path + "/DUTghdl/compile.sh", shell=True)
+            subprocess.call(self.msys_bin+"/bash.exe -c " +
+                            "'chmod a+x start_server.sh'", shell=True)
+            subprocess.call(self.msys_bin+"/bash.exe -c " +
+                            "'chmod a+x sock_pkg_create.sh'", shell=True)
+        else:
+            subprocess.call("bash " + path + "/DUTghdl/compile.sh", shell=True)
+            subprocess.call("chmod a+x start_server.sh", shell=True)
+            subprocess.call("chmod a+x sock_pkg_create.sh", shell=True)
         os.remove("compile.sh")
         os.remove("ghdlserver.c")
         # os.remove("ghdlserver.h")
@@ -242,10 +259,18 @@ class Mainwindow(QtGui.QWidget):
     def runMake(self):
         print("run Make Called")
         self.release_home = self.parser.get('NGSPICE', 'RELEASE')
-        os.chdir(self.release_home)
+        #08.June.2020 - BM - Changed make location to .../ngspice-nghdl/release/src/xspice/icm
+        path_icm = os.path.join(self.release_home, "src/xspice/icm")
+        print(path_icm)
+        os.chdir(path_icm)
         try:
-            cmd = " make"
-            print("Running Make command in " + self.release_home)
+            #08.June.2020 - BM - Use make.exe provided by MSYS for Windows
+            if os.name == 'nt':
+                self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME') #path to msys bin directory where make is located
+                cmd = self.msys_bin+"\make.exe"
+            else:
+                cmd = " make"
+            print("Running Make command in " + path_icm)
             path = os.getcwd()  # noqa
             self.process = QtCore.QProcess(self)
             self.process.start(cmd)
@@ -257,7 +282,11 @@ class Mainwindow(QtGui.QWidget):
     def runMakeInstall(self):
         print("run Make Install Called")
         try:
-            cmd = " make install"
+            if os.name == 'nt':
+                self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME')
+                cmd = self.msys_bin+"\make.exe install"
+            else:
+                cmd = " make install"
             print("Running Make Install")
             path = os.getcwd()  # noqa
             try:
