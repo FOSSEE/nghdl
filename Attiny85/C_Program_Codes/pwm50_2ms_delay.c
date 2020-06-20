@@ -17,6 +17,6 @@ int main (void)
     // set PB30low
     PORTB = 0x00;
     // delay loop
-    _delay_ms(2);
+    _delay_ms(3);
   }
 }

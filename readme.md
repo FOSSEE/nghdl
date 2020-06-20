@@ -12,11 +12,18 @@ Ngspice supports mixed mode simulation. It can simulate both digital and analog 
 Ngspice has something called code-model which defines the behavior of your component and can be used in the netlist. For example you can create a full-adder's code-model in Ngspice and use it in any circuit netlist of Ngspice.
 
 Now the question is if we already have digital model creation in Ngspice, then why this interfacing?
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 Well, in Ngspice, it is difficult to write your own digital code-models. Though, many people are familiar with GHDL and can easily write the VHDL code. So the idea of interfacing is just to write VHDL code for a model and use it as a dummy model in Ngspice. Thus, whenever Ngspice looks for that model, it will actually call GHDL to get the results. GHDL's foreign language interface is used for this inter-process communication.
+=======
+>>>>>>> a28522ac35da6f275f6ca73c47006b39c8a6725f
 
+Well, in Ngspice, it is difficult to write your own digital code-models. Though, many people are familiar with GHDL and can easily write the VHDL code.
+So the idea of interfacing is just to write VHDL code for a model and use it as a dummy model in Ngspice. Thus, whenever Ngspice looks for that model, it will actually call GHDL to get the results.
+GHDL's foreign language interface is used for this inter-process communication.
 
+<<<<<<< HEAD
 ##Pre-requisites
 =======
 Well, in Ngspice, it is difficult to write your own digital code-models. Though, many people are familiar with GHDL and can easily write the VHDL code.
@@ -34,6 +41,15 @@ GHDL's foreign language interface is used for this inter-process communication.
 ##How to install? This module is made available with eSim (Electronic Circuit Simulation). Refer https://esim.fossee.in/ for more information.
 =======
 
+=======
+
+## Pre-requisites
+1. Ubuntu 16.04-18.04 (You can try it on other version and let us know)
+2. GHDL (LLVM)-0.36
+3. Ngspice-31
+
+
+>>>>>>> a28522ac35da6f275f6ca73c47006b39c8a6725f
 ## How to install?
 This module is made available with eSim (Electronic Circuit Simulation). 
 Refer https://esim.fossee.in/ for more information.
