@@ -11,7 +11,7 @@ use ieee.numeric_std.all;
 library work;
 use work.ghdl_access.all;
 
-entity attiny_85_nghdl is
+entity attiny85_latest is
 port(VCC : in std_logic;
      GND : in std_logic;
      clk : in std_logic;
@@ -21,9 +21,9 @@ port(VCC : in std_logic;
      PB3 : out std_logic_vector(0 downto 0);
      PB4 : out std_logic_vector(0 downto 0);
      PB5 : out std_logic_vector(0 downto 0));
-end attiny_85_nghdl;
+end attiny85_latest;
 
-architecture bhv of attiny_85_nghdl is
+architecture bhv of attiny85_latest is
 
 begin
 MapToRam(1);
