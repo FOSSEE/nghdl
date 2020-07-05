@@ -1,0 +1,44 @@
+* /home/ash98/esim-workspace/piso_test1/piso_test1.cir
+
+* u4  net-_u1-pad6_ serial_out dac_bridge_1
+r1  serial_out gnd 1k
+* u5  serial_out plot_v1
+* u3  clock plot_v1
+* u1  ? ? ? ? net-_u1-pad5_ net-_u1-pad6_ piso
+v1  clock gnd pulse(0 5 0 0 0 10m 20m)
+* u2  clock net-_u1-pad5_ adc_bridge_1
+a1 [net-_u1-pad6_ ] [serial_out ] u4
+a2 [? ] [? ] [? ] [? ] [net-_u1-pad5_ ] [net-_u1-pad6_ ] u1
+a3 [clock ] [net-_u1-pad5_ ] u2
+* Schematic Name:                             dac_bridge_1, NgSpice Name: dac_bridge
+.model u4 dac_bridge(out_high=6 t_rise=1.0e-9 out_undef=0.5 out_low=0.0 t_fall=1.0e-9 input_load=1.0e-12 ) 
+* Schematic Name:                             piso, NgSpice Name: piso
+.model u1 piso(instance_id=1 rise_delay=1.0e-9 fall_delay=1.0e-9 input_load=1.0e-12 ) 
+* Schematic Name:                             adc_bridge_1, NgSpice Name: adc_bridge
+.model u2 adc_bridge(fall_delay=1.0e-9 in_low=1.0 in_high=2.0 rise_delay=1.0e-9 ) 
+.tran 0.1e-03 500e-03 0e-00
+
+* Control Statements 
+.control
+*******Style Parameters******
+set hcopydevtype=postscript
+set color0 = rgb:f/f/e
+set xfont 20
+*background
+set color1 = rgb:/f/f/f
+set xbrushwidth 10
+*grid and text
+set color2 = rgb:f/0/0  
+*vector0
+set color3 = rgb:0/0/f  
+*vector1
+set color4 = rgb:f/0/0
+*vector2 
+
+run
+print allv > plot_data_v.txt
+print alli > plot_data_i.txt
+plot v(serial_out) v(clock)
+plot v(clock) v(serial_out)
+.endc
+.end
