@@ -1,5 +1,7 @@
+# 10 Bit ADC & DAC code models
+
 This folder contains code models of 10 BIT ADC & DAC.
-Accuracy ~ 99.8%
+**Steady State Accuracy ~ 99.8%**
 
 To use - 
 1. Make a new folder in /home/ash98/ngspice-nghdl/src/xspice/icm/analog or /home/ash98/ngspice-nghdl/src/xspice/icm/xtradev
