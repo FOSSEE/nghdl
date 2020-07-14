@@ -3,17 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 **********/
-/**************************************************************************
- * 10.Mar.2017 - RM - Added a dirty fix to handle orphan FOSSEE test bench 
- * processes. The following static functions were added in the process:
- *             o nghdl_orphan_tb()
- *             o nghdl_tb_SIGUSR1()
- **************************************************************************/
-/**************************************************************************
- * 22.Oct.2019 - RP - Read all the PIDs and send kill signal to all those
- * processes. Also, Remove the common file of used IPs and PIDs for this 
- * Ngspice's instance rather than depending on GHDLServer to do the same. 
- **************************************************************************/
 /*
  * This module replaces the old "writedata" routines in nutmeg.
  * Unlike the writedata routines, the OUT routines are only called by
@@ -21,23 +10,37 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
  * of nutmeg doesn't deal with OUT at all.
  */
 
+/**************************************************************************
+ * 08.June.2020 - RP, BM - Added OS (Windows and Linux) dependent 
+ *                         preprocessors and sockets
+ **************************************************************************
+ * 29.May.2020 - RP, BM - Read all the IPs and ports from NGHDL_COMMON_IP
+ * file from /tmp folder. It connects to each of the ghdlserver and sends 
+ * CLOSE_FROM_NGSPICE message to terminate themselves
+ **************************************************************************/
+
 #include "ngspice/ngspice.h"
+
+/*05.June.2020 - BM - Added follwing includes for Windows OS */
 #ifdef _WIN32
-#undef BOOLEAN //05.Jue.2020 - BM - Undefine BOOLEAN due to clashing definition in WIndows
+    #undef BOOLEAN  /* Undefine it due to conflicting definitions in Windows OS */
+
+    #include <ws2tcpip.h>
+    #include <winsock2.h>
 #endif
+
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/plot.h"
 #include "ngspice/sim.h"
-#include "ngspice/inpdefs.h" /* for INPtables */
+#include "ngspice/inpdefs.h"        /* for INPtables */
 #include "ngspice/ifsim.h"
 #include "ngspice/jobdefs.h"
 #include "ngspice/iferrmsg.h"
 #include "circuits.h"
 #include "outitf.h"
 #include "variable.h"
-#include <fcntl.h>
 #include "ngspice/cktdefs.h"
 #include "ngspice/inpdefs.h"
 #include "breakp2.h"
@@ -46,29 +49,24 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "../misc/misc_time.h"
 
 /* 10.Mar.2917 - RM - Added the following #include */
-#include <dirent.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
-//05.June.2020 - BM - Added follwing includes for Windows
-#ifdef _WIN32
-#include <ws2tcpip.h>
-#include <winsock2.h>
-#endif
-
 /* 27.May.2020 - BM - Added the following #include */
 #ifdef __linux__
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+    #include <stdio.h>
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
 #endif
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
+
 
 static int beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName,
                      char *refName, int refType, int numNames, char **dataNames, int dataType,
@@ -126,39 +124,47 @@ static double *valueold, *valuenew;
 static bool savenone = FALSE;
 #endif
 
+
 /* 28.May.2020 - RP, BM - Closing the GHDL server after simulation is over */
-
-#ifdef __linux__
 static void close_server()
-{
-    FILE *fptr;
-    char ip_filename[48];
-    sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
-    fptr = fopen(ip_filename, "r");
+{	
+	FILE *fptr;
+	char ip_filename[48];
 
-    if (fptr)
-    {
-        char server_ip[20], *message = "CLOSE_FROM_NGSPICE";
-        int port = -1, sock = -1, try_limit = 0, skip_flag = 0;
-        struct sockaddr_in serv_addr;
+	#ifdef __linux__
+		sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+	#elif _WIN32
+		WSADATA WSAData;
+    	SOCKADDR_IN addr;
+    	WSAStartup(MAKEWORD(2, 2), &WSAData);
+		sprintf(ip_filename, "C:\\Windows\\Temp\\NGHDL_COMMON_IP_%d.txt", getpid());
+	#endif
+
+	fptr = fopen(ip_filename, "r");
+	
+    if(fptr)
+	{
+		char server_ip[20], *message = "CLOSE_FROM_NGSPICE";
+		int port = -1, sock = -1, try_limit = 0, skip_flag = 0;
+	    struct sockaddr_in serv_addr;
         serv_addr.sin_family = AF_INET;
 
         /* scan server ip and port to send close message */
-        while (fscanf(fptr, "%s %d\n", server_ip, &port) == 2)
-        {
+        while(fscanf(fptr, "%s %d\n", server_ip, &port) == 2) 
+		{	
             /* Create socket descriptor */
             try_limit = 10, skip_flag = 0;
-            while (try_limit > 0)
+            while(try_limit > 0)
             {
-                if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-                {
+    			if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    			{ 
                     sleep(0.2);
                     try_limit--;
-                    if (try_limit == 0)
+                    if(try_limit == 0)
                     {
-                        perror("\nClient Termination - Socket Failed: ");
+    				    perror("\nClient Termination - Socket Failed: ");
                         skip_flag = 1;
-                    }
+    			    }
                 }
                 else
                     break;
@@ -166,118 +172,57 @@ static void close_server()
 
             if (skip_flag)
                 continue;
-
-            serv_addr.sin_port = htons(port);
-            serv_addr.sin_addr.s_addr = inet_addr(server_ip);
+				   
+			serv_addr.sin_port = htons(port);
+			serv_addr.sin_addr.s_addr = inet_addr(server_ip); 
 
             /* connect with the server */
             try_limit = 10, skip_flag = 0;
-            while (try_limit > 0)
+			while(try_limit > 0)
             {
-                if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-                {
-                    sleep(0.2);
+    			if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+    			{ 
+    				sleep(0.2);
                     try_limit--;
-                    if (try_limit == 0)
+                    if(try_limit == 0)
                     {
                         perror("\nClient Termination - Connection Failed: ");
                         skip_flag = 1;
                     }
-                }
+    			}
                 else
                     break;
             }
-
+			
             if (skip_flag)
                 continue;
 
             /* send close message to the server */
-            send(sock, message, strlen(message) + 1, 0);
-            close(sock);
-        }
-    }
+            #ifdef __linux__
+            	send(sock, message, strlen(message), 0);
+            	close(sock);
+            #elif _WIN32
+            	send(sock, message, strlen(message) + 1, 0);
+            	closesocket(sock);
+            #endif
+		}
+	}
 
-    remove(ip_filename);
+	#ifdef _WIN32
+		WSACleanup();
+	#endif
+	fclose(fptr);
+	remove(ip_filename);
 }
-#endif
 
-#ifdef _WIN32
-static void close_server()
-{
-    WSADATA WSAData;
-    SOCKADDR_IN addr;
-    WSAStartup(MAKEWORD(2, 2), &WSAData);
-    FILE *fptr;
-    char ip_filename[48];
-    sprintf(ip_filename, "C:\Windows\Temp\NGHDL_COMMON_IP_%d.txt", getpid());
-    fptr = fopen(ip_filename, "r");
-    if (fptr)
-    {
-        char server_ip[20], *message = "CLOSE_FROM_NGSPICE";
-        int port = -1, sock = -1, try_limit = 0, skip_flag = 0;
-        struct sockaddr_in serv_addr;
-        serv_addr.sin_family = AF_INET;
 
-        /* scan server ip and port to send close message */
-        while (fscanf(fptr, "%s %d\n", server_ip, &port) == 2)
-        {
-            /* Create socket descriptor */
-            try_limit = 10, skip_flag = 0;
-            while (try_limit > 0)
-            {
-                if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-                {
-                    sleep(0.2);
-                    try_limit--;
-                    if (try_limit == 0)
-                    {
-                        perror("\nClient Termination - Socket Failed: ");
-                        skip_flag = 1;
-                    }
-                }
-                else
-                    break;
-            }
+// The two "begin plot" routines share all their internals... 
 
-            if (skip_flag)
-                continue;
-            serv_addr.sin_port = htons(port);
-            serv_addr.sin_addr.s_addr = inet_addr(server_ip);
-            /* connect with the server */
-            try_limit = 10, skip_flag = 0;
-            while (try_limit > 0)
-            {
-                if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-                {
-                    sleep(0.2);
-                    try_limit--;
-                    if (try_limit == 0)
-                    {
-                        perror("\nClient Termination - Connection Failed: ");
-                        skip_flag = 1;
-                    }
-                }
-                else
-                    break;
-            }
-            if (skip_flag)
-                continue;
-            /* send close message to the server */
-            send(sock, message, strlen(message) + 1, 0);
-            closesocket(sock);
-        }
-    }
-    WSACleanup();
-    remove(ip_filename);
-}
-#endif
-
-/* The two "begin plot" routines share all their internals... */
-
-int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
-                  IFuid analName,
-                  IFuid refName, int refType,
-                  int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
+int
+OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
+              IFuid analName,
+              IFuid refName, int refType,
+              int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
 {
     char *name;
 
@@ -292,10 +237,12 @@ int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                       plotPtr));
 }
 
-int OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
-                  IFuid analName,
-                  IFuid refName, int refType,
-                  int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
+
+int
+OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
+              IFuid analName,
+              IFuid refName, int refType,
+              int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
 {
 
     return (beginPlot(analysisPtr, circuitPtr, "circuit name",
@@ -303,6 +250,7 @@ int OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                       dataNames, dataType, TRUE,
                       plotPtr));
 }
+
 
 static int
 beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
@@ -322,14 +270,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
      *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
      */
 
-    if (dataType == 666 && numNames == 666)
-    {
+    if (dataType == 666 && numNames == 666) {
         run = *runp;
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
                                      run->type, run->name);
-    }
-    else
-    {
+
+    } else {
         /*end saj*/
 
         /* Check to see if we want to print informational data. */
@@ -337,8 +283,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             fprintf(cp_err, "(debug printing enabled)\n");
 
         /* Check to see if we want to save only interpolated data. */
-        if (cp_getvar("interp", CP_BOOL, NULL, 0))
-        {
+        if (cp_getvar("interp", CP_BOOL, NULL, 0)) {
             interpolated = TRUE;
             fprintf(cp_out, "Warning: Interpolated raw file data!\n\n");
         }
@@ -362,14 +307,11 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
          * the remaining saves into parameters.
          */
         numsaves = ft_getSaves(&saves);
-        if (numsaves)
-        {
+        if (numsaves) {
             savesused = TMALLOC(bool, numsaves);
             saveall = FALSE;
-            for (i = 0; i < numsaves; i++)
-            {
-                if (saves[i].analysis && !cieq(saves[i].analysis, an_name))
-                {
+            for (i = 0; i < numsaves; i++) {
+                if (saves[i].analysis && !cieq(saves[i].analysis, an_name)) {
                     /* ignore this one this time around */
                     savesused[i] = TRUE;
                     continue;
@@ -377,8 +319,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
                 /*  Check for ".save all" and new synonym ".save allv"  */
 
-                if (cieq(saves[i].name, "all") || cieq(saves[i].name, "allv"))
-                {
+                if (cieq(saves[i].name, "all") || cieq(saves[i].name, "allv")) {
                     saveall = TRUE;
                     savesused[i] = TRUE;
                     saves[i].used = 1;
@@ -387,8 +328,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
                 /*  And now for the new ".save alli" option  */
 
-                if (cieq(saves[i].name, "alli"))
-                {
+                if (cieq(saves[i].name, "alli")) {
                     savealli = TRUE;
                     savesused[i] = TRUE;
                     saves[i].used = 1;
@@ -396,8 +336,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 }
 #ifdef SHARED_MODULE
                 /* this may happen if shared ngspice*/
-                if (cieq(saves[i].name, "none"))
-                {
+                if (cieq(saves[i].name, "none")) {
                     savenone = TRUE;
                     saveall = TRUE;
                     savesused[i] = TRUE;
@@ -414,37 +353,29 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             initmem = numNames;
 
         /* Pass 0. */
-        if (refName)
-        {
+        if (refName) {
             addDataDesc(run, refName, refType, -1, initmem);
             for (i = 0; i < numsaves; i++)
-                if (!savesused[i] && name_eq(saves[i].name, refName))
-                {
+                if (!savesused[i] && name_eq(saves[i].name, refName)) {
                     savesused[i] = TRUE;
                     saves[i].used = 1;
                 }
-        }
-        else
-        {
+        } else {
             run->refIndex = -1;
         }
 
         /* Pass 1. */
-        if (numsaves && !saveall)
-        {
+        if (numsaves && !saveall) {
             for (i = 0; i < numsaves; i++)
                 if (!savesused[i])
                     for (j = 0; j < numNames; j++)
-                        if (name_eq(saves[i].name, dataNames[j]))
-                        {
+                        if (name_eq(saves[i].name, dataNames[j])) {
                             addDataDesc(run, dataNames[j], dataType, j, initmem);
                             savesused[i] = TRUE;
                             saves[i].used = 1;
                             break;
                         }
-        }
-        else
-        {
+        } else {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
                     /*  Save the node as long as it's an internal device node  */
@@ -463,11 +394,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
            This is a new pass which searches for all the internal device
            nodes, and saves the terminal currents instead  */
 
-        if (savealli)
-        {
+        if (savealli) {
             depind = 0;
-            for (i = 0; i < numNames; i++)
-            {
+            for (i = 0; i < numNames; i++) {
                 if (strstr(dataNames[i], "#internal") ||
                     strstr(dataNames[i], "#source") ||
                     strstr(dataNames[i], "#drain") ||
@@ -477,57 +406,40 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 {
                     tmpname[0] = '@';
                     tmpname[1] = '\0';
-                    strncat(tmpname, dataNames[i], BSIZE_SP - 1);
+                    strncat(tmpname, dataNames[i], BSIZE_SP-1);
                     ch = strchr(tmpname, '#');
 
-                    if (strstr(ch, "#collector"))
-                    {
+                    if (strstr(ch, "#collector")) {
                         strcpy(ch, "[ic]");
-                    }
-                    else if (strstr(ch, "#base"))
-                    {
+                    } else if (strstr(ch, "#base")) {
                         strcpy(ch, "[ib]");
-                    }
-                    else if (strstr(ch, "#emitter"))
-                    {
+                    } else if (strstr(ch, "#emitter")) {
                         strcpy(ch, "[ie]");
                         if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         strcpy(ch, "[is]");
-                    }
-                    else if (strstr(ch, "#drain"))
-                    {
+                    } else if (strstr(ch, "#drain")) {
                         strcpy(ch, "[id]");
                         if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         strcpy(ch, "[ig]");
-                    }
-                    else if (strstr(ch, "#source"))
-                    {
+                    } else if (strstr(ch, "#source")) {
                         strcpy(ch, "[is]");
                         if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         strcpy(ch, "[ib]");
-                    }
-                    else if (strstr(ch, "#internal") && (tmpname[1] == 'd'))
-                    {
+                    } else if (strstr(ch, "#internal") && (tmpname[1] == 'd')) {
                         strcpy(ch, "[id]");
-                    }
-                    else
-                    {
+                    } else {
                         fprintf(cp_err,
                                 "Debug: could output current for %s\n", tmpname);
                         continue;
                     }
-                    if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
-                    {
-                        if (*depbuf)
-                        {
+                    if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                        if (*depbuf) {
                             fprintf(stderr,
                                     "Warning : unexpected dependent variable on %s\n", tmpname);
-                        }
-                        else
-                        {
+                        } else {
                             addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         }
                     }
@@ -536,14 +448,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         }
 
         /* Pass 2. */
-        for (i = 0; i < numsaves; i++)
-        {
+        for (i = 0; i < numsaves; i++) {
 
             if (savesused[i])
                 continue;
 
-            if (!parseSpecial(saves[i].name, namebuf, parambuf, depbuf))
-            {
+            if (!parseSpecial(saves[i].name, namebuf, parambuf, depbuf)) {
                 if (saves[i].analysis)
                     fprintf(cp_err, "Warning: can't parse '%s': ignored\n",
                             saves[i].name);
@@ -551,19 +461,16 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             }
 
             /* Now, if there's a dep variable, do we already have it? */
-            if (*depbuf)
-            {
+            if (*depbuf) {
                 for (j = 0; j < run->numData; j++)
                     if (name_eq(depbuf, run->data[j].name))
                         break;
-                if (j == run->numData)
-                {
+                if (j == run->numData) {
                     /* Better add it. */
                     for (j = 0; j < numNames; j++)
                         if (name_eq(depbuf, dataNames[j]))
                             break;
-                    if (j == numNames)
-                    {
+                    if (j == numNames) {
                         fprintf(cp_err,
                                 "Warning: can't find '%s': value '%s' ignored\n",
                                 depbuf, saves[i].name);
@@ -573,9 +480,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     savesused[i] = TRUE;
                     saves[i].used = 1;
                     depind = j;
-                }
-                else
-                {
+                } else {
                     depind = run->data[j].outIndex;
                 }
             }
@@ -583,10 +488,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             addSpecialDesc(run, saves[i].name, namebuf, parambuf, depind, initmem);
         }
 
-        if (numsaves)
-        {
-            for (i = 0; i < numsaves; i++)
-            {
+        if (numsaves) {
+            for (i = 0; i < numsaves; i++) {
                 tfree(saves[i].analysis);
                 tfree(saves[i].name);
             }
@@ -609,12 +512,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
                                      run->type, run->name);
 
-        if (run->writeOut)
-        {
+        if (run->writeOut) {
             fileInit(run);
-        }
-        else
-        {
+        } else {
             plotInit(run);
             if (refName)
                 run->runPlot->pl_ndims = 1;
@@ -622,8 +522,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     }
 
     /* define storage for old and new data, to allow interpolation */
-    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4)
-    {
+    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4) {
         valueold = TMALLOC(double, run->numData);
         for (i = 0; i < run->numData; i++)
             valueold[i] = 0.0;
@@ -648,15 +547,13 @@ addDataDesc(runDesc *run, char *name, int type, int ind, int meminit)
     dataDesc *data;
 
     /* initialize memory (for all vectors or given by 'save') */
-    if (!run->numData)
-    {
+    if (!run->numData) {
         /* even if input 0, do a malloc */
         run->data = TMALLOC(dataDesc, ++meminit);
         run->maxData = meminit;
     }
     /* If there is need for more memory */
-    else if (run->numData == run->maxData)
-    {
+    else if (run->numData == run->maxData) {
         run->maxData = (int)(run->maxData * 1.1) + 1;
         run->data = TREALLOC(dataDesc, run->data, run->maxData);
     }
@@ -686,17 +583,15 @@ static int
 addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind, int meminit)
 {
     dataDesc *data;
-    char *unique, *freeunique; /* unique char * from back-end */
+    char *unique, *freeunique;       /* unique char * from back-end */
     int ret;
 
-    if (!run->numData)
-    {
+    if (!run->numData) {
         /* even if input 0, do a malloc */
         run->data = TMALLOC(dataDesc, ++meminit);
         run->maxData = meminit;
     }
-    else if (run->numData == run->maxData)
-    {
+    else if (run->numData == run->maxData) {
         run->maxData = (int)(run->maxData * 1.1) + 1;
         run->data = TREALLOC(dataDesc, run->data, run->maxData);
     }
@@ -728,39 +623,34 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind,
     return (OK);
 }
 
+
 static void
 OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 {
     int i, n = run->numData;
 
-    for (i = 0; i < n; i++)
-    {
+    for (i = 0; i < n; i++) {
 
         dataDesc *d;
 
-#ifdef TCL_MODULE
+        #ifdef TCL_MODULE
         /*Locks the blt vector to stop access*/
         blt_lockvec(i);
-#endif
+        #endif
 
         d = &run->data[i];
 
-        if (d->outIndex == -1)
-        {
+        if (d->outIndex == -1) {
             if (d->type == IF_REAL)
                 plotAddRealValue(d, refValue->rValue);
             else if (d->type == IF_COMPLEX)
                 plotAddComplexValue(d, refValue->cValue);
-        }
-        else if (d->regular)
-        {
+        } else if (d->regular) {
             if (d->type == IF_REAL)
                 plotAddRealValue(d, valuePtr->v.vec.rVec[d->outIndex]);
             else if (d->type == IF_COMPLEX)
                 plotAddComplexValue(d, valuePtr->v.vec.cVec[d->outIndex]);
-        }
-        else
-        {
+        } else {
             IFvalue val;
 
             /* should pre-check instance */
@@ -775,16 +665,19 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 fprintf(stderr, "OUTpData: unsupported data type\n");
         }
 
-#ifdef TCL_MODULE
+        #ifdef TCL_MODULE
         /*relinks and unlocks vector*/
         blt_relink(i, d->vec);
-#endif
+        #endif
+
     }
 }
 
-int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
+
+int
+OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 {
-    runDesc *run = plotPtr; // FIXME
+    runDesc *run = plotPtr;  // FIXME
     int i;
 
     run->pointCount++;
@@ -793,60 +686,49 @@ int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
     steps_completed = run->pointCount;
 #endif
     /* interpolated batch mode output to file in transient analysis */
-    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && run->writeOut)
-    {
+    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && run->writeOut) {
         InterpFileAdd(run, refValue, valuePtr);
         return (OK);
     }
     /* interpolated interactive or control mode output to plot in transient analysis */
-    else if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && !(run->writeOut))
-    {
+    else if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && !(run->writeOut)) {
         InterpPlotAdd(run, refValue, valuePtr);
         return (OK);
     }
     /* standard batch mode output to file */
-    else if (run->writeOut)
-    {
+    else if (run->writeOut) {
 
         if (run->pointCount == 1)
             fileInit_pass2(run);
 
         fileStartPoint(run->fp, run->binary, run->pointCount);
 
-        if (run->refIndex != -1)
-        {
-            if (run->isComplex)
-            {
+        if (run->refIndex != -1) {
+            if (run->isComplex) {
                 fileAddComplexValue(run->fp, run->binary, refValue->cValue);
 
                 /*  While we're looking at the reference value, print it to the screen
                     every quarter of a second, to give some feedback without using
                     too much CPU time  */
 #ifndef HAS_WINGUI
-                if (!orflag && !ft_norefprint)
-                {
+                if (!orflag && !ft_norefprint) {
                     currclock = clock();
-                    if ((currclock - lastclock) > (0.25 * CLOCKS_PER_SEC))
-                    {
+                    if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
                                 refValue->cValue.real);
                         lastclock = currclock;
                     }
                 }
 #endif
-            }
-            else
-            {
+            } else {
 
                 /*  And the same for a non-complex value  */
 
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINGUI
-                if (!orflag && !ft_norefprint)
-                {
+                if (!orflag && !ft_norefprint) {
                     currclock = clock();
-                    if ((currclock - lastclock) > (0.25 * CLOCKS_PER_SEC))
-                    {
+                    if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
                                 refValue->rValue);
                         lastclock = currclock;
@@ -856,8 +738,7 @@ int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             }
         }
 
-        for (i = 0; i < run->numData; i++)
-        {
+        for (i = 0; i < run->numData; i++) {
             /* we've already printed reference vec first */
             if (run->data[i].outIndex == -1)
                 continue;
@@ -866,23 +747,19 @@ int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             blt_add(i, refValue ? refValue->rValue : NAN);
 #endif
 
-            if (run->data[i].regular)
-            {
+            if (run->data[i].regular) {
                 if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
-                                     valuePtr->v.vec.rVec[run->data[i].outIndex]);
+                                     valuePtr->v.vec.rVec [run->data[i].outIndex]);
                 else if (run->data[i].type == IF_COMPLEX)
                     fileAddComplexValue(run->fp, run->binary,
-                                        valuePtr->v.vec.cVec[run->data[i].outIndex]);
+                                        valuePtr->v.vec.cVec [run->data[i].outIndex]);
                 else
                     fprintf(stderr, "OUTpData: unsupported data type\n");
-            }
-            else
-            {
+            } else {
                 IFvalue val;
                 /* should pre-check instance */
-                if (!getSpecial(&run->data[i], run, &val))
-                {
+                if (!getSpecial(&run->data[i], run, &val)) {
 
                     /*  If this is the first data point, print a warning for any unrecognized
                         variables, since this has not already been checked  */
@@ -891,14 +768,11 @@ int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                         fprintf(stderr, "Warning: unrecognized variable - %s\n",
                                 run->data[i].name);
 
-                    if (run->isComplex)
-                    {
+                    if (run->isComplex) {
                         val.cValue.real = 0;
                         val.cValue.imag = 0;
                         fileAddComplexValue(run->fp, run->binary, val.cValue);
-                    }
-                    else
-                    {
+                    } else {
                         val.rValue = 0;
                         fileAddRealValue(run->fp, run->binary, val.rValue);
                     }
@@ -915,22 +789,21 @@ int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             }
 
 #ifdef TCL_MODULE
-            blt_add(i, valuePtr->v.vec.rVec[run->data[i].outIndex]);
+            blt_add(i, valuePtr->v.vec.rVec [run->data[i].outIndex]);
 #endif
+
         }
 
         fileEndPoint(run->fp, run->binary);
 
         /*  Check that the write to disk completed successfully, otherwise abort  */
 
-        if (ferror(run->fp))
-        {
+        if (ferror(run->fp)) {
             fprintf(stderr, "Warning: rawfile write error !!\n");
             shouldstop = TRUE;
         }
-    }
-    else
-    {
+
+    } else {
 
         OUTpD_memory(run, refValue, valuePtr);
 
@@ -938,18 +811,13 @@ int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             variable just the same  */
 
 #ifndef HAS_WINGUI
-        if (!orflag && !ft_norefprint)
-        {
+        if (!orflag && !ft_norefprint) {
             currclock = clock();
-            if ((currclock - lastclock) > (0.25 * CLOCKS_PER_SEC))
-            {
-                if (run->isComplex)
-                {
+            if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
+                if (run->isComplex) {
                     fprintf(stderr, " Reference value : % 12.5e\r",
                             refValue ? refValue->cValue.real : NAN);
-                }
-                else
-                {
+                } else {
                     fprintf(stderr, " Reference value : % 12.5e\r",
                             refValue ? refValue->rValue : NAN);
                 }
@@ -973,7 +841,9 @@ int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
     return (OK);
 }
 
-int OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
+
+int
+OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 {
     NG_IGNORE(refPtr);
     NG_IGNORE(valuePtr);
@@ -982,7 +852,9 @@ int OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
     return (OK);
 }
 
-int OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
+
+int
+OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 {
     NG_IGNORE(refPtr);
     NG_IGNORE(valuePtr);
@@ -992,21 +864,22 @@ int OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
     return (OK);
 }
 
-int OUTwEnd(runDesc *plotPtr)
+
+int
+OUTwEnd(runDesc *plotPtr)
 {
     NG_IGNORE(plotPtr);
 
     return (OK);
 }
 
-int OUTendPlot(runDesc *plotPtr)
+
+int
+OUTendPlot(runDesc *plotPtr)
 {
-    if (plotPtr->writeOut)
-    {
+    if (plotPtr->writeOut) {
         fileEnd(plotPtr);
-    }
-    else
-    {
+    } else {
         gr_end_iplot();
         plotEnd(plotPtr);
     }
@@ -1019,7 +892,9 @@ int OUTendPlot(runDesc *plotPtr)
     return (OK);
 }
 
-int OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
+
+int
+OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
 {
     NG_IGNORE(outerRefValue);
     NG_IGNORE(refType);
@@ -1029,16 +904,20 @@ int OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerR
     return (OK);
 }
 
-int OUTendDomain(runDesc *plotPtr)
+
+int
+OUTendDomain(runDesc *plotPtr)
 {
     NG_IGNORE(plotPtr);
 
     return (OK);
 }
 
-int OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
+
+int
+OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
 {
-    runDesc *run = plotPtr; // FIXME
+    runDesc *run = plotPtr;  // FIXME
     GRIDTYPE type;
 
     struct dvec *d;
@@ -1052,41 +931,31 @@ int OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
     else
         return E_UNSUPP;
 
-    if (run->writeOut)
-    {
-        if (varName)
-        {
+    if (run->writeOut) {
+        if (varName) {
             int i;
             for (i = 0; i < run->numData; i++)
                 if (!strcmp(varName, run->data[i].name))
                     run->data[i].gtype = type;
-        }
-        else
-        {
+        } else {
             run->data[run->refIndex].gtype = type;
         }
-    }
-    else
-    {
-        if (varName)
-        {
+    } else {
+        if (varName) {
             for (d = run->runPlot->pl_dvecs; d; d = d->v_next)
                 if (!strcmp(varName, d->v_name))
                     d->v_gridtype = type;
-        }
-        else if (param == PLOT_COMB)
-        {
+        } else if (param == PLOT_COMB) {
             for (d = run->runPlot->pl_dvecs; d; d = d->v_next)
                 d->v_plottype = PLOT_COMB;
-        }
-        else
-        {
+        } else {
             run->runPlot->pl_scale->v_gridtype = type;
         }
     }
 
     return (OK);
 }
+
 
 /* The file writing routines. */
 
@@ -1125,9 +994,9 @@ fileInit(runDesc *run)
     n += strlen(buf);
     fputs(buf, run->fp);
 
-    fflush(run->fp); /* Gotta do this for LATTICE. */
+    fflush(run->fp);        /* Gotta do this for LATTICE. */
     if (run->fp == stdout || (run->pointPos = ftell(run->fp)) <= 0)
-        run->pointPos = (long)n;
+        run->pointPos = (long) n;
     fprintf(run->fp, "0       \n"); /* Save 8 spaces here. */
 
     /*fprintf(run->fp, "Command: version %s\n", ft_sim->version);*/
@@ -1135,6 +1004,7 @@ fileInit(runDesc *run)
 
     printf("No. of Data Columns : %d  \n", run->numData);
 }
+
 
 static int
 guess_type(const char *name)
@@ -1171,33 +1041,28 @@ guess_type(const char *name)
     return type;
 }
 
+
 static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
 
-    for (i = 0; i < run->numData; i++)
-    {
+    for (i = 0; i < run->numData; i++) {
 
         char *name = run->data[i].name;
 
         type = guess_type(name);
 
-        if (type == SV_CURRENT)
-        {
+        if (type == SV_CURRENT) {
             char *branch = strstr(name, "#branch");
             if (branch)
                 *branch = '\0';
             fprintf(run->fp, "\t%d\ti(%s)\t%s", i, name, ft_typenames(type));
             if (branch)
                 *branch = '#';
-        }
-        else if (type == SV_VOLTAGE)
-        {
+        } else if (type == SV_VOLTAGE) {
             fprintf(run->fp, "\t%d\tv(%s)\t%s", i, name, ft_typenames(type));
-        }
-        else
-        {
+        } else {
             fprintf(run->fp, "\t%d\t%s\t%s", i, name, ft_typenames(type));
         }
 
@@ -1212,19 +1077,17 @@ fileInit_pass2(runDesc *run)
 
     /*  Allocate Row buffer  */
 
-    if (run->binary)
-    {
-        rowbuflen = (size_t)(run->numData);
+    if (run->binary) {
+        rowbuflen = (size_t) (run->numData);
         if (run->isComplex)
             rowbuflen *= 2;
         rowbuf = TMALLOC(double, rowbuflen);
-    }
-    else
-    {
+    } else {
         rowbuflen = 0;
         rowbuf = NULL;
     }
 }
+
 
 static void
 fileStartPoint(FILE *fp, bool bin, int num)
@@ -1237,6 +1100,7 @@ fileStartPoint(FILE *fp, bool bin, int num)
     column = 0;
 }
 
+
 static void
 fileAddRealValue(FILE *fp, bool bin, double value)
 {
@@ -1246,20 +1110,19 @@ fileAddRealValue(FILE *fp, bool bin, double value)
         fprintf(fp, "\t%.*e\n", DOUBLE_PRECISION, value);
 }
 
+
 static void
 fileAddComplexValue(FILE *fp, bool bin, IFcomplex value)
 {
-    if (bin)
-    {
+    if (bin) {
         rowbuf[column++] = value.real;
         rowbuf[column++] = value.imag;
-    }
-    else
-    {
+    } else {
         fprintf(fp, "\t%.*e,%.*e\n", DOUBLE_PRECISION, value.real,
                 DOUBLE_PRECISION, value.imag);
     }
 }
+
 
 static void
 fileEndPoint(FILE *fp, bool bin)
@@ -1271,29 +1134,28 @@ fileEndPoint(FILE *fp, bool bin)
         fwrite(rowbuf, sizeof(double), rowbuflen, fp);
 }
 
+
 /* Here's the hack...  Run back and fill in the number of points. */
 
 static void
 fileEnd(runDesc *run)
 {
-    /* 10.Mar.2017 - RM - Check if any orphan test benches are running. If any arefound, force them to exit.*/
-    //nghdl_orphan_tb();
-    /* End 10.Mar.2017 */
+    /* 28.May.2020 - RP, BM - Check if any orphan test benches are running. If any are
+     * found, force them to exit.
+     */
 
-    /* 28.May.2020 - BM - Patch for closing ghdlserver */
+    /* 28.May.2020 - BM */
     close_server();
     /* End 28.May.2020 */
 
-    if (run->fp != stdout)
-    {
+
+    if (run->fp != stdout) {
         long place = ftell(run->fp);
         fseek(run->fp, run->pointPos, SEEK_SET);
         fprintf(run->fp, "%d", run->pointCount);
         fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
         fseek(run->fp, place, SEEK_SET);
-    }
-    else
-    {
+    } else {
         /* Yet another hack-around */
         fprintf(stderr, "@@@ %ld %d\n", run->pointPos, run->pointCount);
     }
@@ -1302,6 +1164,7 @@ fileEnd(runDesc *run)
 
     tfree(rowbuf);
 }
+
 
 /* The plot maintenance routines. */
 
@@ -1327,8 +1190,7 @@ plotInit(runDesc *run)
         if (run->data[i].type == IF_COMPLEX)
             run->isComplex = TRUE;
 
-    for (i = 0; i < run->numData; i++)
-    {
+    for (i = 0; i < run->numData; i++) {
         dataDesc *dd = &run->data[i];
         char *name;
 
@@ -1340,8 +1202,8 @@ plotInit(runDesc *run)
         v = dvec_alloc(name,
                        guess_type(name),
                        run->isComplex
-                           ? (VF_COMPLEX | VF_PERMANENT)
-                           : (VF_REAL | VF_PERMANENT),
+                       ? (VF_COMPLEX | VF_PERMANENT)
+                       : (VF_REAL | VF_PERMANENT),
                        0, NULL);
 
         vec_new(v);
@@ -1366,14 +1228,12 @@ vlength2delta(int len)
     /* TSTOP / TSTEP */
     int points = ft_curckt->ci_ckt->CKTtimeListSize;
     /* transient and pss analysis (points > 0) upon start */
-    if (len == 0 && points > 0)
-    {
+    if (len == 0 && points > 0) {
         /* number of timesteps plus some overhead */
         return points + 100;
     }
     /* transient and pss if original estimate is exceeded */
-    else if (points > 0)
-    {
+    else if (points > 0) {
         /* check where we are */
         double timerel = ft_curckt->ci_ckt->CKTtime / ft_curckt->ci_ckt->CKTfinalTime;
         /* return an estimate of the appropriate number of time points, if more than 20% of
@@ -1389,6 +1249,7 @@ vlength2delta(int len)
         return 1024;
 }
 
+
 static void
 plotAddRealValue(dataDesc *desc, double value)
 {
@@ -1403,12 +1264,9 @@ plotAddRealValue(dataDesc *desc, double value)
     if (v->v_length >= v->v_alloc_length)
         dvec_extend(v, v->v_length + vlength2delta(v->v_length));
 
-    if (isreal(v))
-    {
+    if (isreal(v)) {
         v->v_realdata[v->v_length] = value;
-    }
-    else
-    {
+    } else {
         /* a real parading as a VF_COMPLEX */
         v->v_compdata[v->v_length].cx_real = value;
         v->v_compdata[v->v_length].cx_imag = 0.0;
@@ -1417,6 +1275,7 @@ plotAddRealValue(dataDesc *desc, double value)
     v->v_length++;
     v->v_dims[0] = v->v_length; /* va, must be updated */
 }
+
 
 static void
 plotAddComplexValue(dataDesc *desc, IFcomplex value)
@@ -1438,19 +1297,17 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
     v->v_dims[0] = v->v_length; /* va, must be updated */
 }
 
+
 static void
 plotEnd(runDesc *run)
 {
-    /* 10.Mar.2017 - RM - Check if any orphan test benches are running. If any are*/
-    //nghdl_orphan_tb();
-    /* End 10.Mar.2017 */
-
-    /* 28.May.2020 - BM - Patch for closing ghdlserver */
+    /* 28.May.2020 - BM, RP */
     close_server();
     /* End 28.May.2020 */
 
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 }
+
 
 /* ParseSpecial takes something of the form "@name[param,index]" and rips
  * out name, param, andstrchr.
@@ -1498,6 +1355,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
         return FALSE;
 }
 
+
 /* This routine must match two names with or without a V() around them. */
 
 static bool
@@ -1505,8 +1363,7 @@ name_eq(char *n1, char *n2)
 {
     char buf1[BSIZE_SP], buf2[BSIZE_SP], *s;
 
-    if ((s = strchr(n1, '(')) != NULL)
-    {
+    if ((s = strchr(n1, '(')) != NULL) {
         strcpy(buf1, s);
         if ((s = strchr(buf1, ')')) == NULL)
             return FALSE;
@@ -1514,8 +1371,7 @@ name_eq(char *n1, char *n2)
         n1 = buf1;
     }
 
-    if ((s = strchr(n2, '(')) != NULL)
-    {
+    if ((s = strchr(n2, '(')) != NULL) {
         strcpy(buf2, s);
         if ((s = strchr(buf2, ')')) == NULL)
             return FALSE;
@@ -1526,6 +1382,7 @@ name_eq(char *n1, char *n2)
     return (strcmp(n1, n2) ? FALSE : TRUE);
 }
 
+
 static bool
 getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
 {
@@ -1535,14 +1392,12 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
     selector.iValue = desc->specIndex;
     if (INPaName(desc->specParamName, val, run->circuit, &desc->specType,
                  desc->specName, &desc->specFast, ft_sim, &desc->type,
-                 &selector) == OK)
-    {
-        desc->type &= (IF_REAL | IF_COMPLEX); /* mask out other bits */
+                 &selector) == OK) {
+        desc->type &= (IF_REAL | IF_COMPLEX);   /* mask out other bits */
         return TRUE;
     }
 
-    if ((vv = if_getstat(run->circuit, &desc->name[1])) != NULL)
-    {
+    if ((vv = if_getstat(run->circuit, &desc->name[1])) != NULL) {
         /* skip @ sign */
         desc->type = IF_REAL;
         if (vv->va_type == CP_REAL)
@@ -1560,13 +1415,13 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
     return FALSE;
 }
 
+
 static void
 freeRun(runDesc *run)
 {
     int i;
 
-    for (i = 0; i < run->numData; i++)
-    {
+    for (i = 0; i < run->numData; i++) {
         tfree(run->data[i].name);
         tfree(run->data[i].specParamName);
     }
@@ -1578,10 +1433,11 @@ freeRun(runDesc *run)
     tfree(run);
 }
 
-int OUTstopnow(void)
+
+int
+OUTstopnow(void)
 {
-    if (ft_intrpt || shouldstop)
-    {
+    if (ft_intrpt || shouldstop) {
         ft_intrpt = shouldstop = FALSE;
         return (1);
     }
@@ -1589,20 +1445,23 @@ int OUTstopnow(void)
     return (0);
 }
 
+
 /* Print out error messages. */
 
-static struct mesg
-{
+static struct mesg {
     char *string;
     long flag;
 } msgs[] = {
-    {"Warning", ERR_WARNING},
-    {"Fatal error", ERR_FATAL},
-    {"Panic", ERR_PANIC},
-    {"Note", ERR_INFO},
-    {NULL, 0}};
+    { "Warning", ERR_WARNING } ,
+    { "Fatal error", ERR_FATAL } ,
+    { "Panic", ERR_PANIC } ,
+    { "Note", ERR_INFO } ,
+    { NULL, 0 }
+};
 
-void OUTerror(int flags, char *format, IFuid *names)
+
+void
+OUTerror(int flags, char *format, IFuid *names)
 {
     struct mesg *m;
     char buf[BSIZE_SP], *s, *bptr;
@@ -1615,10 +1474,8 @@ void OUTerror(int flags, char *format, IFuid *names)
         if (flags & m->flag)
             fprintf(cp_err, "%s: ", m->string);
 
-    for (s = format, bptr = buf; *s; s++)
-    {
-        if (*s == '%' && (s == format || s[-1] != '%') && s[1] == 's')
-        {
+    for (s = format, bptr = buf; *s; s++) {
+        if (*s == '%' && (s == format || s[-1] != '%') && s[1] == 's') {
             if (names[nindex])
                 strcpy(bptr, names[nindex]);
             else
@@ -1626,9 +1483,7 @@ void OUTerror(int flags, char *format, IFuid *names)
             bptr += strlen(bptr);
             s++;
             nindex++;
-        }
-        else
-        {
+        } else {
             *bptr++ = *s;
         }
     }
@@ -1638,7 +1493,9 @@ void OUTerror(int flags, char *format, IFuid *names)
     fflush(cp_err);
 }
 
-void OUTerrorf(int flags, const char *format, ...)
+
+void
+OUTerrorf(int flags, const char *format, ...)
 {
     struct mesg *m;
     va_list args;
@@ -1650,7 +1507,7 @@ void OUTerrorf(int flags, const char *format, ...)
         if (flags & m->flag)
             fprintf(cp_err, "%s: ", m->string);
 
-    va_start(args, format);
+    va_start (args, format);
 
     vfprintf(cp_err, format, args);
     fputc('\n', cp_err);
@@ -1660,6 +1517,7 @@ void OUTerrorf(int flags, const char *format, ...)
     va_end(args);
 }
 
+
 static int
 InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 {
@@ -1668,41 +1526,35 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
     bool nodata = FALSE;
     bool interpolatenow = FALSE;
 
-    if (run->pointCount == 1)
-    {
+    if (run->pointCount == 1) {
         fileInit_pass2(run);
         timestep = run->circuit->CKTinitTime + run->circuit->CKTstep;
     }
 
-    if (run->refIndex != -1)
-    {
+    if (run->refIndex != -1) {
         /*  Save first time step  */
-        if (refValue->rValue == run->circuit->CKTinitTime)
-        {
+        if (refValue->rValue == run->circuit->CKTinitTime) {
             timeold = refValue->rValue;
             fileStartPoint(run->fp, run->binary, run->pointCount);
             fileAddRealValue(run->fp, run->binary, run->circuit->CKTinitTime);
             interpolatenow = nodata = FALSE;
         }
         /*  Save last time step  */
-        else if (refValue->rValue == run->circuit->CKTfinalTime)
-        {
+        else if (refValue->rValue == run->circuit->CKTfinalTime) {
             timeold = refValue->rValue;
             fileStartPoint(run->fp, run->binary, run->pointCount);
             fileAddRealValue(run->fp, run->binary, run->circuit->CKTfinalTime);
             interpolatenow = nodata = FALSE;
         }
         /*  Save exact point  */
-        else if (refValue->rValue == timestep)
-        {
+        else if (refValue->rValue == timestep) {
             timeold = refValue->rValue;
             fileStartPoint(run->fp, run->binary, run->pointCount);
             fileAddRealValue(run->fp, run->binary, timestep);
             timestep += run->circuit->CKTstep;
             interpolatenow = nodata = FALSE;
         }
-        else if (refValue->rValue > timestep)
-        {
+        else if (refValue->rValue > timestep) {
             /* add the next time step value to the vector */
             fileStartPoint(run->fp, run->binary, run->pointCount);
             timenew = refValue->rValue;
@@ -1711,8 +1563,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
             nodata = FALSE;
             interpolatenow = TRUE;
         }
-        else
-        {
+        else {
             /* Do not save this step */
             run->pointCount--;
             timeold = refValue->rValue;
@@ -1720,21 +1571,19 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
             interpolatenow = FALSE;
         }
 #ifndef HAS_WINGUI
-        if (!orflag && !ft_norefprint)
-        {
+        if (!orflag && !ft_norefprint) {
             currclock = clock();
-            if ((currclock - lastclock) > (0.25 * CLOCKS_PER_SEC))
-            {
+            if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 fprintf(stderr, " Reference value : % 12.5e\r",
                         refValue->rValue);
                 lastclock = currclock;
             }
         }
 #endif
+
     }
 
-    for (i = 0; i < run->numData; i++)
-    {
+    for (i = 0; i < run->numData; i++) {
         /* we've already printed reference vec first */
         if (run->data[i].outIndex == -1)
             continue;
@@ -1743,57 +1592,49 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
         blt_add(i, refValue ? refValue->rValue : NAN);
 #endif
 
-        if (run->data[i].regular)
-        {
-            /*  Store value or interpolate and store or do not store any value to file */
-            if (!interpolatenow && !nodata)
-            {
+        if (run->data[i].regular) {
+        /*  Store value or interpolate and store or do not store any value to file */
+            if (!interpolatenow && !nodata) {
                 /* store the first or last value */
-                valueold[i] = valuePtr->v.vec.rVec[run->data[i].outIndex];
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
                 fileAddRealValue(run->fp, run->binary, valueold[i]);
             }
-            else if (interpolatenow)
-            {
-                /*  Interpolate time if actual time is greater than proposed next time step  */
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
                 double newval;
-                valuenew[i] = valuePtr->v.vec.rVec[run->data[i].outIndex];
-                newval = (timestep - run->circuit->CKTstep - timeold) / (timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                valuenew[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 fileAddRealValue(run->fp, run->binary, newval);
                 valueold[i] = valuenew[i];
             }
             else if (nodata)
                 /* Just keep the transient output value corresponding to timeold, 
                     but do not store to file */
-                valueold[i] = valuePtr->v.vec.rVec[run->data[i].outIndex];
-        }
-        else
-        {
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+        } else {
             IFvalue val;
             /* should pre-check instance */
-            if (!getSpecial(&run->data[i], run, &val))
-            {
+            if (!getSpecial(&run->data[i], run, &val)) {
 
                 /*  If this is the first data point, print a warning for any unrecognized
                     variables, since this has not already been checked  */
                 if (run->pointCount == 1)
-                    fprintf(stderr, "Warning: unrecognized variable - %s\n",
-                            run->data[i].name);
+                fprintf(stderr, "Warning: unrecognized variable - %s\n",
+                        run->data[i].name);
                 val.rValue = 0;
                 fileAddRealValue(run->fp, run->binary, val.rValue);
                 continue;
             }
-            if (!interpolatenow && !nodata)
-            {
+            if (!interpolatenow && !nodata) {
                 /* store the first or last value */
                 valueold[i] = val.rValue;
                 fileAddRealValue(run->fp, run->binary, valueold[i]);
             }
-            else if (interpolatenow)
-            {
-                /*  Interpolate time if actual time is greater than proposed next time step  */
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
                 double newval;
                 valuenew[i] = val.rValue;
-                newval = (timestep - run->circuit->CKTstep - timeold) / (timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 fileAddRealValue(run->fp, run->binary, newval);
                 valueold[i] = valuenew[i];
             }
@@ -1804,15 +1645,15 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
         }
 
 #ifdef TCL_MODULE
-        blt_add(i, valuePtr->v.vec.rVec[run->data[i].outIndex]);
+        blt_add(i, valuePtr->v.vec.rVec [run->data[i].outIndex]);
 #endif
+
     }
 
     fileEndPoint(run->fp, run->binary);
 
     /*  Check that the write to disk completed successfully, otherwise abort  */
-    if (ferror(run->fp))
-    {
+    if (ferror(run->fp)) {
         fprintf(stderr, "Warning: rawfile write error !!\n");
         shouldstop = TRUE;
     }
@@ -1825,7 +1666,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 #elif defined SHARED_MODULE
     sh_ExecutePerLoop();
 #endif
-    return (OK);
+    return(OK);
 }
 
 static int
@@ -1841,8 +1682,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 
     /* find the scale vector */
     for (i = 0; i < run->numData; i++)
-        if (run->data[i].outIndex == -1)
-        {
+        if (run->data[i].outIndex == -1) {
             iscale = i;
             break;
         }
@@ -1855,29 +1695,25 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
     /*  Save first time step  */
-    if (refValue->rValue == run->circuit->CKTinitTime)
-    {
+    if (refValue->rValue == run->circuit->CKTinitTime) {
         timeold = refValue->rValue;
         plotAddRealValue(&run->data[iscale], refValue->rValue);
         interpolatenow = nodata = FALSE;
     }
     /*  Save last time step  */
-    else if (refValue->rValue == run->circuit->CKTfinalTime)
-    {
+    else if (refValue->rValue == run->circuit->CKTfinalTime) {
         timeold = refValue->rValue;
         plotAddRealValue(&run->data[iscale], run->circuit->CKTfinalTime);
         interpolatenow = nodata = FALSE;
     }
     /*  Save exact point  */
-    else if (refValue->rValue == timestep)
-    {
+    else if (refValue->rValue == timestep) {
         timeold = refValue->rValue;
         plotAddRealValue(&run->data[iscale], timestep);
         timestep += run->circuit->CKTstep;
         interpolatenow = nodata = FALSE;
     }
-    else if (refValue->rValue > timestep)
-    {
+    else if (refValue->rValue > timestep) {
         /* add the next time step value to the vector */
         timenew = refValue->rValue;
         plotAddRealValue(&run->data[iscale], timestep);
@@ -1885,8 +1721,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
         nodata = FALSE;
         interpolatenow = TRUE;
     }
-    else
-    {
+    else {
         /* Do not save this step */
         run->pointCount--;
         timeold = refValue->rValue;
@@ -1900,11 +1735,9 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
 #ifndef HAS_WINGUI
-    if (!orflag && !ft_norefprint)
-    {
+    if (!orflag && !ft_norefprint) {
         currclock = clock();
-        if ((currclock - lastclock) > (0.25 * CLOCKS_PER_SEC))
-        {
+        if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
             fprintf(stderr, " Reference value : % 12.5e\r",
                     refValue->rValue);
             lastclock = currclock;
@@ -1912,8 +1745,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
     }
 #endif
 
-    for (i = 0; i < run->numData; i++)
-    {
+    for (i = 0; i < run->numData; i++) {
         if (i == iscale)
             continue;
 
@@ -1922,47 +1754,40 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
         blt_lockvec(i);
 #endif
 
-        if (run->data[i].regular)
-        {
-            /*  Store value or interpolate and store or do not store any value to file */
-            if (!interpolatenow && !nodata)
-            {
+        if (run->data[i].regular) {
+        /*  Store value or interpolate and store or do not store any value to file */
+            if (!interpolatenow && !nodata) {
                 /* store the first or last value */
-                valueold[i] = valuePtr->v.vec.rVec[run->data[i].outIndex];
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
                 plotAddRealValue(&run->data[i], valueold[i]);
             }
-            else if (interpolatenow)
-            {
-                /*  Interpolate time if actual time is greater than proposed next time step  */
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
                 double newval;
-                valuenew[i] = valuePtr->v.vec.rVec[run->data[i].outIndex];
-                newval = (timestep - run->circuit->CKTstep - timeold) / (timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                valuenew[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 plotAddRealValue(&run->data[i], newval);
                 valueold[i] = valuenew[i];
             }
             else if (nodata)
                 /* Just keep the transient output value corresponding to timeold, 
                     but do not store to file */
-                valueold[i] = valuePtr->v.vec.rVec[run->data[i].outIndex];
-        }
-        else
-        {
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+        } else {
             IFvalue val;
             /* should pre-check instance */
             if (!getSpecial(&run->data[i], run, &val))
                 continue;
-            if (!interpolatenow && !nodata)
-            {
+            if (!interpolatenow && !nodata) {
                 /* store the first or last value */
                 valueold[i] = val.rValue;
                 plotAddRealValue(&run->data[i], valueold[i]);
             }
-            else if (interpolatenow)
-            {
-                /*  Interpolate time if actual time is greater than proposed next time step  */
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
                 double newval;
                 valuenew[i] = val.rValue;
-                newval = (timestep - run->circuit->CKTstep - timeold) / (timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 plotAddRealValue(&run->data[i], newval);
                 valueold[i] = valuenew[i];
             }
@@ -1976,6 +1801,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
         /*relinks and unlocks vector*/
         blt_relink(i, (run->data[i]).vec);
 #endif
+
     }
 
     gr_iplot(run->runPlot);
@@ -1989,5 +1815,5 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
     sh_ExecutePerLoop();
 #endif
 
-    return (OK);
+    return(OK);
 }
