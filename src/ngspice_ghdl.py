@@ -2,15 +2,14 @@
 
 
 # This file create the gui to install code model in the ngspice.
-#08.June.2020 - Bladen Martin - Added if-else constructs to make code OS independent#
 
 import os
+import sys
 import shutil
 import subprocess
-import sys
-from configparser import SafeConfigParser
-from PyQt4 import QtCore
 from PyQt4 import QtGui
+from PyQt4 import QtCore
+from configparser import SafeConfigParser
 from Appconfig import Appconfig
 from createKicadLibrary import AutoSchematic
 from model_generation import ModelGeneration
@@ -141,7 +140,6 @@ class Mainwindow(QtGui.QWidget):
             )
             if ret == QtGui.QMessageBox.Ok:
                 print("Overwriting existing model " + self.modelname)
-                #08.June.2020 - BM - Delete existing model directory
                 if os.name == 'nt':
                     cmd = "rmdir " + self.modelname + "/s /q"
                 else:
@@ -219,16 +217,18 @@ class Mainwindow(QtGui.QWidget):
                     "/src/ghdlserver/Utility_Package.vhdl", path + "/DUTghdl/")
         shutil.copy(os.path.join(self.home, self.src_home) +
                     "/src/ghdlserver/Vhpi_Package.vhdl", path + "/DUTghdl/")
-        #08.June.2020 - BM - If OS is Windows, copy C library libws2_32.a to DUTghl be linked with server by GHDL            
+
         if os.name == 'nt':
             shutil.copy(os.path.join(self.home, self.src_home) +
                         "/src/ghdlserver/libws2_32.a", path + "/DUTghdl/")
+
         for file in self.file_list:
             shutil.copy(str(file), path + "/DUTghdl/")
+
         os.chdir(path + "/DUTghdl")
-        #08.June.2020 - BM - Run following commands as per OS. Use bash.exe provided by MSYS for Windows         
         if os.name == 'nt':
-            self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME') #path to msys bin directory where bash is located
+            # path to msys bin directory where bash is located
+            self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME')
             subprocess.call(self.msys_bin+"/bash.exe " +
                             path + "/DUTghdl/compile.sh", shell=True)
             subprocess.call(self.msys_bin+"/bash.exe -c " +
@@ -239,11 +239,9 @@ class Mainwindow(QtGui.QWidget):
             subprocess.call("bash " + path + "/DUTghdl/compile.sh", shell=True)
             subprocess.call("chmod a+x start_server.sh", shell=True)
             subprocess.call("chmod a+x sock_pkg_create.sh", shell=True)
+
         os.remove("compile.sh")
         os.remove("ghdlserver.c")
-        # os.remove("ghdlserver.h")
-        # os.remove("Utility_Package.vhdl")
-        # os.remove("Vhpi_Package.vhdl")
 
     # Slot to redirect stdout and stderr to window console
     @QtCore.pyqtSlot()
@@ -259,17 +257,17 @@ class Mainwindow(QtGui.QWidget):
     def runMake(self):
         print("run Make Called")
         self.release_home = self.parser.get('NGSPICE', 'RELEASE')
-        #08.June.2020 - BM - Changed make location to .../ngspice-nghdl/release/src/xspice/icm
         path_icm = os.path.join(self.release_home, "src/xspice/icm")
-        print(path_icm)
         os.chdir(path_icm)
+
         try:
-            #08.June.2020 - BM - Use make.exe provided by MSYS for Windows
             if os.name == 'nt':
-                self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME') #path to msys bin directory where make is located
-                cmd = self.msys_bin+"\make.exe"
+                # path to msys bin directory where make is located
+                self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME')
+                cmd = self.msys_bin+"\\make.exe"
             else:
                 cmd = " make"
+
             print("Running Make command in " + path_icm)
             path = os.getcwd()  # noqa
             self.process = QtCore.QProcess(self)
@@ -284,7 +282,7 @@ class Mainwindow(QtGui.QWidget):
         try:
             if os.name == 'nt':
                 self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME')
-                cmd = self.msys_bin+"\make.exe install"
+                cmd = self.msys_bin+"\\make.exe install"
             else:
                 cmd = " make install"
             print("Running Make Install")

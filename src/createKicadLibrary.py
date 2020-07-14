@@ -13,7 +13,12 @@ class AutoSchematic(QtGui.QWidget):
         self.template = Appconfig.kicad_lib_template.copy()
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
-        self.kicad_nghdl_lib = '/usr/share/kicad/library/eSim_Nghdl.lib'
+        if os.name == 'nt':
+            eSim_src = Appconfig.src_home
+            inst_dir = eSim_src.replace('\eSim', '')
+            self.kicad_nghdl_lib = inst_dir + '/KiCad/share/kicad/library/eSim_Nghdl.lib'
+        else:
+            self.kicad_nghdl_lib = '/usr/share/kicad/library/eSim_Nghdl.lib'
         self.parser = Appconfig.parser_nghdl
 
     def createKicadLibrary(self):
@@ -26,7 +31,7 @@ class AutoSchematic(QtGui.QWidget):
             self.getPortInformation()
             self.createXML()
             self.createLib()
-        elif (xmlFound == self.xml_loc + '/Nghdl'):
+        elif (xmlFound == os.path.join(self.xml_loc, 'Nghdl')):
             print('Library already exists...')
             ret = QtGui.QMessageBox.warning(
                 self, "Warning", '''<b>Library files for this model ''' +
@@ -77,17 +82,17 @@ class AutoSchematic(QtGui.QWidget):
         ET.SubElement(root, "type").text = "Nghdl"
         ET.SubElement(root, "node_number").text = str(len(self.portInfo))
         ET.SubElement(root, "title").text = (
-                            "Add parameters for " + str(self.modelname))
+            "Add parameters for " + str(self.modelname))
         ET.SubElement(root, "split").text = self.splitText
         param = ET.SubElement(root, "param")
         ET.SubElement(param, "rise_delay", default="1.0e-9").text = (
-                                    "Enter Rise Delay (default=1.0e-9)")
+            "Enter Rise Delay (default=1.0e-9)")
         ET.SubElement(param, "fall_delay", default="1.0e-9").text = (
-                                    "Enter Fall Delay (default=1.0e-9)")
+            "Enter Fall Delay (default=1.0e-9)")
         ET.SubElement(param, "input_load", default="1.0e-12").text = (
-                                    "Enter Input Load (default=1.0e-12)")
+            "Enter Input Load (default=1.0e-12)")
         ET.SubElement(param, "instance_id", default="1").text = (
-                                    "Enter Instance ID (Between 0-99)")
+            "Enter Instance ID (Between 0-99)")
         tree = ET.ElementTree(root)
         tree.write(str(self.modelname) + '.xml')
         print("Leaving the directory ", xmlDestination)
