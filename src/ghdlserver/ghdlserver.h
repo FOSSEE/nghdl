@@ -5,26 +5,20 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-
 #include <unistd.h>
 #include <sys/types.h>
 #include<string.h>
 
 #ifdef __linux__
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <netdb.h>
+#elif _WIN32
+    #include<ws2tcpip.h>
+    #include<winsock2.h>
+    #include<eventsys.h>
+    #include<windows.h>
 #endif
-
-#ifdef _WIN32
-#include<ws2tcpip.h>
-#include<winsock2.h>
-#include<eventsys.h>
-#include<windows.h>
-#endif
-
-
-
 
 
 // Should be enough..
