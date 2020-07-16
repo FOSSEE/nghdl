@@ -2,6 +2,7 @@
 
 import re
 import os
+from configparser import SafeConfigParser
 
 
 class ModelGeneration:
@@ -13,6 +14,13 @@ class ModelGeneration:
         self.fname = os.path.basename(file)
         print("VHDL filename is : ", self.fname)
         self.home = os.path.expanduser("~")
+        self.parser = SafeConfigParser()
+        self.parser.read(os.path.join(
+            self.home, os.path.join('.nghdl', 'config.ini')))
+        self.ngspice_home = self.parser.get('NGSPICE', 'NGSPICE_HOME')
+        self.release_dir = self.parser.get('NGSPICE', 'RELEASE')
+        self.src_home = self.parser.get('SRC', 'SRC_HOME')
+        self.licensefile = self.parser.get('SRC', 'LICENSE')
 
         # #### Creating connection_info.txt file from vhdl file #### #
         read_vhdl = open(file, 'r')
@@ -154,14 +162,24 @@ class ModelGeneration:
         #include <math.h>
         #include <string.h>
         #include <time.h>
-        #include <sys/socket.h>
         #include <sys/types.h>
-        #include <netinet/in.h>
-        #include <netdb.h>
         #include <stdlib.h>
         #include <unistd.h>
         #include <errno.h>
+
         '''
+
+        if os.name == 'nt':
+            header += '''
+            #undef BOOLEAN
+            #include<winsock2.h>
+            '''
+        else:
+            header += '''
+            #include <sys/socket.h>
+            #include <netinet/in.h>
+            #include <netdb.h>
+            '''
 
         function_open = (
             '''void cm_''' + self.fname.split('.')[0] + '''(ARGS) \n{''')
@@ -177,7 +195,7 @@ class ModelGeneration:
             // Declaring components of Client
             FILE *log_client = NULL;
             log_client=fopen("client.log","a");
-            int socket_fd, bytes_recieved;
+            int bytes_recieved;
             char send_data[1024];
             char recv_data[1024];
             char *key_iter;
@@ -185,6 +203,11 @@ class ModelGeneration:
             struct sockaddr_in server_addr;
             int sock_port = 5000+PARAM(instance_id);
         '''
+
+        if os.name != 'nt':
+            var_section += '''
+                int socket_fd;
+            '''
 
         temp_input_var = []
         for item in self.input_port:
@@ -262,8 +285,18 @@ class ModelGeneration:
                 char* my_ip = malloc(16);
 
                 char ip_filename[40];
-                sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+        '''
 
+        if os.name == 'nt':
+            client_setup_ip += '''
+                    sprintf(ip_filename, "C:/Windows/Temp/NGHDL_COMMON_IP_%d.txt", getpid());
+            '''
+        else:
+            client_setup_ip += '''
+                    sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+            '''
+
+        client_setup_ip += '''
                 fptr = fopen(ip_filename, "r");
                 if (fptr)
                 {
@@ -276,10 +309,10 @@ class ModelGeneration:
                     fclose(fptr);
                 }
 
-                if (ip_count < 255) {
+                if (ip_count < 254) {
                     sprintf(my_ip, "127.0.0.%d", ip_count+1);
                 } else {
-                    sprintf(my_ip, "127.0.%d.1", (ip_count+1)%256);
+                    sprintf(my_ip, "127.0.%d.1", (ip_count+3)%256);
                 }
 
                 fptr = fopen(ip_filename, "a");
@@ -297,7 +330,16 @@ class ModelGeneration:
 
         client_fetch_ip = '''
             /* Client Fetch IP Addr */
+        '''
 
+        if os.name == 'nt':
+            client_fetch_ip += '''
+                WSADATA WSAData;
+                SOCKET socket_fd;
+                WSAStartup(MAKEWORD(2, 2), &WSAData);
+            '''
+
+        client_fetch_ip += '''
             char* my_ip = STATIC_VAR(my_ip);
 
             host = gethostbyname(my_ip);
@@ -397,7 +439,18 @@ class ModelGeneration:
             if ( send(socket_fd,send_data,sizeof(send_data),0)==-1)
             {
                 fprintf(stderr, "Client-Failure Sending Message \\n");
-                close(socket_fd);
+        '''
+
+        if os.name == 'nt':
+            send_data += '''
+                    closesocket(socket_fd);
+            '''
+        else:
+            send_data += '''
+                    close(socket_fd);
+            '''
+
+        send_data += '''
                 exit(1);
             }
             else
@@ -430,7 +483,7 @@ class ModelGeneration:
 
         for item in self.output_port:
             sch_output_event.append(
-                 "\t/* Scheduling event and processing them */\n\
+                "\t/* Scheduling event and processing them */\n\
         \tif((key_iter=strstr(recv_data, " + '"' + item.split(':')[0] + ':"'")) != NULL)\n\
         \t{\n\
         \t\twhile(*key_iter++ != ':');\n\
@@ -442,7 +495,7 @@ class ModelGeneration:
         \t\t\telse if(*key_iter=='1')\n\t\t\t{\n\
         \t\t\t\t_op_" + item.split(':')[0] + "[Ii]=ONE;\n\
         \t\t\t}\n\t\t\telse\n\t\t\t{\n\
-        \t\t\t\tfprintf(log_client,\"Unknow value return from server \\n\");\n\
+        \t\t\t\tfprintf(log_client,\"Unknown value return from server \\n\");\n\
         \t\t\t\tprintf(\"Client-Unknown value return \\n\");\n\t\t\t}\n\n\
         \t\t\tif(ANALYSIS == DC)\n\t\t\t{\n\
         \t\t\t\tOUTPUT_STATE(" + item.split(':')[0] + "[Ii]) = _op_" + item.split(':')[0] + "[Ii];\n\
@@ -497,12 +550,24 @@ class ModelGeneration:
         cfunc.write(client_setup_ip)
         cfunc.write("\n")
         cfunc.write("\t\tchar command[1024];\n")
-        cfunc.write(
-            '\t\tsnprintf(command,1024,"' + self.home +
-            '/ngspice-nghdl/src/xspice/icm/ghdl/' +
-            self.fname.split('.')[0] +
-            '/DUTghdl/start_server.sh %d %s &",sock_port,my_ip);'
-        )
+
+        if os.name == 'nt':
+            self.digital_home = self.parser.get('NGSPICE', 'DIGITAL_MODEL')
+            self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
+            cmd_str2 = "\\'start_server.sh %d %s\\'" + "\\" + "\""
+            cmd_str1 = os.path.normpath("\"cd " + self.digital_home + "/" + self.fname.split(
+                '.')[0] + "/DUTghdl/ && " + self.msys_home + "/bash.exe -c ")
+            cmd_str1 = cmd_str1.replace("\\", "/")
+            cfunc.write('\t\tsnprintf(command,1024, "start /min cmd /c ' +
+                        '\\' + cmd_str1 + cmd_str2 + ' &", sock_port, my_ip);')
+        else:
+            cfunc.write(
+                '\t\tsnprintf(command,1024,"' + self.home +
+                '/ngspice-nghdl/src/xspice/icm/ghdl/' +
+                self.fname.split('.')[0] +
+                '/DUTghdl/start_server.sh %d %s &", sock_port, my_ip);'
+            )
+
         cfunc.write('\n\t\tsystem(command);')
         cfunc.write("\n\t}")
         cfunc.write("\n")
@@ -534,7 +599,10 @@ class ModelGeneration:
             cfunc.write(item)
 
         # Close socket fd
-        cfunc.write("\tclose(socket_fd);\n\n")
+        if os.name == 'nt':
+            cfunc.write("\tclosesocket(socket_fd);\n\n")
+        else:
+            cfunc.write("\tclose(socket_fd);\n\n")
 
         # close log_client file
         cfunc.write("\tfclose(log_client);")
@@ -974,6 +1042,7 @@ class ModelGeneration:
     def createServerScript(self):
 
         # ####### Creating and writing components in start_server.sh ####### #
+        self.digital_home = self.parser.get('NGSPICE', 'DIGITAL_MODEL')
 
         start_server = open('start_server.sh', 'w')
 
@@ -982,10 +1051,16 @@ class ModelGeneration:
             "###This server run ghdl testebench for infinite time till " +
             "ngspice send END signal to stop it\n\n"
         )
-        start_server.write(
-            "cd "+self.home+"/ngspice-nghdl/src/xspice/icm/ghdl/" +
-            self.fname.split('.')[0]+"/DUTghdl/\n"
-        )
+
+        if os.name == 'nt':
+            pathstr = self.digital_home + "/" + \
+                self.fname.split('.')[0] + "/DUTghdl/"
+            pathstr = pathstr.replace("\\", "/")
+            start_server.write("cd "+pathstr+"\n")
+        else:
+            start_server.write("cd "+self.digital_home +
+                               "/" + self.fname.split('.')[0] + "/DUTghdl/\n")
+
         start_server.write("chmod 775 sock_pkg_create.sh &&\n")
         start_server.write("./sock_pkg_create.sh $1 $2 &&\n")
         start_server.write("ghdl -i *.vhdl &&\n")
@@ -994,10 +1069,15 @@ class ModelGeneration:
         start_server.write(
             "ghdl -a "+self.fname.split('.')[0]+"_tb.vhdl  &&\n"
         )
-        start_server.write(
-            "ghdl -e -Wl,ghdlserver.o " + self.fname.split('.')[0] + "_tb &&\n"
-        )
-        start_server.write("./"+self.fname.split('.')[0]+"_tb")
+
+        if os.name == 'nt':
+            start_server.write("ghdl -e -Wl,ghdlserver.o " +
+                               "-Wl,libws2_32.a " + self.fname.split('.')[0] + "_tb &&\n")
+            start_server.write("./"+self.fname.split('.')[0]+"_tb.exe")
+        else:
+            start_server.write("ghdl -e -Wl,ghdlserver.o " +
+                               self.fname.split('.')[0] + "_tb &&\n")
+            start_server.write("./"+self.fname.split('.')[0]+"_tb")
 
         start_server.close()
 
