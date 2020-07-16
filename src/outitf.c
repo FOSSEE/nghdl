@@ -11,12 +11,24 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
  */
 
 /**************************************************************************
+ * 08.June.2020 - RP, BM - Added OS (Windows and Linux) dependent 
+ *                         preprocessors and sockets
+ **************************************************************************
  * 29.May.2020 - RP, BM - Read all the IPs and ports from NGHDL_COMMON_IP
  * file from /tmp folder. It connects to each of the ghdlserver and sends 
  * CLOSE_FROM_NGSPICE message to terminate themselves
  **************************************************************************/
 
 #include "ngspice/ngspice.h"
+
+/*05.June.2020 - BM - Added follwing includes for Windows OS */
+#ifdef _WIN32
+    #undef BOOLEAN  /* Undefine it due to conflicting definitions in Windows OS */
+
+    #include <ws2tcpip.h>
+    #include <winsock2.h>
+#endif
+
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
@@ -45,11 +57,12 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include <errno.h>
 
 /* 27.May.2020 - BM - Added the following #include */
-#include <stdio.h> 
-#include <sys/socket.h> 
-#include <arpa/inet.h> 
-#include <unistd.h> 
-
+#ifdef __linux__
+    #include <stdio.h>
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+#endif
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
@@ -96,9 +109,7 @@ extern bool orflag;
 int fixme_onoise_type = SV_NOTYPE;
 int fixme_inoise_type = SV_NOTYPE;
 
-
 #define DOUBLE_PRECISION 15
-
 
 static clock_t lastclock, currclock;
 static double *rowbuf;
@@ -119,7 +130,16 @@ static void close_server()
 {	
 	FILE *fptr;
 	char ip_filename[48];
-	sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+
+	#ifdef __linux__
+		sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+	#elif _WIN32
+		WSADATA WSAData;
+    	SOCKADDR_IN addr;
+    	WSAStartup(MAKEWORD(2, 2), &WSAData);
+		sprintf(ip_filename, "C:\\Windows\\Temp\\NGHDL_COMMON_IP_%d.txt", getpid());
+	#endif
+
 	fptr = fopen(ip_filename, "r");
 	
     if(fptr)
@@ -178,11 +198,20 @@ static void close_server()
                 continue;
 
             /* send close message to the server */
-            send(sock, message, strlen(message), 0);
-			close(sock);
+            #ifdef __linux__
+            	send(sock, message, strlen(message), 0);
+            	close(sock);
+            #elif _WIN32
+            	send(sock, message, strlen(message) + 1, 0);
+            	closesocket(sock);
+            #endif
 		}
 	}
 
+	#ifdef _WIN32
+		WSACleanup();
+	#endif
+	fclose(fptr);
 	remove(ip_filename);
 }
 
@@ -233,7 +262,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     int i, j, depind = 0;
     char namebuf[BSIZE_SP], parambuf[BSIZE_SP], depbuf[BSIZE_SP];
     char *ch, tmpname[BSIZE_SP];
-    bool saveall  = TRUE;
+    bool saveall = TRUE;
     bool savealli = FALSE;
     char *an_name;
     int initmem;
@@ -335,7 +364,6 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             run->refIndex = -1;
         }
 
-
         /* Pass 1. */
         if (numsaves && !saveall) {
             for (i = 0; i < numsaves; i++)
@@ -418,7 +446,6 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 }
             }
         }
-
 
         /* Pass 2. */
         for (i = 0; i < numsaves; i++) {
@@ -606,10 +633,10 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 
         dataDesc *d;
 
-#ifdef TCL_MODULE
+        #ifdef TCL_MODULE
         /*Locks the blt vector to stop access*/
         blt_lockvec(i);
-#endif
+        #endif
 
         d = &run->data[i];
 
@@ -638,10 +665,10 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 fprintf(stderr, "OUTpData: unsupported data type\n");
         }
 
-#ifdef TCL_MODULE
+        #ifdef TCL_MODULE
         /*relinks and unlocks vector*/
         blt_relink(i, d->vec);
-#endif
+        #endif
 
     }
 }
@@ -1277,7 +1304,6 @@ plotEnd(runDesc *run)
     /* 28.May.2020 - BM, RP */
     close_server();
     /* End 28.May.2020 */
-
 
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 }

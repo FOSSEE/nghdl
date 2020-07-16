@@ -1,13 +1,25 @@
 /* 18.Mar.2017 - RM - Cleaned up.*/
+/* 20.June.2020 - BM - Added OS dependent includes*/
+#define _GNU_SOURCE
+#include <stdio.h>
 
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
+#include<string.h>
+
+#ifdef __linux__
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <netdb.h>
+#elif _WIN32
+    #include<ws2tcpip.h>
+    #include<winsock2.h>
+    #include<eventsys.h>
+    #include<windows.h>
+#endif
+
 
 // Should be enough..
 #define MAX_BUF_SIZE 4096
