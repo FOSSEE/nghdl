@@ -1,0 +1,37 @@
+* /home/sumanto/esim-workspace/tri/tri.cir
+
+v2  net-_u3-pad3_ gnd pulse(0 5 0 0 0 0.5e-6 1e-6)
+r1  pb0 gnd 1k
+* u6  pb0 plot_v1
+v1 net-_u3-pad1_ gnd  dc 5
+* u2  net-_u1-pad8_ pb0 dac_bridge_1
+* u3  net-_u3-pad1_ gnd net-_u3-pad3_ net-_u3-pad4_ net-_u3-pad5_ net-_u3-pad6_ net-_u3-pad7_ net-_u1-pad1_ net-_u1-pad2_ net-_u1-pad3_ net-_u1-pad4_ net-_u1-pad5_ net-_u1-pad6_ net-_u1-pad7_ adc_bridge_7
+v5 net-_u3-pad6_ gnd  dc 0
+v4 net-_u3-pad5_ gnd  dc 5
+v3 net-_u3-pad4_ gnd  dc 0
+v6 net-_u3-pad7_ gnd  dc 0
+* u1  net-_u1-pad1_ net-_u1-pad2_ net-_u1-pad3_ net-_u1-pad4_ net-_u1-pad5_ net-_u1-pad6_ net-_u1-pad7_ net-_u1-pad8_ ? attiny_85_nghdl
+* u5  triangular plot_v1
+r2  triangular gnd 100
+r3  triangular pb0 1k
+c1  triangular gnd 1u
+a1 [net-_u1-pad8_ ] [pb0 ] u2
+a2 [net-_u3-pad1_ gnd net-_u3-pad3_ net-_u3-pad4_ net-_u3-pad5_ net-_u3-pad6_ net-_u3-pad7_ ] [net-_u1-pad1_ net-_u1-pad2_ net-_u1-pad3_ net-_u1-pad4_ net-_u1-pad5_ net-_u1-pad6_ net-_u1-pad7_ ] u3
+a3 [net-_u1-pad1_ ] [net-_u1-pad2_ ] [net-_u1-pad3_ ] [net-_u1-pad4_ ] [net-_u1-pad5_ ] [net-_u1-pad6_ ] [net-_u1-pad7_ ] [net-_u1-pad8_ ] [? ] u1
+* Schematic Name:                             dac_bridge_1, NgSpice Name: dac_bridge
+.model u2 dac_bridge(out_low=0.0 out_high=5.0 out_undef=0.5 input_load=1.0e-12 t_rise=1.0e-9 t_fall=1.0e-9 ) 
+* Schematic Name:                             adc_bridge_7, NgSpice Name: adc_bridge
+.model u3 adc_bridge(in_low=1.0 in_high=2.0 rise_delay=1.0e-9 fall_delay=1.0e-9 ) 
+* Schematic Name:                             attiny_85_nghdl, NgSpice Name: attiny_85_nghdl
+.model u1 attiny_85_nghdl(rise_delay=1.0e-9 fall_delay=1.0e-9 input_load=1.0e-12 instance_id=1 ) 
+.tran 0.5e-06 2000e-06 0e-06
+
+* Control Statements 
+.control
+run
+print allv > plot_data_v.txt
+print alli > plot_data_i.txt
+plot v(pb0)
+plot v(triangular)
+.endc
+.end

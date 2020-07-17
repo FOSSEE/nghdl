@@ -1,0 +1,25 @@
+* /home/sumanto/eSim-Workspace/tri/tri.cir
+
+* EESchema Netlist Version 1.1 (Spice format) creation date: Wed Jun 10 01:47:44 2020
+
+* To exclude a component from the Spice Netlist add [Spice_Netlist_Enabled] user FIELD set to: N
+* To reorder the component spice node sequence add [Spice_Node_Sequence] user FIELD and define sequence: 2,1,0
+
+* Sheet Name: /
+v2  Net-_U3-Pad3_ GND pulse		
+R1  pb0 GND 1k		
+U6  pb0 plot_v1		
+v1  Net-_U3-Pad1_ GND DC		
+U2  Net-_U1-Pad8_ pb0 dac_bridge_1		
+U3  Net-_U3-Pad1_ GND Net-_U3-Pad3_ Net-_U3-Pad4_ Net-_U3-Pad5_ Net-_U3-Pad6_ Net-_U3-Pad7_ Net-_U1-Pad1_ Net-_U1-Pad2_ Net-_U1-Pad3_ Net-_U1-Pad4_ Net-_U1-Pad5_ Net-_U1-Pad6_ Net-_U1-Pad7_ adc_bridge_7		
+v5  Net-_U3-Pad6_ GND DC		
+v4  Net-_U3-Pad5_ GND DC		
+v3  Net-_U3-Pad4_ GND DC		
+v6  Net-_U3-Pad7_ GND DC		
+U1  Net-_U1-Pad1_ Net-_U1-Pad2_ Net-_U1-Pad3_ Net-_U1-Pad4_ Net-_U1-Pad5_ Net-_U1-Pad6_ Net-_U1-Pad7_ Net-_U1-Pad8_ ? attiny_85_nghdl		
+U5  triangular plot_v1		
+R2  triangular GND 100		
+R3  triangular pb0 1k		
+C1  triangular GND 1u		
+
+.end
