@@ -21,9 +21,9 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 
 #include "ngspice/ngspice.h"
 
-/*05.June.2020 - BM - Added follwing includes for Windows OS */
+/*05.June.2020 - BM - Added follwing includes for Win OS */
 #ifdef _WIN32
-    #undef BOOLEAN  /* Undefine it due to conflicting definitions in Windows OS */
+    #undef BOOLEAN  /* Undefine it due to conflicting definitions in Win OS */
 
     #include <ws2tcpip.h>
     #include <winsock2.h>
@@ -211,6 +211,7 @@ static void close_server()
 	#ifdef _WIN32
 		WSACleanup();
 	#endif
+
 	fclose(fptr);
 	remove(ip_filename);
 }

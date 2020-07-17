@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import re
 import os
 from configparser import SafeConfigParser
@@ -289,11 +287,13 @@ class ModelGeneration:
 
         if os.name == 'nt':
             client_setup_ip += '''
-                    sprintf(ip_filename, "C:/Windows/Temp/NGHDL_COMMON_IP_%d.txt", getpid());
+                    sprintf(ip_filename, ''' \
+                    '''"C:/Windows/Temp/NGHDL_COMMON_IP_%d.txt", getpid());
             '''
         else:
             client_setup_ip += '''
-                    sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+                    sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt",''' \
+                    ''' getpid());
             '''
 
         client_setup_ip += '''
@@ -495,8 +495,8 @@ class ModelGeneration:
         \t\t\telse if(*key_iter=='1')\n\t\t\t{\n\
         \t\t\t\t_op_" + item.split(':')[0] + "[Ii]=ONE;\n\
         \t\t\t}\n\t\t\telse\n\t\t\t{\n\
-        \t\t\t\tfprintf(log_client,\"Unknown value return from server \\n\");\n\
-        \t\t\t\tprintf(\"Client-Unknown value return \\n\");\n\t\t\t}\n\n\
+        \t\t\t\tfprintf(log_client,\"Unknown value return from server \\n\");\
+        \n\t\t\t\tprintf(\"Client-Unknown value return \\n\");\n\t\t\t}\n\n\
         \t\t\tif(ANALYSIS == DC)\n\t\t\t{\n\
         \t\t\t\tOUTPUT_STATE(" + item.split(':')[0] + "[Ii]) = _op_" + item.split(':')[0] + "[Ii];\n\
         \t\t\t}\n\t\t\telse if(_op_" + item.split(':')[0] + "[Ii] != _op_" + item.split(':')[0] + "_old[Ii])\n\
@@ -555,8 +555,11 @@ class ModelGeneration:
             self.digital_home = self.parser.get('NGSPICE', 'DIGITAL_MODEL')
             self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
             cmd_str2 = "\\'start_server.sh %d %s\\'" + "\\" + "\""
-            cmd_str1 = os.path.normpath("\"cd " + self.digital_home + "/" + self.fname.split(
-                '.')[0] + "/DUTghdl/ && " + self.msys_home + "/bash.exe -c ")
+            cmd_str1 = os.path.normpath(
+                                "\"cd " + self.digital_home + "/" +
+                                self.fname.split('.')[0] + "/DUTghdl/ && " +
+                                self.msys_home + "/bash.exe -c "
+            )
             cmd_str1 = cmd_str1.replace("\\", "/")
             cfunc.write('\t\tsnprintf(command,1024, "start /min cmd /c ' +
                         '\\' + cmd_str1 + cmd_str2 + ' &", sock_port, my_ip);')
@@ -1072,7 +1075,8 @@ class ModelGeneration:
 
         if os.name == 'nt':
             start_server.write("ghdl -e -Wl,ghdlserver.o " +
-                               "-Wl,libws2_32.a " + self.fname.split('.')[0] + "_tb &&\n")
+                               "-Wl,libws2_32.a " +
+                               self.fname.split('.')[0] + "_tb &&\n")
             start_server.write("./"+self.fname.split('.')[0]+"_tb.exe")
         else:
             start_server.write("ghdl -e -Wl,ghdlserver.o " +

@@ -10,9 +10,9 @@
  ************************************************************************************
  ************************************************************************************
  * 08.Nov.2019 - Rahul Paknikar  - Switched to blocking sockets from non-blocking
- *								               - Close previous used socket to prevent from   
- *								                 generating too many socket descriptors
- *              								 - Enabled SO_REUSEPORT, SO_DONTROUTE socket options
+ *								 - Close previous used socket to prevent from   
+ *								   generating too many socket descriptors
+ *								 - Enabled SO_REUSEPORT, SO_DONTROUTE socket options
  * 5.July.2019 - Rahul Paknikar  - Added loop to send all port values for 
  *                                 a given event.
  ************************************************************************************
