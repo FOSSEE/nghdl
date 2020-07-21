@@ -3,23 +3,38 @@
 #          FILE: install-nghdl.sh
 # 
 #         USAGE: ./install-nghdl.sh --install
-#                 or
+#                 			OR
 #                ./install-nghdl.sh --uninstall
 # 
-#   DESCRIPTION: It is installation script for Ngspice and GHDL simulators 
-# 				 (NGHDL)
+#   DESCRIPTION: Installation script for Ngspice and GHDL simulators (NGHDL)
+#
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
-#       CREATED: Tuesday 31 March 2020 16:30
-#      REVISION:  ---
+#       CREATED: Tuesday 02 December 2014 17:01
+#      REVISION: Monday 20 July 2020 16:35
 #===============================================================================
 
+set -e  # Set exit option immediately on error
+
+error_exit() {
+    echo -e "\n\nError! Kindly resolve above errors and try again."
+    echo -e "\nAborting Installation......\n"
+}
+
+error_skip() {
+	echo -e "\n\nWarning! Skipping over this error......\n"
+}
+
+# Trap on function error_exit before exiting on error
+trap error_exit ERR
+
+
 ngspice="ngspice-nghdl"
-ghdl="ghdl-0.36"
+ghdl="ghdl-0.37"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -33,94 +48,58 @@ timestamp=`echo $sysdate|awk '{print $3"_"$2"_"$6"_"$4 }'`
 function installDependency
 {
 
-    echo "Installing dependencies for ghdl-0.36 LLVM................"
+    echo "Installing dependencies for $ghdl LLVM...................."
 
     echo "Installing Make..........................................."
     sudo apt install -y make
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"Make\" dependency couldn't be installed.\nKindly resolve above errors and try again."
-        exit 1
-    fi
     
-    echo "Installing GNAT-5........................................."
-    sudo apt install -y gnat-5
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"GNAT-5\" dependency couldn't be installed.\nKindly resolve above errors and try again."
-        exit 1
-    fi
+    echo "Installing GNAT..........................................."
+    sudo apt install -y gnat
 
-	echo "Installing LLVM-3.9......................................."
-    sudo apt install -y llvm-3.9
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"LLVM-3.9\" dependency couldn't be installed.\nKindly resolve above errors and try again."
-        exit 1
-    fi    
+	echo "Installing LLVM-8........................................."
+    sudo apt install -y llvm-8
 
     echo "Installing Clang.........................................."
     sudo apt-get install -y clang
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"Clang\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
-        exit 1
-    fi
 
     echo "Installing Zlib1g-dev....................................."
     sudo apt install -y zlib1g-dev
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"Zlib1g-dev\" dependency couldn't be installed.\nKindly resolve above errors and try again."
-        exit 1
-    fi
   
     # Specific dependency for canberra-gtk modules
     echo "Installing Gtk Canberra modules..........................."
     sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"canberra-gtk-module\" dependency couldn't be installed.\nKindly resolve above errors and try again."
-        exit 1
-    fi  
 
     # Specific dependency for nvidia graphic cards
     echo "Installing graphics dependency for ngspice souce build"
     echo "Installing libxaw7........................................"
     sudo apt install -y libxaw7
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"libxaw7\" dependency couldn't be installed.\nKindly resolve above errors and try again."
-        exit 1
-    fi
 
     echo "Installing libxaw7-dev...................................."
     sudo apt install -y libxaw7-dev
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\"libxaw7-dev\" dependency couldn't be installed.\nKindly resolve above \"apt-get\" errors and try again."
-        exit 1
-    fi
 
 
-    echo "Installing GHDL-0.36 LLVM................................."
-    grep -h "ghdl" /usr/local/bin/ghdl > /dev/null
-    if [ $? -ne 0 ]; then
-        tar -xJf ghdl-0.36.tar.xz
-        if [ "$?" == 0 ]; then
-            echo "ghdl-0.36 successfully extracted"
-            echo "Changing directory to ghdl-0.36 installation"
-            cd ghdl-0.36/
-            echo "Configuring ghdl-0.36 build as per requirements"
-            # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-            sudo ./configure --with-llvm-config=/usr/bin/llvm-config-3.9
-            echo "Building the install file for ghdl-0.36 LLVM"
-            sudo make -j$(nproc)
-            sudo make install
-            echo "Removing unused part of ghdl-0.36 LLVM"
-    		sudo rm -rf ../ghdl-0.36
-    		echo "GHDL installed successfully"
-        else
-            echo "Unable to extract ghdl-0.36 LLVM"
-            echo "Exiting installation"
-            exit 1
-        fi
-    else
-    	echo "GHDL already exists......................................."
-        echo "Leaving ghdl-0.36 LLVM installation"
-    fi
+    echo "Installing $ghdl LLVM....................................."
+    tar -xJf $ghdl.tar.xz
+    echo "$ghdl successfully extracted"
+    echo "Changing directory to $ghdl installation"
+    cd $ghdl/
+    echo "Configuring $ghdl build as per requirements"
+    # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
+    sudo ./configure --with-llvm-config=/usr/bin/llvm-config-8
+    echo "Building the install file for $ghdl LLVM"
+    sudo make
+    sudo make install
+
+    set +e 		# Temporary disable exit on error
+    trap error_skip ERR
+    
+    echo "Removing unused part of $ghdl LLVM"
+    sudo rm -rf ../$ghdl
+    
+    set -e 		# Re-enable exit on error
+    trap error_exit ERR
+
+    echo "GHDL installed successfully"
     
 }
 
@@ -129,59 +108,51 @@ function installNgspice
 {
 
     echo "Installing Ngspice........................................"
-    # Checking if ngspice-nghdl directory is already present in Home directory
-    if [ -d $HOME/$ngspice ];then
-        echo "$ngspice directory already exists at $HOME................"
-        echo "Leaving Ngspice installation"
-    else
-        # Extracting Ngspice to Home Directory
-        cd $src_dir
-        tar -xJf $ngspice.tar.xz -C $HOME 
-        if [ "$?" == 0 ];then 
-            echo "Ngspice extracted sucessfuly to $HOME"
-            # Change to ngspice-nghdl directory
-            cd $HOME/$ngspice
-            # Make local install directory
-            mkdir -p install_dir
-            # Make release directory for build
-            mkdir -p release
-            # Change to release directory
-            cd release
-            echo "Configuring Ngspice"
-            sleep 2
-            ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/
+
+    # Extracting Ngspice to Home Directory
+    cd $src_dir
+    tar -xJf $ngspice.tar.xz -C $HOME 
+    
+    echo "Ngspice extracted sucessfully to $HOME"
+    # Change to ngspice-nghdl directory
+    cd $HOME/$ngspice
+    # Make local install directory
+    mkdir -p install_dir
+    # Make release directory for build
+    mkdir -p release
+    # Change to release directory
+    cd release
+    echo "Configuring Ngspice........."
+    sleep 2
+    
+    ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/
             
-            # Temp fix for adding patch to ngspice base code
-            cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
+    # Adding patch to Ngspice base code
+    cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
 
-            make -j$(nproc)
-            make install
-            if [ "$?" == 0 ];then
-                echo "Removing previously installed Ngspice (if any)"
-                sudo apt-get purge -y ngspice
+    make -j$(nproc)
+    make install
 
-                echo "Ngspice installed sucessfully"
-                echo "Adding softlink for the installed Ngspice"
+    # Make it executable
+    sudo chmod 755 $HOME/$ngspice/install_dir/bin/ngspice
+    
+    set +e 		# Temporary disable exit on error
+    trap error_skip ERR
 
-                # Make it executable
-    			sudo chmod 755 $HOME/$ngspice/install_dir/bin/ngspice
+    echo "Removing previously installed Ngspice (if any)"    
+    sudo apt-get purge -y ngspice
 
-                sudo rm /usr/bin/ngspice
-                sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
-                if [ $? -ne 0 ];then
-                    echo "Failed to add Ngspice softlink"
-                    echo "Remove earlier installations at /usr/bin/ngspice and try again"
-                    exit 1                    
-                fi
-                echo "Added softlink for Ngspice................................"
-            else 
-                echo "There was some error while installing Ngspice"
-            fi
-        else 
-            echo "Unable to extract Ngspice tar file"
-            exit 1;
-        fi
-    fi
+    echo "Ngspice installed sucessfully"
+    echo "Adding softlink for the installed Ngspice"
+
+    # Add symlink to the path
+    sudo rm /usr/bin/ngspice
+
+    set -e 		# Re-enable exit on error
+    trap error_exit ERR
+
+    sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
+    echo "Added softlink for Ngspice................................"
 
 }
 
@@ -218,16 +189,9 @@ function createSoftLink
     if [[ -L nghdl ]];then
         echo "Symlink was already present"
         sudo unlink nghdl
-        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
-    else
-        echo "Creating symlink"
-        sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
-        if [ $? -ne 0 ];then
-            echo "Failed to add NGHDL softlink"
-            echo "Remove earlier installations at /usr/local/bin/nghdl and try again"
-            exit 1
-        fi
     fi
+    
+    sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
     echo "Added softlink for NGHDL.................................."
 
     cd $pwd
@@ -269,9 +233,9 @@ elif [ $option == "--uninstall" ];then
     echo "Removing GHDL......................"
     sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
     echo "Removing LLVM......................"
-    sudo apt-get purge -y llvm-3.9
-    echo "Removing GNAT-5...................."
-    sudo apt purge -y gnat-5
+    sudo apt-get purge -y llvm-8
+    echo "Removing GNAT......................"
+    sudo apt purge -y gnat
 else 
     echo "Please select the proper operation."
     echo "--install"
