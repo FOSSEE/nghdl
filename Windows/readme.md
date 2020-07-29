@@ -82,17 +82,17 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 3. Remove the following files at /nghdl/
     - .gitignore
     - GHDLside.md
-    - Readme.md
     - Workflow.md
 
-4. Place **nghdl** folder containing `src folder`, `Examples folder` & `LICENSE`under folder named eSim/
+4. Place **nghdl** folder containing `src folder`, `Example folder` & `LICENSE` under folder named eSim/
 
-5. Final directory structure should be:  eSim/nghdl/Examples
-				         eSim/nghdL/src
-				         eSim/nghdl/LICENSE
+5. Final directory structure should be: 
+- eSim/nghdl/Example
+- eSim/nghdl/src 
+- eSim/nghdl/LICENSE 
 
-6. Compress the `eSim` folder from step 4 in 7z format (Make sure that there is folder named `eSim` inside this compressed file) and name it as `nghdl-src.7z`.
-	(7z compression tool can be downloaded from - https://www.7-zip.org/download.html )
+6. Compress the `eSim` folder from step 4 in 7z format (Make sure that there is folder named `eSim` inside this compressed file) and name it as `nghdl-src.7z`.\
+(7z compression tool can be downloaded from - https://www.7-zip.org/download.html )
 
 7. ALong with `nghdl-src.7z` from step 5, place the following 7z files at the installer folder for eSim.
 (these can be obtained under *sources/* folder in the repository )
