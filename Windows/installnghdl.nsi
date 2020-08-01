@@ -76,52 +76,52 @@
 Section "nghdl-loadsource"
     SetOutPath $EXEDIR
     
-    File "ghdl.zip"
-    File "mingw.7z"
-    File "MSYS.zip"
-    File "nghdl-src.zip"
-    File "ngspice-nghdl.zip"
+    File "ghdl.7z"
+    File "mingw64.7z"
+    File "MSYS.7z"
+    File "nghdl-src.7z"
+    File "ngspice-nghdl.7z"
 SectionEnd
 
 Section "nghdl-src"
     SetOutPath $INSTDIR
-    ZipDLL::extractall "$EXEDIR\nghdl-src.zip" "$INSTDIR\"
+    Nsis7z::ExtractWithDetails "$EXEDIR\nghdl-src.7z" "Extracting NGHDL %s..."
     EnVar::SetHKLM
     DetailPrint "EnVar::SetHKLM"
     EnVar::AddValue "Path" "$INSTDIR\eSim\nghdl\src"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
-    Delete "$EXEDIR\nghdl-src.zip"
+    Delete "$EXEDIR\nghdl-src.7z"
 SectionEnd
 
 Section "nghdl-mingw"
     SetOutPath $INSTDIR
-    Nsis7z::ExtractWithDetails "$EXEDIR\mingw.7z" "Extracting MinGW %s..."
+    Nsis7z::ExtractWithDetails "$EXEDIR\mingw64.7z" "Extracting MinGW %s..."
     EnVar::SetHKLM
     EnVar::AddValue "Path" "$INSTDIR\mingw64\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
-    Delete "$EXEDIR\mingw.7z"
+    Delete "$EXEDIR\mingw64.7z"
 SectionEnd
 
 Section "nghdl-msys"
     SetOutPath $INSTDIR\mingw64
-    ZipDLL::extractall "$EXEDIR\MSYS.zip" "$INSTDIR\mingw64\"
+    Nsis7z::ExtractWithDetails "$EXEDIR\MSYS.7z" "Extracting MSYS %s..."
     EnVar::SetHKLM
     EnVar::AddValue "Path" "$INSTDIR\mingw64\msys\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
-    Delete "$EXEDIR\MSYS.zip"
+    Delete "$EXEDIR\MSYS.7z"
 SectionEnd
 
 Section "nghdl-GHDL"
     SetOutPath $INSTDIR\mingw64
-    ZipDLL::extractall "$EXEDIR\ghdl.zip" "$INSTDIR\mingw64\"
+    Nsis7z::ExtractWithDetails "$EXEDIR\ghdl.7z" "Extracting GHDL %s..."
     EnVar::SetHKLM
     EnVar::AddValue "Path" "$INSTDIR\mingw64\GHDL\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
-    Delete "$EXEDIR\ghdl.zip"
+    Delete "$EXEDIR\ghdl.7z"
 SectionEnd
 
 Section "envar-refresh"	
@@ -133,7 +133,7 @@ SectionEnd
 
 Section "nghdl-installNgspice"
     SetOutPath $INSTDIR
-    ZipDLL::extractall "$EXEDIR\ngspice-nghdl.zip" "$INSTDIR\"
+    Nsis7z::ExtractWithDetails "$EXEDIR\ngspice-nghdl.7z" "Extracting GHDL %s..."
 
     CopyFiles $INSTDIR\eSim\nghdl\src\outitf.c $INSTDIR\ngspice-nghdl\src\frontend
     
@@ -160,7 +160,7 @@ Section "nghdl-installNgspice"
     FileClose $0
     
     nsExec::ExecToLog "$INSTDIR\mingw64\msys\bin\bash.exe installngspice.sh"
-    Delete "$EXEDIR\ngspice-nghdl.zip"
+    Delete "$EXEDIR\ngspice-nghdl.7z"
 	Delete $INSTDIR\ngspice-nghdl\release\installngspice.sh
 
     SetOutPath $INSTDIR

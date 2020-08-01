@@ -7,7 +7,7 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 
 ## NGHDL Executable:
 
-1. Download and install "Python-3.7.7", "Git For Windows". Use "Git Bash" for all following shell commands.
+1. Download and install "Python-3.5.2", "Git For Windows". Use "Git Bash" for all following shell commands.
 		
 		Reference - https://gitforwindows.org/
 
@@ -32,7 +32,6 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 		- Install PyInstaller, tornado, SetupTools through pip :
 
 			$ pip install pyinstaller
-			$ pip install tornado
 			$ pip install --upgrade 'setuptools<45.0.0'
 		
 		- Install PyQt4 through pip (Reference - https://stackoverflow.com/questions/22640640/how-to-install-pyqt4-on-windows-using-pip) :
@@ -41,7 +40,7 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 			$ pip install <wheel_package_of_PyQt4>
 			
 			Download PyQt4 Wheel from - [https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4]
-			Where cp37 represents the Python version i.e. 3.7.7
+			Where cp37 represents the Python version i.e. 3.7.x and so on
 
 			> Note : 
 				- If there are any issues regarding loading of DLL files, refer : https://stackoverflow.com/questions/2738879/cannot-import-pyqt4-qtgui
@@ -53,11 +52,12 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 
 > Note : Following dependencies should be available -
 >	- PyQt4
->	- numpy
->	- dateutil
->	- pyparsing
->	- six
->	- cycler.py
+>	- sip
+>	- altgraph
+>	- future
+>	- pefile
+>	- pyinstaller
+>	- pywin32-ctypes
 
 
 8. Create spec file as:
@@ -73,7 +73,7 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 
 
 
-## How to package NGHDL?
+## How to package NGHDL with eSim ?
 
 1. Place the nghdl.exe generated from the above process at the location /nghdl/src/
 
@@ -82,21 +82,25 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 3. Remove the following files at /nghdl/
     - .gitignore
     - GHDLside.md
-    - Readme.md
     - Workflow.md
 
-4. Place nghdl folder containing `src folder`, `Examples folder`&`LICENSE`under folder named eSim/
+4. Place **nghdl** folder containing `src folder`, `Example folder` & `LICENSE` under folder named eSim/
 
-5. Compress `eSim` folder in zip format (Make sure that there is folder named `eSim` inside this compressed file) and name it as `nghdl-src.zip`.
+5. Final directory structure should be: 
+- eSim/nghdl/Example
+- eSim/nghdl/src 
+- eSim/nghdl/LICENSE 
 
-6.  Place the following zip files at the installer folder for eSim.
+6. Compress the `eSim` folder from step 4 in 7z format (Make sure that there is folder named `eSim` inside this compressed file) and name it as `nghdl-src.7z`.\
+(7z compression tool can be downloaded from - https://www.7-zip.org/download.html )
+
+7. ALong with `nghdl-src.7z` from step 5, place the following 7z files at the installer folder for eSim.
 (these can be obtained under *sources/* folder in the repository )
-- nghdl-src.zip
-- ghdl.zip
-- MSYS.zip
-- ngspice-nghdl.zip
-- mingw.7z
+- ghdl.7z
+- MSYS.7z
+- ngspice-nghdl.7z
+- mingw64.7z
 
-7.  Place the script `installnghdl.nsi` at the eSim installer location.
+8.  Place the script `installnghdl.nsi` at the eSim installer location.
 
-8. Follow the rest of the instructions for packging eSim [https://github.com/FOSSEE/eSim/tree/installers/Windows] and compile the NSI script (`esim-setup-script` file). Now only use the generated installer for distribution.
+9. Follow the rest of the instructions for packging eSim [https://github.com/FOSSEE/eSim/tree/installers/Windows] and compile the NSI script (`esim-setup-script.nsi` file). Now only use the generated installer for distribution.
