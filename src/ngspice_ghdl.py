@@ -1,25 +1,23 @@
 #!/usr/bin/python3
 
-
-# This file create the gui to install code model in the ngspice.
+# This file create the GUI to install code model in the Ngspice.
 
 import os
 import sys
 import shutil
 import subprocess
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from configparser import SafeConfigParser
 from Appconfig import Appconfig
 from createKicadLibrary import AutoSchematic
 from model_generation import ModelGeneration
 
 
-class Mainwindow(QtGui.QWidget):
+class Mainwindow(QtWidgets.QWidget):
 
     def __init__(self):
         # super(Mainwindow, self).__init__()
-        QtGui.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
         print("Initializing..........")
 
         self.home = os.path.expanduser("~")
@@ -41,20 +39,20 @@ class Mainwindow(QtGui.QWidget):
         self.initUI()
 
     def initUI(self):
-        self.uploadbtn = QtGui.QPushButton('Upload')
+        self.uploadbtn = QtWidgets.QPushButton('Upload')
         self.uploadbtn.clicked.connect(self.uploadModel)
-        self.exitbtn = QtGui.QPushButton('Exit')
+        self.exitbtn = QtWidgets.QPushButton('Exit')
         self.exitbtn.clicked.connect(self.closeWindow)
-        self.browsebtn = QtGui.QPushButton('Browse')
+        self.browsebtn = QtWidgets.QPushButton('Browse')
         self.browsebtn.clicked.connect(self.browseFile)
-        self.addbtn = QtGui.QPushButton('Add Files')
+        self.addbtn = QtWidgets.QPushButton('Add Files')
         self.addbtn.clicked.connect(self.addFiles)
-        self.removebtn = QtGui.QPushButton('Remove Files')
+        self.removebtn = QtWidgets.QPushButton('Remove Files')
         self.removebtn.clicked.connect(self.removeFiles)
-        self.ledit = QtGui.QLineEdit(self)
-        self.sedit = QtGui.QTextEdit(self)
+        self.ledit = QtWidgets.QLineEdit(self)
+        self.sedit = QtWidgets.QTextEdit(self)
         self.process = QtCore.QProcess(self)
-        self.termedit = QtGui.QTextEdit(self)
+        self.termedit = QtWidgets.QTextEdit(self)
         self.termedit.setReadOnly(1)
         pal = QtGui.QPalette()
         bgc = QtGui.QColor(0, 0, 0)
@@ -63,7 +61,7 @@ class Mainwindow(QtGui.QWidget):
         self.termedit.setStyleSheet("QTextEdit {color:white}")
 
         # Creating gridlayout
-        grid = QtGui.QGridLayout()
+        grid = QtWidgets.QGridLayout()
         grid.setSpacing(5)
         grid.addWidget(self.ledit, 1, 0)
         grid.addWidget(self.browsebtn, 1, 1)
@@ -90,15 +88,15 @@ class Mainwindow(QtGui.QWidget):
 
     def browseFile(self):
         print("Browse button clicked")
-        self.filename = QtGui.QFileDialog.getOpenFileName(
-            self, 'Open File', '.')
+        self.filename = QtWidgets.QFileDialog.getOpenFileName(
+            self, 'Open File', '.')[0]
         self.ledit.setText(self.filename)
         print("Vhdl file uploaded to process :", self.filename)
 
     def addFiles(self):
         print("Starts adding supporting files")
         title = self.addbtn.text()
-        for file in QtGui.QFileDialog.getOpenFileNames(self, title):
+        for file in QtWidgets.QFileDialog.getOpenFileNames(self, title)[0]:
             self.sedit.append(str(file))
             self.file_list.append(file)
         print("Supporting Files are :", self.file_list)
@@ -116,7 +114,7 @@ class Mainwindow(QtGui.QWidget):
                 self.file_list.remove(file)
 
         if nonvhdl_count > 0:
-            QtGui.QMessageBox.critical(
+            QtWidgets.QMessageBox.critical(
                 self, 'Critical', '''<b>Important Message.</b>
                 <br/><br/>Supporting files should be <b>.vhdl</b> file '''
             )
@@ -131,14 +129,14 @@ class Mainwindow(QtGui.QWidget):
         # Looking if model directory is present or not
         if os.path.isdir(self.modelname):
             print("Model Already present")
-            ret = QtGui.QMessageBox.warning(
+            ret = QtWidgets.QMessageBox.warning(
                 self, "Warning",
                 "<b>This model already exist. Do you want to " +
                 "overwrite it?</b><br/> If yes press ok, else cancel it and " +
                 "change the name of your vhdl file.",
-                QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel
+                QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel
             )
-            if ret == QtGui.QMessageBox.Ok:
+            if ret == QtWidgets.QMessageBox.Ok:
                 print("Overwriting existing model " + self.modelname)
                 if os.name == 'nt':
                     cmd = "rmdir " + self.modelname + "/s /q"
@@ -295,10 +293,7 @@ class Mainwindow(QtGui.QWidget):
             self.process = QtCore.QProcess(self)
             self.process.start(cmd)
             self.process.finished.connect(self.createSchematicLib)
-            QtCore.QObject.connect(
-                self.process, QtCore.SIGNAL("readyReadStandardOutput()"),
-                self, QtCore.SLOT("readAllStandard()")
-            )
+            self.process.readyReadStandardOutput.connect(self.readAllStandard)
             os.chdir(self.cur_dir)
 
         except BaseException:
@@ -312,13 +307,13 @@ class Mainwindow(QtGui.QWidget):
                 schematicLib = AutoSchematic(self.modelname)
                 schematicLib.createKicadLibrary()
             else:
-                QtGui.QMessageBox.critical(
+                QtWidgets.QMessageBox.critical(
                     self, 'Error', '''Cannot create Schematic Library of ''' +
                     '''your model. Resolve the <b>errors</b> shown on ''' +
                     '''console of NGHDL window. '''
                 )
         else:
-            QtGui.QMessageBox.information(
+            QtWidgets.QMessageBox.information(
                 self, 'Message', '''<b>Important Message</b><br/><br/>''' +
                 '''To create Schematic Library of your model, ''' +
                 '''use NGHDL through <b>eSim</b> '''
@@ -344,15 +339,15 @@ class Mainwindow(QtGui.QWidget):
                 self.runMake()
                 self.runMakeInstall()
             else:
-                QtGui.QMessageBox.information(
+                QtWidgets.QMessageBox.information(
                     self, 'Message', '''<b>Important Message.</b><br/>''' +
                     '''<br/>This accepts only <b>.vhdl</b> file '''
                 )
         except Exception as e:
-            QtGui.QMessageBox.critical(self, 'Error', str(e))
+            QtWidgets.QMessageBox.critical(self, 'Error', str(e))
 
 
-class FileRemover(QtGui.QWidget):
+class FileRemover(QtWidgets.QWidget):
 
     def __init__(self, main_obj):
         super(FileRemover, self).__init__()
@@ -365,8 +360,8 @@ class FileRemover(QtGui.QWidget):
 
         print(self.files)
 
-        self.grid = QtGui.QGridLayout()
-        removebtn = QtGui.QPushButton('Remove', self)
+        self.grid = QtWidgets.QGridLayout()
+        removebtn = QtWidgets.QPushButton('Remove', self)
         removebtn.clicked.connect(self.removeFiles)
 
         self.grid.addWidget(self.createCheckBox(), 0, 0)
@@ -376,15 +371,15 @@ class FileRemover(QtGui.QWidget):
         self.show()
 
     def createCheckBox(self):
-        self.checkbox = QtGui.QGroupBox()
+        self.checkbox = QtWidgets.QGroupBox()
         self.checkbox.setTitle('Remove Files')
-        self.checkgrid = QtGui.QGridLayout()
+        self.checkgrid = QtWidgets.QGridLayout()
 
-        self.checkgroupbtn = QtGui.QButtonGroup()
+        self.checkgroupbtn = QtWidgets.QButtonGroup()
 
         for path in self.files:
             print(path)
-            self.cb_dict[path] = QtGui.QCheckBox(path)
+            self.cb_dict[path] = QtWidgets.QCheckBox(path)
             self.checkgroupbtn.addButton(self.cb_dict[path])
             self.checkgrid.addWidget(self.cb_dict[path], self.row, self.col)
             self.row += 1
@@ -420,7 +415,7 @@ class FileRemover(QtGui.QWidget):
 
 
 def main():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     if len(sys.argv) > 1:
         if sys.argv[1] == '-e':
             Appconfig.esimFlag = 1
