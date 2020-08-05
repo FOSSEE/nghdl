@@ -1,15 +1,15 @@
-NGHDL Installers
+NGHDL Packaging
 ====
 
-It contains all the documenation for making installations on various platforms.
+It contains all the documentation for packaging NGHDL to be distributed with [eSim](https://github.com/fossee/esim).
 
 
-## How to package NGHDL with eSim?
-1. Add GHDL executable and the corresponding installer for the target OS in the `nghdl` folder.
+## Packaging NGHDL with eSim?
 
-> Note : Instructions on how to generate NGHDL executable and distribute it along with GHDL are
-> provided under respective target OS directory.
+1. NGHDL is currently packaged for Ubuntu OS (Linux) and MS Windows OS.
 
-2. Rename `nghdl` folder as `nghdl-master` and compress it to `.zip` format.
+2. Refer the [documentation](Ngspice_Version_Change.md) for the changes to be done when the Ngspice is to be upgraded to a new verion. Note that these changes are common to both Ubuntu and Windows OS.
 
-3. Place this compressed file in `eSim-<version>` folder.
+3. Refer the [documentation](Ubuntu/README.md) to package eSim for Ubuntu OS.
+
+4. Refer the [documentation](Windows/README.md) to package eSim for Windows OS.
