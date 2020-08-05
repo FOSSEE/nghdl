@@ -248,7 +248,7 @@ class Mainwindow(QtWidgets.QWidget):
             str(self.process.readAllStandardOutput().data(), encoding='utf-8')
         )
         stderror = self.process.readAllStandardError()
-        if stderror.toUpper().contains("ERROR"):
+        if stderror.toUpper().contains(b"ERROR"):
             self.errorFlag = True
         self.termedit.append(str(stderror.data(), encoding='utf-8'))
 
