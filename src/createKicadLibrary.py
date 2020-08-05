@@ -7,8 +7,9 @@ from PyQt5 import QtWidgets
 
 class AutoSchematic(QtWidgets.QWidget):
 
-    def __init__(self, modelname):
+    def __init__(self, parent, modelname):
         QtWidgets.QWidget.__init__(self)
+        self.parent = parent
         self.modelname = modelname.split('.')[0]
         self.template = Appconfig.kicad_lib_template.copy()
         self.xml_loc = Appconfig.xml_loc
@@ -35,7 +36,7 @@ class AutoSchematic(QtWidgets.QWidget):
         elif (xmlFound == os.path.join(self.xml_loc, 'Nghdl')):
             print('Library already exists...')
             ret = QtWidgets.QMessageBox.warning(
-                self, "Warning", '''<b>Library files for this model ''' +
+                self.parent, "Warning", '''<b>Library files for this model ''' +
                 '''already exist. Do you want to overwrite it?</b><br/>
                 If yes press ok, else cancel it and ''' +
                 '''change the name of your vhdl file.''',
@@ -53,7 +54,7 @@ class AutoSchematic(QtWidgets.QWidget):
         else:
             print('Pre existing library...')
             ret = QtWidgets.QMessageBox.critical(
-                self, "Error", '''<b>A standard library already exists ''' +
+                self.parent, "Error", '''<b>A standard library already exists ''' +
                 '''with this name.</b><br/><b>Please change the name ''' +
                 '''of your vhdl file and upload it again</b>''',
                 QtWidgets.QMessageBox.Ok
@@ -231,7 +232,7 @@ class AutoSchematic(QtWidgets.QWidget):
         os.chdir(cwd)
         print('Leaving directory, ', self.lib_loc)
         QtWidgets.QMessageBox.information(
-            self, "Library added",
+            self.parent, "Library added",
             '''Library details for this model is added to the ''' +
             '''<b>eSim_Nghdl.lib</b> in the KiCad shared directory''',
             QtWidgets.QMessageBox.Ok

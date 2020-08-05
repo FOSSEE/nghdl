@@ -304,7 +304,7 @@ class Mainwindow(QtWidgets.QWidget):
         if Appconfig.esimFlag == 1:
             if not self.errorFlag:
                 print('Creating library files................................')
-                schematicLib = AutoSchematic(self.modelname)
+                schematicLib = AutoSchematic(self, self.modelname)
                 schematicLib.createKicadLibrary()
             else:
                 QtWidgets.QMessageBox.critical(
