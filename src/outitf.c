@@ -58,7 +58,6 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 
 /* 27.May.2020 - BM - Added the following #include */
 #ifdef __linux__
-    #include <stdio.h>
     #include <sys/socket.h>
     #include <arpa/inet.h>
     #include <unistd.h>
@@ -206,13 +205,14 @@ static void close_server()
             	closesocket(sock);
             #endif
 		}
+
+        fclose(fptr);
 	}
 
 	#ifdef _WIN32
 		WSACleanup();
 	#endif
 
-	fclose(fptr);
 	remove(ip_filename);
 }
 
