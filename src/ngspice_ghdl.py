@@ -7,7 +7,7 @@ import sys
 import shutil
 import subprocess
 from PyQt5 import QtGui, QtCore, QtWidgets
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from Appconfig import Appconfig
 from createKicadLibrary import AutoSchematic
 from model_generation import ModelGeneration
@@ -22,7 +22,7 @@ class Mainwindow(QtWidgets.QWidget):
 
         self.home = os.path.expanduser("~")
         # Reading all variables from config.ini
-        self.parser = SafeConfigParser()
+        self.parser = ConfigParser()
         self.parser.read(
             os.path.join(self.home, os.path.join('.nghdl', 'config.ini'))
         )
