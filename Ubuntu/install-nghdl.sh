@@ -15,18 +15,15 @@
 #        AUTHOR: Fahim Khan, Rahul Paknikar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Monday 20 July 2020 16:35
+#      REVISION: Sunday 02 August 2020 01:35
 #===============================================================================
 
 set -e  # Set exit option immediately on error
+set -E  # inherit ERR trap by shell functions
 
 error_exit() {
-    echo -e "\n\nError! Kindly resolve above errors and try again."
-    echo -e "\nAborting Installation......\n"
-}
-
-error_skip() {
-	echo -e "\n\nWarning! Skipping over this error......\n"
+    echo -e "\n\nError! Kindly resolve above error(s) and try again."
+    echo -e "\nAborting Installation...\n"
 }
 
 # Trap on function error_exit before exiting on error
@@ -91,7 +88,7 @@ function installDependency
     sudo make install
 
     set +e 		# Temporary disable exit on error
-    trap error_skip ERR
+    trap "" ERR # Do not trap on error of any command
     
     echo "Removing unused part of $ghdl LLVM"
     sudo rm -rf ../$ghdl
@@ -137,7 +134,7 @@ function installNgspice
     sudo chmod 755 $HOME/$ngspice/install_dir/bin/ngspice
     
     set +e 		# Temporary disable exit on error
-    trap error_skip ERR
+    trap "" ERR # Do not trap on error of any command
 
     echo "Removing previously installed Ngspice (if any)"    
     sudo apt-get purge -y ngspice
@@ -152,7 +149,7 @@ function installNgspice
     trap error_exit ERR
 
     sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
-    echo "Added softlink for Ngspice................................"
+    echo "Added softlink for Ngspice..."
 
 }
 
@@ -192,7 +189,7 @@ function createSoftLink
     fi
     
     sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
-    echo "Added softlink for NGHDL.................................."
+    echo "Added softlink for NGHDL..."
 
     cd $pwd
 
