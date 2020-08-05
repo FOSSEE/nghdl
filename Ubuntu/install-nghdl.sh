@@ -45,7 +45,7 @@ timestamp=`echo $sysdate|awk '{print $3"_"$2"_"$6"_"$4 }'`
 function installDependency
 {
 
-    echo "Installing dependencies for $ghdl LLVM...................."
+    echo "Installing dependencies for $ghdl LLVM................"
 
     echo "Installing Make..........................................."
     sudo apt install -y make
@@ -75,12 +75,13 @@ function installDependency
     sudo apt install -y libxaw7-dev
 
 
-    echo "Installing $ghdl LLVM....................................."
+    echo "Installing $ghdl LLVM................................."
     tar -xJf $ghdl.tar.xz
     echo "$ghdl successfully extracted"
     echo "Changing directory to $ghdl installation"
     cd $ghdl/
     echo "Configuring $ghdl build as per requirements"
+    chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
     sudo ./configure --with-llvm-config=/usr/bin/llvm-config-8
     echo "Building the install file for $ghdl LLVM"
@@ -122,6 +123,7 @@ function installNgspice
     echo "Configuring Ngspice........."
     sleep 2
     
+    chmod +x ../configure
     ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/
             
     # Adding patch to Ngspice base code
