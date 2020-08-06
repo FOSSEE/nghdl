@@ -29,7 +29,7 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 
 6. Install all Python dependencies for NGHDL within the virtual environment as:
 		
-		- Install PyInstaller, tornado, SetupTools through pip :
+		- Install PyInstaller, SetupTools through pip :
 
 			$ pip install pyinstaller
 			$ pip install --upgrade 'setuptools<45.0.0'
