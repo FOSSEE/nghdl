@@ -29,7 +29,7 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 
 6. Install all Python dependencies for NGHDL within the virtual environment as:
 		
-		- Install PyInstaller, tornado, SetupTools through pip :
+		- Install PyInstaller, SetupTools through pip :
 
 			$ pip install pyinstaller
 			$ pip install --upgrade 'setuptools<45.0.0'
@@ -98,8 +98,9 @@ It contains all the documenation for making NGHDL executable (using PyInstaller)
 (these can be obtained under *sources/* folder in the repository )
 - ghdl.7z
 - MSYS.7z
-- ngspice-nghdl.7z
 - mingw64.7z
+
+- ngspice-nghdl.7z ( this file can be obtained by decompressing `ngspice-nghdl.tar.xz` file present at `master branch` of this repository and recompressing using 7z tool)
 
 8.  Place the script `installnghdl.nsi` at the eSim installer location.
 
