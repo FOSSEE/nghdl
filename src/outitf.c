@@ -48,7 +48,7 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "plotting/graf.h"
 #include "../misc/misc_time.h"
 
-/* 10.Mar.2917 - RM - Added the following #include */
+/* 10.Mar.2017 - RM - Added the following #include */
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
