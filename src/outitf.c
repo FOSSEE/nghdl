@@ -3,17 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 **********/
-/**************************************************************************
- * 10.Mar.2017 - RM - Added a dirty fix to handle orphan FOSSEE test bench 
- * processes. The following static functions were added in the process:
- *             o nghdl_orphan_tb()
- *             o nghdl_tb_SIGUSR1()
- **************************************************************************/
-/**************************************************************************
- * 22.Oct.2019 - RP - Read all the PIDs and send kill signal to all those
- * processes. Also, Remove the common file of used IPs and PIDs for this 
- * Ngspice's instance rather than depending on GHDLServer to do the same. 
- **************************************************************************/
 /*
  * This module replaces the old "writedata" routines in nutmeg.
  * Unlike the writedata routines, the OUT routines are only called by
@@ -21,7 +10,25 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
  * of nutmeg doesn't deal with OUT at all.
  */
 
+/**************************************************************************
+ * 08.June.2020 - RP, BM - Added OS (Windows and Linux) dependent 
+ *                         preprocessors and sockets
+ **************************************************************************
+ * 29.May.2020 - RP, BM - Read all the IPs and ports from NGHDL_COMMON_IP
+ * file from /tmp folder. It connects to each of the ghdlserver and sends 
+ * CLOSE_FROM_NGSPICE message to terminate themselves
+ **************************************************************************/
+
 #include "ngspice/ngspice.h"
+
+/*05.June.2020 - BM - Added follwing includes for Win OS */
+#ifdef _WIN32
+    #undef BOOLEAN  /* Undefine it due to conflicting definitions in Win OS */
+
+    #include <ws2tcpip.h>
+    #include <winsock2.h>
+#endif
+
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
@@ -34,7 +41,6 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "circuits.h"
 #include "outitf.h"
 #include "variable.h"
-#include <fcntl.h>
 #include "ngspice/cktdefs.h"
 #include "ngspice/inpdefs.h"
 #include "breakp2.h"
@@ -42,13 +48,20 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "plotting/graf.h"
 #include "../misc/misc_time.h"
 
-/* 10.Mar.2917 - RM - Added the following #include */
-#include <dirent.h>
+/* 10.Mar.2017 - RM - Added the following #include */
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+
+/* 27.May.2020 - BM - Added the following #include */
+#ifdef __linux__
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+#endif
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
@@ -95,9 +108,7 @@ extern bool orflag;
 int fixme_onoise_type = SV_NOTYPE;
 int fixme_inoise_type = SV_NOTYPE;
 
-
-#define DOUBLE_PRECISION    15
-
+#define DOUBLE_PRECISION 15
 
 static clock_t lastclock, currclock;
 static double *rowbuf;
@@ -112,102 +123,101 @@ static double *valueold, *valuenew;
 static bool savenone = FALSE;
 #endif
 
-/* 10.Mar.2017 - RM - Added nghdl_tb_SIGUSR1().*/
-static void nghdl_tb_SIGUSR1(char* pid_file)
-{
-    int ret;
-    char line[80];
-    char* nptr;
-    pid_t pid[256], tmp;
-    int count=0, i;
 
-    FILE* fp = fopen(pid_file, "r");
+/* 28.May.2020 - RP, BM - Closing the GHDL server after simulation is over */
+static void close_server()
+{	
+	FILE *fptr;
+	char ip_filename[48];
 
-    if (fp)
-    {
-        /* 22.Oct.2019 - RP - Scan and store all the PIDs in this file */
-        while (fscanf(fp, "%s", line) == 1)
-        {   
-            // PID is converted to a decimal value.
-            tmp = (pid_t) strtol(line, &nptr, 10);
-            if ((errno != ERANGE) && (errno!= EINVAL))
+	#ifdef __linux__
+		sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
+	#elif _WIN32
+		WSADATA WSAData;
+    	SOCKADDR_IN addr;
+    	WSAStartup(MAKEWORD(2, 2), &WSAData);
+		sprintf(ip_filename, "C:\\Windows\\Temp\\NGHDL_COMMON_IP_%d.txt", getpid());
+	#endif
+
+	fptr = fopen(ip_filename, "r");
+	
+    if(fptr)
+	{
+		char server_ip[20], *message = "CLOSE_FROM_NGSPICE";
+		int port = -1, sock = -1, try_limit = 0, skip_flag = 0;
+	    struct sockaddr_in serv_addr;
+        serv_addr.sin_family = AF_INET;
+
+        /* scan server ip and port to send close message */
+        while(fscanf(fptr, "%s %d\n", server_ip, &port) == 2) 
+		{	
+            /* Create socket descriptor */
+            try_limit = 10, skip_flag = 0;
+            while(try_limit > 0)
             {
-                pid[count++] = tmp;
+    			if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    			{ 
+                    sleep(0.2);
+                    try_limit--;
+                    if(try_limit == 0)
+                    {
+    				    perror("\nClient Termination - Socket Failed: ");
+                        skip_flag = 1;
+    			    }
+                }
+                else
+                    break;
             }
-        }
 
-        fclose(fp);
-    }
+            if (skip_flag)
+                continue;
+				   
+			serv_addr.sin_port = htons(port);
+			serv_addr.sin_addr.s_addr = inet_addr(server_ip); 
 
-    /* 22.Oct.2019 - RP - Kill all the active PIDs */
-    for(i=0; i<count; i++)
-    {
-        if (pid[i])      
-        {
-            // Check if a process with this pid really exists.
-            ret = kill(pid[i], 0);
-            if (ret == 0)
+            /* connect with the server */
+            try_limit = 10, skip_flag = 0;
+			while(try_limit > 0)
             {
-                kill(pid[i], SIGUSR1);
+    			if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+    			{ 
+    				sleep(0.2);
+                    try_limit--;
+                    if(try_limit == 0)
+                    {
+                        perror("\nClient Termination - Connection Failed: ");
+                        skip_flag = 1;
+                    }
+    			}
+                else
+                    break;
             }
-        }
-    }
+			
+            if (skip_flag)
+                continue;
 
-    // 22.Oct.2019 - RP
-    remove(pid_file);
+            /* send close message to the server */
+            #ifdef __linux__
+            	send(sock, message, strlen(message), 0);
+            	close(sock);
+            #elif _WIN32
+            	send(sock, message, strlen(message) + 1, 0);
+            	closesocket(sock);
+            #endif
+		}
+
+        fclose(fptr);
+	}
+
+	#ifdef _WIN32
+		WSACleanup();
+	#endif
+
+	remove(ip_filename);
 }
 
-/* 10.Mar.2017 - RM - Added nghdl_orphan_tb().*/
-static void nghdl_orphan_tb(void)
-{
-    struct dirent* dirp;
-    DIR* dirfd;
-    char* dir = "/tmp";
-    char filename_tmp[1024];
-    char pid_file_prefix[256];
-        
-    sprintf(pid_file_prefix, "NGHDL_%d", getpid()); 
 
-    if ((dirfd = opendir(dir)) == NULL)
-    {
-    fprintf(stderr, "nghdl_orphan_tb(): Cannot open /tmp\n");
-        return;
-    }
-
-    /* Loop through /tmp directories looking for "NGHDL_<my pid>*" files.*/
-    while ((dirp = readdir(dirfd)) != NULL)
-    {
-    struct stat stbuf;
-    sprintf(filename_tmp, "/tmp/%s", dirp->d_name);
-    if (strstr(filename_tmp, pid_file_prefix)) 
-    {
-        if (stat(filename_tmp, &stbuf) == -1)
-        {
-        fprintf(stderr,
-                  "nghdl_orphan_tb: stat() failed; ERRNO=%d on file:%s\n",
-                        errno, filename_tmp);
-        continue;
-        }
-
-        if ((stbuf.st_mode & S_IFMT) == S_IFDIR)
-        {
-        continue;
-        }
-        else
-        {
-        nghdl_tb_SIGUSR1(filename_tmp);
-        }
-    }
-    }
-
-    // 22.Oct.2019 - RP
-    char ip_filename[40];
-    sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
-    remove(ip_filename);
-}
-/* End 10.Mar.2017 - RM */
-
-/* The two "begin plot" routines share all their internals... */
+// The two "begin plot" routines share all their internals... 
 
 int
 OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
@@ -253,7 +263,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     int i, j, depind = 0;
     char namebuf[BSIZE_SP], parambuf[BSIZE_SP], depbuf[BSIZE_SP];
     char *ch, tmpname[BSIZE_SP];
-    bool saveall  = TRUE;
+    bool saveall = TRUE;
     bool savealli = FALSE;
     char *an_name;
     int initmem;
@@ -355,7 +365,6 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             run->refIndex = -1;
         }
 
-
         /* Pass 1. */
         if (numsaves && !saveall) {
             for (i = 0; i < numsaves; i++)
@@ -438,7 +447,6 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 }
             }
         }
-
 
         /* Pass 2. */
         for (i = 0; i < numsaves; i++) {
@@ -626,10 +634,10 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 
         dataDesc *d;
 
-#ifdef TCL_MODULE
+        #ifdef TCL_MODULE
         /*Locks the blt vector to stop access*/
         blt_lockvec(i);
-#endif
+        #endif
 
         d = &run->data[i];
 
@@ -658,10 +666,10 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 fprintf(stderr, "OUTpData: unsupported data type\n");
         }
 
-#ifdef TCL_MODULE
+        #ifdef TCL_MODULE
         /*relinks and unlocks vector*/
         blt_relink(i, d->vec);
-#endif
+        #endif
 
     }
 }
@@ -1133,12 +1141,13 @@ fileEndPoint(FILE *fp, bool bin)
 static void
 fileEnd(runDesc *run)
 {
-    /* 10.Mar.2017 - RM - Check if any orphan test benches are running. If any are
+    /* 28.May.2020 - RP, BM - Check if any orphan test benches are running. If any are
      * found, force them to exit.
      */
-    nghdl_orphan_tb();    
 
-    /* End 10.Mar.2017 */
+    /* 28.May.2020 - BM */
+    close_server();
+    /* End 28.May.2020 */
 
 
     if (run->fp != stdout) {
@@ -1293,9 +1302,9 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 static void
 plotEnd(runDesc *run)
 {
-    /* 10.Mar.2017 - RM */
-    nghdl_orphan_tb();
-    /* End 10.Mar.2017 */
+    /* 28.May.2020 - BM, RP */
+    close_server();
+    /* End 28.May.2020 */
 
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 }
