@@ -2,18 +2,25 @@ from Appconfig import Appconfig
 import re
 import os
 import xml.etree.cElementTree as ET
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 
-class AutoSchematic(QtGui.QWidget):
+class AutoSchematic(QtWidgets.QWidget):
 
-    def __init__(self, modelname):
-        QtGui.QWidget.__init__(self)
+    def __init__(self, parent, modelname):
+        QtWidgets.QWidget.__init__(self)
+        self.parent = parent
         self.modelname = modelname.split('.')[0]
         self.template = Appconfig.kicad_lib_template.copy()
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
-        self.kicad_nghdl_lib = '/usr/share/kicad/library/eSim_Nghdl.lib'
+        if os.name == 'nt':
+            eSim_src = Appconfig.src_home
+            inst_dir = eSim_src.replace('\eSim', '')
+            self.kicad_nghdl_lib = \
+                inst_dir + '/KiCad/share/kicad/library/eSim_Nghdl.lib'
+        else:
+            self.kicad_nghdl_lib = '/usr/share/kicad/library/eSim_Nghdl.lib'
         self.parser = Appconfig.parser_nghdl
 
     def createKicadLibrary(self):
@@ -26,16 +33,16 @@ class AutoSchematic(QtGui.QWidget):
             self.getPortInformation()
             self.createXML()
             self.createLib()
-        elif (xmlFound == self.xml_loc + '/Nghdl'):
+        elif (xmlFound == os.path.join(self.xml_loc, 'Nghdl')):
             print('Library already exists...')
-            ret = QtGui.QMessageBox.warning(
-                self, "Warning", '''<b>Library files for this model ''' +
+            ret = QtWidgets.QMessageBox.warning(
+                self.parent, "Warning", '''<b>Library files for this model ''' +
                 '''already exist. Do you want to overwrite it?</b><br/>
                 If yes press ok, else cancel it and ''' +
                 '''change the name of your vhdl file.''',
-                QtGui.QMessageBox.Ok, QtGui.QMessageBox.Cancel
+                QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel
             )
-            if ret == QtGui.QMessageBox.Ok:
+            if ret == QtWidgets.QMessageBox.Ok:
                 print("Overwriting existing libraries")
                 self.getPortInformation()
                 self.createXML()
@@ -46,11 +53,11 @@ class AutoSchematic(QtGui.QWidget):
                 quit()
         else:
             print('Pre existing library...')
-            ret = QtGui.QMessageBox.critical(
-                self, "Error", '''<b>A standard library already exists ''' +
+            ret = QtWidgets.QMessageBox.critical(
+                self.parent, "Error", '''<b>A standard library already exists ''' +
                 '''with this name.</b><br/><b>Please change the name ''' +
                 '''of your vhdl file and upload it again</b>''',
-                QtGui.QMessageBox.Ok
+                QtWidgets.QMessageBox.Ok
             )
 
             # quit()
@@ -224,11 +231,11 @@ class AutoSchematic(QtGui.QWidget):
 
         os.chdir(cwd)
         print('Leaving directory, ', self.lib_loc)
-        QtGui.QMessageBox.information(
-            self, "Library added",
+        QtWidgets.QMessageBox.information(
+            self.parent, "Library added",
             '''Library details for this model is added to the ''' +
             '''<b>eSim_Nghdl.lib</b> in the KiCad shared directory''',
-            QtGui.QMessageBox.Ok
+            QtWidgets.QMessageBox.Ok
         )
 
 
