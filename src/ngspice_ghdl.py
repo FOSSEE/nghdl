@@ -271,6 +271,11 @@ class Mainwindow(QtWidgets.QWidget):
             self.process = QtCore.QProcess(self)
             self.process.start(cmd)
             print("make command process pid ---------- >", self.process.pid())
+
+            if os.name == "nt":
+                self.process.finished.connect(self.createSchematicLib)
+                self.process.readyReadStandardOutput.connect(self.readAllStandard)
+
         except BaseException:
             print("There is error in 'make' ")
             sys.exit()
@@ -301,6 +306,10 @@ class Mainwindow(QtWidgets.QWidget):
             sys.exit()
 
     def createSchematicLib(self):
+        if os.name == "nt":
+            shutil.copy("ghdl/ghdl.cm", "../../../../lib/ngspice/")
+
+        os.chdir(self.cur_dir)
         if Appconfig.esimFlag == 1:
             if not self.errorFlag:
                 print('Creating library files................................')
@@ -337,7 +346,8 @@ class Mainwindow(QtWidgets.QWidget):
                 self.addingModelInModpath()
                 self.createModelFiles()
                 self.runMake()
-                self.runMakeInstall()
+                if os.name != 'nt':
+                    self.runMakeInstall()
             else:
                 QtWidgets.QMessageBox.information(
                     self, 'Message', '''<b>Important Message.</b><br/>''' +
