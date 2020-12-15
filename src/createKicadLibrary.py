@@ -36,8 +36,8 @@ class AutoSchematic(QtWidgets.QWidget):
         elif (xmlFound == os.path.join(self.xml_loc, 'Nghdl')):
             print('Library already exists...')
             ret = QtWidgets.QMessageBox.warning(
-                self.parent, "Warning", '''<b>Library files for this model ''' +
-                '''already exist. Do you want to overwrite it?</b><br/>
+                self.parent, "Warning", '''<b>Library files for this model''' +
+                ''' already exist. Do you want to overwrite it?</b><br/>
                 If yes press ok, else cancel it and ''' +
                 '''change the name of your vhdl file.''',
                 QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel
@@ -54,9 +54,9 @@ class AutoSchematic(QtWidgets.QWidget):
         else:
             print('Pre existing library...')
             ret = QtWidgets.QMessageBox.critical(
-                self.parent, "Error", '''<b>A standard library already exists ''' +
-                '''with this name.</b><br/><b>Please change the name ''' +
-                '''of your vhdl file and upload it again</b>''',
+                self.parent, "Error", '''<b>A standard library already ''' +
+                '''exists with this name.</b><br/><b>Please change the ''' +
+                '''name of your vhdl file and upload it again</b>''',
                 QtWidgets.QMessageBox.Ok
             )
 
