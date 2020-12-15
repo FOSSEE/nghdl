@@ -274,7 +274,8 @@ class Mainwindow(QtWidgets.QWidget):
 
             if os.name == "nt":
                 self.process.finished.connect(self.createSchematicLib)
-                self.process.readyReadStandardOutput.connect(self.readAllStandard)
+                self.process \
+                    .readyReadStandardOutput.connect(self.readAllStandard)
 
         except BaseException:
             print("There is error in 'make' ")

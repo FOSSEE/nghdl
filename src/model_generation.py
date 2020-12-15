@@ -563,8 +563,9 @@ class ModelGeneration:
             cmd_str1 = cmd_str1.replace("\\", "/")
 
             cfunc.write(
-                '\t\tsnprintf(command,1024, "start mintty.exe -t \\"VHDL-Testbench Logs\\" ' +
-                '-h always bash.exe -c ' + '\\' + cmd_str1 + cmd_str2 + ', sock_port, my_ip);'
+                '\t\tsnprintf(command,1024, "start mintty.exe -t ' +
+                '\\"VHDL-Testbench Logs\\" -h always bash.exe -c ' +
+                '\\' + cmd_str1 + cmd_str2 + ', sock_port, my_ip);'
             )
         else:
             cfunc.write(
