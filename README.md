@@ -1,3 +1,11 @@
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/fossee/nghdl?color=blueviolet)
+![Python](https://img.shields.io/badge/python-v3.6+-blue.svg)
+[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+[![GitHub forks](https://img.shields.io/github/forks/fossee/nghdl)](https://github.com/fossee/nghdl/network)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/fossee/nghdl)
+![GitHub contributors](https://img.shields.io/github/contributors/fossee/nghdl)
+
+
 Ngspice Ghdl Interfacing Documentation 
 ====
 
@@ -5,7 +13,7 @@ It contains all the documentation for Ngspice and GHDL related work.
 
 
 ## How is Ngspice interfaced with GHDL?
-Ngspice supports mixed mode simulation. It can simulate both digital and analog components.
+Ngspice supports mixed-signal simulation. It can simulate both digital and analog components.
 
 Ngspice has something called code-model which defines the behavior of your component and can be used in the netlist. For example you can create a full-adder's code-model in Ngspice and use it in any circuit netlist of Ngspice.
 
@@ -20,7 +28,7 @@ GHDL's foreign language interface is used for this inter-process communication.
 * Ubuntu 16.04 OS and above LTS versions.
 * Microsoft Windows 7, 8 and 10.
 
-> Note: Refer [`installers`](https://github.com/fossee/nghdl/tree/installers) branch for documentation on packaging for above mentioned platforms.
+    > Note for other distributions: You can refer [`installers`](https://github.com/fossee/nghdl/tree/installers) branch for documentation on packaging (for above mentioned distributions) to build installers for your operating system in a similar way. For providing your build, please check the `Contribution` section mentioned below.
 
 
 ## Features
@@ -30,8 +38,8 @@ GHDL's foreign language interface is used for this inter-process communication.
 
 
 ## Pre-requisites
-* GHDL (LLVM)-v0.37
-* Ngspice-v31
+* [GHDL (LLVM - v0.37)](http://ghdl.free.fr/)
+* [Ngspice (v31+)](http://ngspice.sourceforge.net/)
 
 
 ## How to install?
@@ -46,3 +54,6 @@ Refer https://esim.fossee.in/ for more information.
 4. Open the desired example under `eSim/Examples/Mixed_Signal/` using the "Open Project" button, double click on the project when the project is loaded in the "Projects" window.
 5. Click on the "Simulation" button on eSim Main window.
 
+
+## Contribution
+Please refer [here](https://github.com/FOSSEE/nghdl/blob/master/CONTRIBUTION.md) for further details.
