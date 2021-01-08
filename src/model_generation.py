@@ -282,13 +282,14 @@ class ModelGeneration:
                 int ip_count = 0;
                 char* my_ip = malloc(16);
 
-                char ip_filename[40];
+                char ip_filename[100];
         '''
 
         if os.name == 'nt':
             client_setup_ip += '''
-                    sprintf(ip_filename, ''' \
-                    '''"C:/Windows/Temp/NGHDL_COMMON_IP_%d.txt", getpid());
+                    sprintf(ip_filename, "''' + \
+                    os.getenv('LOCALAPPDATA').replace('\\', '/') + \
+                    '''/Temp/NGHDL_COMMON_IP_%d.txt", getpid());
             '''
         else:
             client_setup_ip += '''
@@ -554,15 +555,18 @@ class ModelGeneration:
         if os.name == 'nt':
             self.digital_home = self.parser.get('NGSPICE', 'DIGITAL_MODEL')
             self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
-            cmd_str2 = "\\'start_server.sh %d %s\\'" + "\\" + "\""
+            cmd_str2 = "/start_server.sh %d %s & read" + "\\" + "\"" + "\""
             cmd_str1 = os.path.normpath(
-                                "\"cd " + self.digital_home + "/" +
-                                self.fname.split('.')[0] + "/DUTghdl/ && " +
-                                self.msys_home + "/bash.exe -c "
+                                "\"" + self.digital_home + "/" +
+                                self.fname.split('.')[0] + "/DUTghdl/"
             )
             cmd_str1 = cmd_str1.replace("\\", "/")
-            cfunc.write('\t\tsnprintf(command,1024, "start /min cmd /c ' +
-                        '\\' + cmd_str1 + cmd_str2 + ' &", sock_port, my_ip);')
+
+            cfunc.write(
+                '\t\tsnprintf(command,1024, "start mintty.exe -t ' +
+                '\\"VHDL-Testbench Logs\\" -h always bash.exe -c ' +
+                '\\' + cmd_str1 + cmd_str2 + ', sock_port, my_ip);'
+            )
         else:
             cfunc.write(
                 '\t\tsnprintf(command,1024,"' + self.home +
