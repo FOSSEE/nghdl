@@ -55,12 +55,12 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 /* 27.May.2020 - BM - Added the following #include */
 #ifdef __linux__
     #include <sys/socket.h>
     #include <arpa/inet.h>
-    #include <unistd.h>
 #endif
 
 extern char *spice_analysis_get_name(int index);
@@ -128,15 +128,17 @@ static bool savenone = FALSE;
 static void close_server()
 {	
 	FILE *fptr;
-	char ip_filename[48];
+	char ip_filename[100];
 
 	#ifdef __linux__
 		sprintf(ip_filename, "/tmp/NGHDL_COMMON_IP_%d.txt", getpid());
 	#elif _WIN32
 		WSADATA WSAData;
-    	SOCKADDR_IN addr;
-    	WSAStartup(MAKEWORD(2, 2), &WSAData);
-		sprintf(ip_filename, "C:\\Windows\\Temp\\NGHDL_COMMON_IP_%d.txt", getpid());
+    		SOCKADDR_IN addr;
+    		WSAStartup(MAKEWORD(2, 2), &WSAData);
+        	char *base_path = getenv("LocalAppData");
+        	sprintf(ip_filename, "\\Temp\\NGHDL_COMMON_IP_%d.txt", getpid());
+        	sprintf(ip_filename, strcat(base_path, ip_filename));
 	#endif
 
 	fptr = fopen(ip_filename, "r");
