@@ -33,7 +33,7 @@ It contains all the documentation for making NGHDL executable (using PyInstaller
 
 			$ pip install pyinstaller
 			$ pip install setuptools
-			$ pip install PyQt5
+			$ pip install PyQt5==5.9.2
 
 7. Test whether only NGHDL dependencies are available or not:
 
