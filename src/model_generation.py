@@ -35,7 +35,14 @@ class ModelGeneration:
                 item = re.sub("\(", " ", item, flags=re.I)      # noqa
                 item = re.sub("\)", " ", item, flags=re.I)      # noqa
                 item = re.sub(";", " ", item, flags=re.I)
-
+                
+                if item.find(','):
+                    temp1 = item.split{",")
+                    item = " " + temp1[-1]
+                    temp2 = temp1[-1].split(":")
+                    for i in range(len(temp1)-1):
+                        temp3 = temp1[i] + ":" + temp2[-1]
+                        scan_data.append(temp3.rstrip())
                 scan_data.append(item.rstrip())
                 scan_data = [_f for _f in scan_data if _f]
             elif start_flag == 0:
