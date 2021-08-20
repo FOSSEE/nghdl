@@ -709,6 +709,16 @@ class ModelGeneration:
         Vector:              no                          no
         Vector_Bounds:       -                           -
         Null_Allowed:       yes                         yes
+        
+        PARAMETER_TABLE:
+        Parameter_Name:     upload_hex_file                
+        Description:        "Upload hex file to your MCU"                
+        Data_Type:          real                        
+        Default_Value:      1.0e-9                      
+        Limits:             [1e-12 -]                   
+        Vector:              no                          
+        Vector_Bounds:       -                           
+        Null_Allowed:       yes                         
 
         '''
 
