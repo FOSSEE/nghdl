@@ -4,7 +4,6 @@ import os
 import xml.etree.cElementTree as ET
 from PyQt5 import QtWidgets
 
-
 class AutoSchematic(QtWidgets.QWidget):
 
     def __init__(self, parent, modelname):
