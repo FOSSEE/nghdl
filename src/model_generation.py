@@ -2,7 +2,6 @@ import re
 import os
 from configparser import SafeConfigParser
 
-
 class ModelGeneration:
 
     def __init__(self, file):
