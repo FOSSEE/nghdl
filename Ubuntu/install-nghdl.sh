@@ -12,10 +12,10 @@
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
-#        AUTHOR: Fahim Khan, Rahul Paknikar
+#        AUTHOR: Fahim Khan, Rahul Paknikar, Sumanto Kar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Sunday 02 August 2020 01:35
+#      REVISION: Tuesday 11 November 2021 15:56
 #===============================================================================
 
 ngspice="ngspice-nghdl"
@@ -123,12 +123,14 @@ function installNgspice
             
     # Adding patch to Ngspice base code
     cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
+    cp $src_dir/src/verilated.o $HOME/$ngspice/release/src/xspice/icm/
 
     make -j$(nproc)
     make install
 
     # Make it executable
     sudo chmod 755 $HOME/$ngspice/install_dir/bin/ngspice
+    sudo chmod 777 -R $HOME/$ngspice/
     
     set +e 		# Temporary disable exit on error
     trap "" ERR # Do not trap on error of any command
