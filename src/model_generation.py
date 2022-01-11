@@ -41,7 +41,13 @@ class ModelGeneration:
                 item = re.sub("\(", " ", item, flags=re.I)      # noqa
                 item = re.sub("\)", " ", item, flags=re.I)      # noqa
                 item = re.sub(";", " ", item, flags=re.I)
-
+                if item.find(','):
+                    temp1 = item.split(",")
+                    item = "" + temp1[-1]
+                    temp2 = temp1[-1].split(":")
+                    for i in range(len(temp1) - 1):
+                        temp3 = temp1[i] + ":" + temp2[-1]
+                        scan_data.append(temp3.rstrip())
                 scan_data.append(item.rstrip())
                 scan_data = [_f for _f in scan_data if _f]
             elif start_flag == 0:
@@ -122,23 +128,23 @@ class ModelGeneration:
                 out_items = re.findall(
                     "OUT", line, re.MULTILINE | re.IGNORECASE
                 )
+
                 if in_items:
                     input_list.append(line.split())
-
                 if out_items:
                     output_list.append(line.split())
 
-        print("Inout List :", input_list)
-        print("Output list", output_list)
+        print("Input List :", input_list)
+        print("Output list :", output_list)
 
         self.input_port = []
         self.output_port = []
 
         # creating list of input and output port with its weight
         for input in input_list:
-            self.input_port.append(input[0]+":"+input[2])
+            self.input_port.append(input[0] + ":" + input[2])
         for output in output_list:
-            self.output_port.append(output[0]+":"+output[2])
+            self.output_port.append(output[0] + ":" + output[2])
 
         print("Output Port List : ", self.output_port)
         print("Input Port List : ", self.input_port)
@@ -288,8 +294,8 @@ class ModelGeneration:
         if os.name == 'nt':
             client_setup_ip += '''
                     sprintf(ip_filename, "''' + \
-                    os.getenv('LOCALAPPDATA').replace('\\', '/') + \
-                    '''/Temp/NGHDL_COMMON_IP_%d.txt", getpid());
+                os.getenv('LOCALAPPDATA').replace('\\', '/') + \
+                '''/Temp/NGHDL_COMMON_IP_%d.txt", getpid());
             '''
         else:
             client_setup_ip += '''
@@ -557,8 +563,8 @@ class ModelGeneration:
             self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
             cmd_str2 = "/start_server.sh %d %s & read" + "\\" + "\"" + "\""
             cmd_str1 = os.path.normpath(
-                                "\"" + self.digital_home + "/" +
-                                self.fname.split('.')[0] + "/DUTghdl/"
+                "\"" + self.digital_home + "/" +
+                self.fname.split('.')[0] + "/DUTghdl/"
             )
             cmd_str1 = cmd_str1.replace("\\", "/")
 
@@ -710,6 +716,15 @@ class ModelGeneration:
         Vector_Bounds:       -                           -
         Null_Allowed:       yes                         yes
 
+        PARAMETER_TABLE:
+        Parameter_Name:     Sumanto
+        Description:        "Sumanto"
+        Data_Type:          real
+        Default_Value:      1.0e-9
+        Limits:             [1e-12 -]
+        Vector:              no
+        Vector_Bounds:       -
+        Null_Allowed:       yes
         '''
 
         static_table = '''
@@ -973,7 +988,7 @@ class ModelGeneration:
             else:
                 process.append(
                     '\t\t\t' + item.split(':')[0] +
-                    ' <= To_Std_Logic('+item.split(':')[0]+'_v'+');\n'
+                    ' <= To_Std_Logic(' + item.split(':')[0] + '_v' + ');\n'
                 )
 
             port_vector_count += 1
@@ -987,20 +1002,20 @@ class ModelGeneration:
                     '\t\t\t' + item.split(':')[0] +
                     '_v := Pack_String_To_Vhpi_String' +
                     '(Convert_SLV_To_String(' +
-                    item.split(':')[0]+'));\n'
+                    item.split(':')[0] + '));\n'
                 )
             else:
                 process.append(
                     '\t\t\t' + item.split(':')[0] +
                     '_v := Pack_String_To_Vhpi_String(To_String(' +
-                    item.split(':')[0]+'));\n'
+                    item.split(':')[0] + '));\n'
                 )
 
             port_vector_count += 1
 
             process.append(
                 '\t\t\tobj_ref := Pack_String_To_Vhpi_String("' +
-                item.split(':')[0]+'");\n'
+                item.split(':')[0] + '");\n'
             )
             process.append(
                 '\t\t\tVhpi_Set_Port_Value(obj_ref,' +
@@ -1036,7 +1051,7 @@ class ModelGeneration:
         for item in map:
             testbench.write(item)
 
-        testbench.write("\n\t"+tb_clk)
+        testbench.write("\n\t" + tb_clk)
 
         for item in process_Vhpi:
             testbench.write(item)
@@ -1063,29 +1078,38 @@ class ModelGeneration:
             pathstr = self.digital_home + "/" + \
                 self.fname.split('.')[0] + "/DUTghdl/"
             pathstr = pathstr.replace("\\", "/")
-            start_server.write("cd "+pathstr+"\n")
+            start_server.write("cd " + pathstr + "\n")
         else:
-            start_server.write("cd "+self.digital_home +
+            start_server.write("cd " + self.digital_home +
                                "/" + self.fname.split('.')[0] + "/DUTghdl/\n")
 
         start_server.write("chmod 775 sock_pkg_create.sh &&\n")
         start_server.write("./sock_pkg_create.sh $1 $2 &&\n")
         start_server.write("ghdl -i *.vhdl &&\n")
         start_server.write("ghdl -a *.vhdl &&\n")
-        start_server.write("ghdl -a "+self.fname+" &&\n")
+        start_server.write("ghdl -a " + self.fname + " &&\n")
         start_server.write(
-            "ghdl -a "+self.fname.split('.')[0]+"_tb.vhdl  &&\n"
+            "ghdl -a " + self.fname.split('.')[0] + "_tb.vhdl  &&\n"
         )
 
         if os.name == 'nt':
             start_server.write("ghdl -e -Wl,ghdlserver.o " +
                                "-Wl,libws2_32.a " +
                                self.fname.split('.')[0] + "_tb &&\n")
-            start_server.write("./"+self.fname.split('.')[0]+"_tb.exe")
+            start_server.write("./" + self.fname.split('.')[0] + "_tb.exe")
         else:
             start_server.write("ghdl -e -Wl,ghdlserver.o " +
                                self.fname.split('.')[0] + "_tb &&\n")
-            start_server.write("./"+self.fname.split('.')[0]+"_tb")
+            start_server.write(
+                "./" +
+                self.fname.split('.')[0] +
+                "_tb --vcd=" +
+                self.fname.split('.')[0] +
+                "_tb.vcd\n")
+            start_server.write(
+                "gtkwave " +
+                self.fname.split('.')[0] +
+                "_tb.vcd")
 
         start_server.close()
 
