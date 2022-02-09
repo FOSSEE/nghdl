@@ -63,10 +63,10 @@
     ```
     with
     ```make
-        CMDIRS = spice2poly digital analog xtradev xtraevt table ghdl
+        CMDIRS = spice2poly digital analog xtradev xtraevt table ghdl Ngveri
     ```
 
-8. Create a **`ghdl` directory** with two empty files named `modpath.lst` and `udnpath.lst` at the location *`ngspice-nghdl/src/xspice/icm/`* 
+8. Create a **`ghdl`** and **`Ngveri`** directories at the location *`ngspice-nghdl/src/xspice/icm/`*, each with two empty files named `modpath.lst` and `udnpath.lst`
 
     > Note: For Ubuntu OS, now compress this new version of Ngspice to `ngspice-nghdl.tar.xz` file and replace the existing older tar file at the `master` branch of this repository.
 
