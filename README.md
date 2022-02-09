@@ -25,7 +25,7 @@ GHDL's foreign language interface is used for this inter-process communication.
 
 
 ## Releases
-* Ubuntu 16.04 OS and above LTS versions.
+* Ubuntu 18.04 and 20.04 LTS versions.
 * Microsoft Windows 7, 8 and 10.
 
     > Note for other distributions: You can refer [`installers`](https://github.com/fossee/nghdl/tree/installers) branch for documentation on packaging (for above mentioned distributions) to build installers for your operating system in a similar way. For providing your build, please check the `Contribution` section mentioned below.
@@ -39,7 +39,7 @@ GHDL's foreign language interface is used for this inter-process communication.
 
 ## Pre-requisites
 * [GHDL (LLVM - v0.37)](http://ghdl.free.fr/)
-* [Ngspice (v31+)](http://ngspice.sourceforge.net/)
+* [Ngspice (v35+)](http://ngspice.sourceforge.net/)
 
 
 ## How to install?
