@@ -9,9 +9,9 @@ It contains the documentation to package NGHDL for Ubuntu OS.
 
 1. Take the `master` branch containing the source code. Rename the folder to `nghdl`.
 
-2. Add GHDL source code `ghdl-<version>.tar.xz` in the `nghdl` folder. 
+2. Add GHDL source code `ghdl-<version>.tar.xz` from the `installers` branch to the `nghdl` folder. 
 
-3. Add the installer script `install-nghdl.sh` in the `nghdl` folder.
+3. Add the installer script `install-nghdl.sh` from the `installers` branch to the `nghdl` folder.
 
 4. Add the NGHDL executable (if available) in `nghdl/src` folder. Also, remove following files from this folder:
 	- `.git` folder
