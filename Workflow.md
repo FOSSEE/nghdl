@@ -1,8 +1,8 @@
 1.  When `nghdl` button clicked in `eSim` it calls the `ngspice_ghdl.py` from `nghdl` installed directory
 - `ngspice_ghdl.py` defines the UI for nghdl, and the functionality of each button
-- When `Upload` clicked, it calls `uploadModle` function from `ngspice_ghdl.py`
+- When `Upload` clicked, it calls `uploadModel` function from `ngspice_ghdl.py`
 - Similarly functions called on each button click defined
-- `uploadModle` inturn calls these 5 functions sequentially =>
+- `uploadModel` inturn calls these 5 functions sequentially =>
 - - createModelDirectory()
 - - addingModelInModpath()
 - - createModelFiles()
