@@ -95,9 +95,6 @@ class AutoSchematic(QtWidgets.QWidget):
                                     "Enter Input Load (default=1.0e-12)")
         ET.SubElement(param, "instance_id", default="1").text = (
                                     "Enter Instance ID (Between 0-99)")
-        ET.SubElement(param, "Sumanto", default="1").text = (
-                                    "Enter Instance ID (Between 0-99)")
-
         tree = ET.ElementTree(root)
         tree.write(str(self.modelname) + '.xml')
         print("Leaving the directory ", xmlDestination)
