@@ -238,8 +238,8 @@ class Mainwindow(QtWidgets.QWidget):
             subprocess.call("chmod a+x start_server.sh", shell=True)
             subprocess.call("chmod a+x sock_pkg_create.sh", shell=True)
 
-        #os.remove("compile.sh")
-        #os.remove("ghdlserver.c")
+        os.remove("compile.sh")
+        os.remove("ghdlserver.c")
 
     # Slot to redirect stdout and stderr to window console
     @QtCore.pyqtSlot()
