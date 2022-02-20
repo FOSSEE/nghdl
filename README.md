@@ -32,13 +32,14 @@ GHDL's foreign language interface is used for this inter-process communication.
 
 
 ## Features
-* Support for 500 digital models.
-* Support for digital models upto 64 output ports/pins.
-* Multiple instances of same digital model.
+* Support for nearly 500 VHDL digital models.
+* Support for VHDL digital models upto 64 output ports/pins.
+* Support for Verilog digital models.
 
 
 ## Pre-requisites
 * [GHDL (LLVM - v0.37)](http://ghdl.free.fr/)
+* [Verilator (v4.210)](https://www.veripool.org/verilator/)
 * [Ngspice (v35+)](http://ngspice.sourceforge.net/)
 
 
