@@ -10,23 +10,23 @@
 - - runMakeInstall()
 
 2. `createModelDirectory()`
-- Create directory for the specified file name at `~/ngspice-nghdl/src/xspice/icm/ghdl/`
+- Create directory for the specified file name at `~/nghdl-simulator/src/xspice/icm/ghdl/`
 - The location where the directory is created in mentioned at `~/.nghdl/config.ini`, this config file is inside a hidden folder `.ngdhl`, created when nghdl is installed
 - If a folder of the same name exists, it asks to overwrite, then removes earlier folder, and writes new one
 
 3. `addingModelInModpath()`
 - This adds the name of the new model created to `modpath.lst` file
-- `modpath.lst` is located at `~/ngspice-nghdl/src/xspice/icm/ghdl`, this should contain name of all the models that the folder has
-- Similarly you can look at `~/ngspice-nghdl/src/xspice/icm/digital` which also contains a `modpath.list` for all the models in that folder
-- This `modpath.lst` is used in the `GNUMakefile` at `~/ngspice-nghdl/release/src/xspice/icm`
+- `modpath.lst` is located at `~/nghdl-simulator/src/xspice/icm/ghdl`, this should contain name of all the models that the folder has
+- Similarly you can look at `~/nghdl-simulator/src/xspice/icm/digital` which also contains a `modpath.list` for all the models in that folder
+- This `modpath.lst` is used in the `GNUMakefile` at `~/nghdl-simulator/release/src/xspice/icm`
 - This file used to keep a track of all components created
 - If model already there it isn't added to the list
 
 4. `createModelFiles()`
 - Calls `model_generation.py` at the installed nghdl location under `src/model_generation.py`
-- Moves the generated `cfunc.mode` and `ifspec.ifs` files to `~/ngspice-nghdl/src/xspice/icm/ghdl/modelName`
-- Creates  `DUTghdl` folder at `~/ngspice-nghdl/src/xspice/icm/ghdl/modelName`
-- Move `compile.sh`,`uthash.sh`,`ghdlserver.c`,`ghdlserver.h`,`Utility_Package.vhdl`,`Vhpi_Package.vhdl` to the `DUTghdl` folder
+- Moves the generated `cfunc.mod` and `ifspec.ifs` files to `~/nghdl-simulator/src/xspice/icm/ghdl/modelName`
+- Creates  `DUTghdl` folder at `~/nghdl-simulator/src/xspice/icm/ghdl/modelName`
+- Move `compile.sh`, `uthash.sh`, `ghdlserver.c`, `ghdlserver.h`, `Utility_Package.vhdl`, `Vhpi_Package.vhdl` to the `DUTghdl` folder
 - Copy `modelName.vhdl` file from source location to `DUTghdl` folder
 - Rum `compile.sh` which generates the object file for `ghdlserver.c`
 - Give permission to `start_server.sh` and `sock_pkg_create.sh` to execute _chod a+x_
@@ -40,10 +40,10 @@
 - - `modelName_tb.vhdl` => testbench file for the model
 - - `start_server.sh`
 - - `sock_pkg_create.sh`
-- The above files can be found either at `~/ngspice-nghdl/src/xspice/icm/ghdl/modelName` or `DUTghdl` folder inside it
+- The above files can be found either at `~/nghdl-simulator/src/xspice/icm/ghdl/modelName` or `DUTghdl` folder inside it
 
 6. `runMake()`
-- Runs the `Makefile` at `~/ngspice-nghdl/release`
+- Runs the `Makefile` at `~/nghdl-simulator/release`
 - Executing by running `make` command
 
 7. `runMakeInstall()`
@@ -60,26 +60,27 @@
 <br/>
 
 Finally all the relevant files are generated, now while executing ngspice, we need to make sure to run the ngspice, which is located at -
-- `~/ngspice-nghdl/install_dir/bin/ngspice` this has the binary for the ngspice,
-- And also the script at `~/ngspice-nghdl/install_dir/share/ngspice/scripts/spinit`
+- `~/nghdl-simulator/install_dir/bin/ngspice` this has the binary for the ngspice,
+- And also the script at `~/nghdl-simulator/install_dir/share/ngspice/scripts/spinit`
 = ` spinit` has the line `codemodel ...` mentioning a `cm` file to execute at runtime
 - This has mention of `ghdl.cm` which makes sure that our `cfunc.c` file is executed at runtime
-- You can see the `ghdl.cm` file is located at `~/ngspice-nghdl/release/src/xspice/icm/ghdl`
-- Also the `cfunc.c` files, located at `~/ngspice-nghdl/release/src/xspice/icm/ghdl/modelName`
+- You can see the `ghdl.cm` file is located at `~/nghdl-simulator/release/src/xspice/icm/ghdl`
+- Also the `cfunc.c` files, located at `~/nghdl-simulator/release/src/xspice/icm/ghdl/modelName`
 - These have mention of the `start_server.sh` file at `DUTghdl`, hence server is started and values passed as well
-- Also you can look at `~/ngspice-nghdl/release/src/xspice/icm/digital` it has `digital.cm` and the folders inside have `cfunc.c`
+- Also you can look at `~/nghdl-simulator/release/src/xspice/icm/digital` it has `digital.cm` and the folders inside have `cfunc.c`
 - Also has `ifspec.c` which defines the interface
 
 <br/>
 
-- Note that, if you have ngspice currently installed remove it and genearate a softlink or command for the ngspice installed at -
-`~/ngspice-nghdl/install_dir/bin/ngspice`
+- If you have ngspice currently installed remove it and genearate a softlink or command for the ngspice installed at -
+`~/nghdl-simulator/install_dir/bin/ngspice`
 - `whereis ngspice`, run this to get the location from where `ngspice` is being executed currently
 <br/>
 
 - To generate softlink refer - [Creating softlink](https://askubuntu.com/questions/56339/how-to-create-a-soft-or-symbolic-link)i
-- Exeecute `ln -s ~/ngspice-nghdl/install_dir/bin/ngspice /usr/bin/ngspice`
+- Exeecute `ln -s ~/nghdl-simulator/install_dir/bin/ngspice /usr/bin/ngspice`
 
+- Note that all the paths mentioned here are specific to a Linux machine.
 
 <br/>
 
@@ -98,4 +99,4 @@ Finally all the relevant files are generated, now while executing ngspice, we ne
 <br/>
 
 - Also once ghdl is installed, to check syntax of your vhdl files use -
-`ghdl -s <vhdl file location>`
+`ghdl -s <vhdl file location>`	
