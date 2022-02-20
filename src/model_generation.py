@@ -1,6 +1,6 @@
 import re
 import os
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 
 
 class ModelGeneration:
@@ -12,7 +12,7 @@ class ModelGeneration:
         self.fname = os.path.basename(file)
         print("VHDL filename is : ", self.fname)
         self.home = os.path.expanduser("~")
-        self.parser = SafeConfigParser()
+        self.parser = ConfigParser()
         self.parser.read(os.path.join(
             self.home, os.path.join('.nghdl', 'config.ini')))
         self.ngspice_home = self.parser.get('NGSPICE', 'NGSPICE_HOME')
