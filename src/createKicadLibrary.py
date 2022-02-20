@@ -16,7 +16,7 @@ class AutoSchematic(QtWidgets.QWidget):
         self.lib_loc = Appconfig.lib_loc
         if os.name == 'nt':
             eSim_src = Appconfig.src_home
-            inst_dir = eSim_src.replace('\eSim', '')
+            inst_dir = eSim_src.replace('\\eSim', '')
             self.kicad_nghdl_lib = \
                 inst_dir + '/KiCad/share/kicad/library/eSim_Nghdl.lib'
         else:
@@ -245,12 +245,14 @@ class AutoSchematic(QtWidgets.QWidget):
 class PortInfo:
     def __init__(self, model):
         self.modelname = model.modelname
-        self.model_loc = model.parser.get('NGSPICE', 'DIGITAL_MODEL')
+        self.model_loc = os.path.join(
+            model.parser.get('NGHDL', 'DIGITAL_MODEL'), 'ghdl'
+        )
         self.bit_list = []
         self.input_len = 0
 
     def getPortInfo(self):
-        info_loc = os.path.join(self.model_loc, self.modelname+'/DUTghdl/')
+        info_loc = os.path.join(self.model_loc, self.modelname + '/DUTghdl/')
         input_list = []
         output_list = []
         read_file = open(info_loc + 'connection_info.txt', 'r')

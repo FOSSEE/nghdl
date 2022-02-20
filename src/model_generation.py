@@ -20,8 +20,8 @@ class ModelGeneration:
         self.parser = ConfigParser()
         self.parser.read(os.path.join(
             self.home, os.path.join('.nghdl', 'config.ini')))
-        self.ngspice_home = self.parser.get('NGSPICE', 'NGSPICE_HOME')
-        self.release_dir = self.parser.get('NGSPICE', 'RELEASE')
+        self.nghdl_home = self.parser.get('NGHDL', 'NGHDL_HOME')
+        self.release_dir = self.parser.get('NGHDL', 'RELEASE')
         self.src_home = self.parser.get('SRC', 'SRC_HOME')
         self.licensefile = self.parser.get('SRC', 'LICENSE')
 
@@ -564,8 +564,9 @@ class ModelGeneration:
         cfunc.write("\t\tchar command[1024];\n")
 
         if os.name == 'nt':
-            self.digital_home = self.parser.get('NGSPICE', 'DIGITAL_MODEL')
-            self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
+            self.digital_home = self.parser.get('NGHDL', 'DIGITAL_MODEL')
+            self.digital_home = os.path.join(self.digital_home, "ghdl")
+
             cmd_str2 = "/start_server.sh %d %s & read" + "\\" + "\"" + "\""
             cmd_str1 = os.path.normpath(
                 "\"" + self.digital_home + "/" +
@@ -581,7 +582,7 @@ class ModelGeneration:
         else:
             cfunc.write(
                 '\t\tsnprintf(command,1024,"' + self.home +
-                '/ngspice-nghdl/src/xspice/icm/ghdl/' +
+                '/nghdl-simulator/src/xspice/icm/ghdl/' +
                 self.fname.split('.')[0] +
                 '/DUTghdl/start_server.sh %d %s &", sock_port, my_ip);'
             )
@@ -1059,14 +1060,15 @@ class ModelGeneration:
     def createServerScript(self):
 
         # ####### Creating and writing components in start_server.sh ####### #
-        self.digital_home = self.parser.get('NGSPICE', 'DIGITAL_MODEL')
+        self.digital_home = self.parser.get('NGHDL', 'DIGITAL_MODEL')
+        self.digital_home = os.path.join(self.digital_home, "ghdl")
 
         start_server = open('start_server.sh', 'w')
 
         start_server.write("#!/bin/bash\n\n")
         start_server.write(
-            "###This server run ghdl testebench for infinite time till " +
-            "ngspice send END signal to stop it\n\n"
+            "###This server run ghdl testbench for infinite time till " +
+            "Ngspice sends kill signal to stop it\n\n"
         )
 
         if os.name == 'nt':
