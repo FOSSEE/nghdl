@@ -11,7 +11,12 @@ class ModelGeneration:
         print("Arguement is : ", file)
         self.fname = os.path.basename(file)
         print("VHDL filename is : ", self.fname)
-        self.home = os.path.expanduser("~")
+
+        if os.name == 'nt':
+            self.home = os.path.join('library', 'config')
+        else:
+            self.home = os.path.expanduser('~')
+
         self.parser = ConfigParser()
         self.parser.read(os.path.join(
             self.home, os.path.join('.nghdl', 'config.ini')))

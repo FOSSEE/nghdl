@@ -20,7 +20,11 @@ class Mainwindow(QtWidgets.QWidget):
         QtWidgets.QMainWindow.__init__(self)
         print("Initializing..........")
 
-        self.home = os.path.expanduser("~")
+        if os.name == 'nt':
+            self.home = os.path.join('library', 'config')
+        else:
+            self.home = os.path.expanduser('~')
+
         # Reading all variables from config.ini
         self.parser = ConfigParser()
         self.parser.read(
