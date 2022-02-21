@@ -26,27 +26,27 @@
     ```make
         ISMINGW = $(shell uname | grep -c "MINGW64")
         ifeq ($(ISMINGW), 1)
-          LIBS = -lm -lws2_32
+          LIBS = -lm -lws2_32 -lstdc++
         endif
 
         ISMINGW = $(shell uname | grep -c "MINGW32")
         ifeq ($(ISMINGW), 1)
-          LIBS = -lm -lws2_32
+          LIBS = -lm -lws2_32 -lstdc++
         endif
 
         ISMINGW = $(shell uname | grep -c "MSYS")
         ifeq ($(ISMINGW), 1)
-          LIBS = -lm -lws2_32
+          LIBS = -lm -lws2_32 -lstdc++
         endif
     ```
 
 6. Add patch for linking `libws2_32.a` in Windows OS at `Makefile.in` at *`nghdl-simulator-source/src/`* by modifying the line:
     ```make
-        @WINGUI_TRUE@am__append_19 = -lpsapi -lShlwapi 
+        @WINGUI_TRUE@am__append_18 = -lpsapi -lShlwapi 
     ```
     To
     ```make
-        @WINGUI_TRUE@am__append_19 = -lpsapi -lShlwapi -lws2_32
+        @WINGUI_TRUE@am__append_18 = -lpsapi -lShlwapi -lws2_32
     ```
 
 7. Add GHDL codemodel to the spinit.in file at *`nghdl-simulator-source/src/`* as an addition to the section:
@@ -56,6 +56,7 @@
     with the line:
     ```make
         @XSPICEINIT@ codemodel @pkglibdir@/ghdl.cm
+        @XSPICEINIT@ codemodel @pkglibdir@/Ngveri.cm
     ```
     and in `GNUmakefile.in` at *`nghdl-simulator-source/src/xspice/icm`* by replacing the line:
     ```make
@@ -66,7 +67,7 @@
         CMDIRS = spice2poly digital analog xtradev xtraevt table ghdl Ngveri
     ```
 
-8. Create a **`ghdl`** and **`Ngveri`** directories at the location *`ngspice-nghdl/src/xspice/icm/`*, each with two empty files named `modpath.lst` and `udnpath.lst`
+8. Create **`ghdl`** and **`Ngveri`** directories at the location *`nghdl-simulator-source/src/xspice/icm/`*, each with two empty files named `modpath.lst` and `udnpath.lst`
 
     > Note: For Ubuntu OS, now compress this new version of Ngspice to `nghdl-simulator-source.tar.xz` file and replace the existing older tar file at the `master` branch of this repository.
 
@@ -85,7 +86,7 @@
     ```
     > Note: MSYS + MinGW environment must be setup before building Ngspice. Refer this [documentation](Windows/MinGW+MSYS.md) for the same.
 
-10. Move the generated ghdl code model from `ngspice-nghdl/release/src/xspice/icm/ghdl.cm` to the `ngspice-nghdl/lib/ngspice/` directory.
+10. Move the generated ``ghdl`` and ``Ngveri`` code models from `nghdl-simulator-source/release/src/xspice/icm/ghdl.cm` and `nghdl-simulator-source/release/src/xspice/icm/Ngveri.cm` respectively to the `nghdl-simulator-source/lib/ngspice/` directory.
 
 11. Download Ngspice which is readily available to be used directly on Windows OS. Now, intelligently merge this downloaded version with the built version (from step 10).
 
