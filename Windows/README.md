@@ -81,6 +81,7 @@ It contains all the documentation for making NGHDL executable (using PyInstaller
 
 6. Along with `nghdl.7z` from step 5, place the following 7z files at the installer folder for eSim:
 	- ghdl.7z
+	- verilator.7z
 	- MSYS.7z
 	- mingw64.7z
 	- nghdl-simulator.7z

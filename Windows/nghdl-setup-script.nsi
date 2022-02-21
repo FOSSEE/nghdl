@@ -77,6 +77,7 @@ Section "nghdl-loadsource"
     SetOutPath $EXEDIR
     
     File "ghdl.7z"
+    File "verilator.7z"
     File "mingw64.7z"
     File "MSYS.7z"
     File "nghdl-src.7z"
@@ -122,6 +123,20 @@ Section "nghdl-GHDL"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
     Delete "$EXEDIR\ghdl.7z"
+SectionEnd
+
+Section "verilator"
+    SetOutPath $INSTDIR
+    Nsis7z::ExtractWithDetails "$EXEDIR\verilator.7z" "Extracting Verilator %s..."
+    CopyFiles "$INSTDIR\verilator\bin\*" "$INSTDIR\MSYS\mingw64\bin\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\bin\*" "$INSTDIR\MSYS\mingw64\bin\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\include\*" "$INSTDIR\MSYS\mingw64\include\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\examples\*" "$INSTDIR\MSYS\mingw64\examples\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\verilator-config.cmake" "$INSTDIR\MSYS\mingw64\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\verilator-config-version.cmake" "$INSTDIR\MSYS\mingw64\"
+    CopyFiles "$INSTDIR\verilator\share\pkgconfig" "$INSTDIR\MSYS\mingw64\"
+    RMDir /r "$INSTDIR\verilator"
+    Delete "$EXEDIR\verilator.7z"
 SectionEnd
 
 Section "envar-refresh"	
