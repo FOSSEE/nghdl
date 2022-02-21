@@ -192,17 +192,17 @@ Section "install-nghdl-simulator"
 SectionEnd
   
 Section "nghdl-config.ini" 
-    CreateDirectory $PROFILE\.nghdl
-    FileOpen $0  "$PROFILE\.nghdl\config.ini" w
-    FileWrite $0 `[NGSPICE]$\n`
-    FileWrite $0 `NGSPICE_HOME = $INSTDIR\ngspice-nghdl$\n`
-    FileWrite $0 `DIGITAL_MODEL = %(NGSPICE_HOME)s\src\xspice\icm\ghdl$\n`
-    FileWrite $0 `RELEASE = %(NGSPICE_HOME)s\release$\n`
+    CreateDirectory $INSTDIR\eSim\library\config\.nghdl
+    FileOpen $0  "$INSTDIR\eSim\library\config\.nghdl\config.ini" w
+    FileWrite $0 `[NGHDL]$\n`
+    FileWrite $0 `NGHDL_HOME = $shellpath1/nghdl-simulator$\n`
+    FileWrite $0 `DIGITAL_MODEL = %(NGHDL_HOME)s/src/xspice/icm$\n`
+    FileWrite $0 `RELEASE = %(NGHDL_HOME)s/release$\n`
     FileWrite $0 `[SRC]$\n`
-    FileWrite $0 `SRC_HOME = $INSTDIR\eSim\nghdl$\n`
-    FileWrite $0 `LICENSE = %(SRC_HOME)s\LICENSE$\n`
+    FileWrite $0 `SRC_HOME = $shellpath1/eSim/nghdl$\n`
+    FileWrite $0 `LICENSE = %(SRC_HOME)s/LICENSE$\n`
     FileWrite $0 `[COMPILER]$\n`
-    FileWrite $0 `MSYS_HOME = $INSTDIR\mingw64\msys\bin$\n`
+    FileWrite $0 `MSYS_HOME = $shellpath1/MSYS$\n`
     FileClose $0
 SectionEnd
 
