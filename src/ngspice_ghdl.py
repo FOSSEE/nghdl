@@ -20,14 +20,18 @@ class Mainwindow(QtWidgets.QWidget):
         QtWidgets.QMainWindow.__init__(self)
         print("Initializing..........")
 
-        self.home = os.path.expanduser("~")
+        if os.name == 'nt':
+            self.home = os.path.join('library', 'config')
+        else:
+            self.home = os.path.expanduser('~')
+
         # Reading all variables from config.ini
         self.parser = ConfigParser()
         self.parser.read(
             os.path.join(self.home, os.path.join('.nghdl', 'config.ini'))
         )
-        self.ngspice_home = self.parser.get('NGSPICE', 'NGSPICE_HOME')
-        self.release_dir = self.parser.get('NGSPICE', 'RELEASE')
+        self.nghdl_home = self.parser.get('NGHDL', 'NGHDL_HOME')
+        self.release_dir = self.parser.get('NGHDL', 'RELEASE')
         self.src_home = self.parser.get('SRC', 'SRC_HOME')
         self.licensefile = self.parser.get('SRC', 'LICENSE')
         # Printing LICENCE file on terminal
@@ -74,7 +78,7 @@ class Mainwindow(QtWidgets.QWidget):
 
         self.setLayout(grid)
         self.setGeometry(300, 300, 600, 600)
-        self.setWindowTitle("Ngspice Digital Model Creator")
+        self.setWindowTitle("Ngspice Digital Model Creator (from VHDL)")
         # self.setWindowIcon(QtGui.QIcon('logo.png'))
         self.show()
 
@@ -121,7 +125,8 @@ class Mainwindow(QtWidgets.QWidget):
 
     def createModelDirectory(self):
         print("Create Model Directory Called")
-        self.digital_home = self.parser.get('NGSPICE', 'DIGITAL_MODEL')
+        self.digital_home = self.parser.get('NGHDL', 'DIGITAL_MODEL')
+        self.digital_home = os.path.join(self.digital_home, "ghdl")
         os.chdir(self.digital_home)
         print("Current Working Directory Changed to", os.getcwd())
         self.modelname = os.path.basename(str(self.filename)).split('.')[0]
@@ -226,12 +231,12 @@ class Mainwindow(QtWidgets.QWidget):
         os.chdir(path + "/DUTghdl")
         if os.name == 'nt':
             # path to msys bin directory where bash is located
-            self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME')
-            subprocess.call(self.msys_bin+"/bash.exe " +
+            self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
+            subprocess.call(self.msys_home + "/usr/bin/bash.exe " +
                             path + "/DUTghdl/compile.sh", shell=True)
-            subprocess.call(self.msys_bin+"/bash.exe -c " +
+            subprocess.call(self.msys_home + "/usr/bin/bash.exe -c " +
                             "'chmod a+x start_server.sh'", shell=True)
-            subprocess.call(self.msys_bin+"/bash.exe -c " +
+            subprocess.call(self.msys_home + "/usr/bin/bash.exe -c " +
                             "'chmod a+x sock_pkg_create.sh'", shell=True)
         else:
             subprocess.call("bash " + path + "/DUTghdl/compile.sh", shell=True)
@@ -254,15 +259,15 @@ class Mainwindow(QtWidgets.QWidget):
 
     def runMake(self):
         print("run Make Called")
-        self.release_home = self.parser.get('NGSPICE', 'RELEASE')
+        self.release_home = self.parser.get('NGHDL', 'RELEASE')
         path_icm = os.path.join(self.release_home, "src/xspice/icm")
         os.chdir(path_icm)
 
         try:
             if os.name == 'nt':
                 # path to msys bin directory where make is located
-                self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME')
-                cmd = self.msys_bin+"\\make.exe"
+                self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
+                cmd = self.msys_home + "/mingw64/bin/mingw32-make.exe"
             else:
                 cmd = " make"
 
@@ -285,8 +290,8 @@ class Mainwindow(QtWidgets.QWidget):
         print("run Make Install Called")
         try:
             if os.name == 'nt':
-                self.msys_bin = self.parser.get('COMPILER', 'MSYS_HOME')
-                cmd = self.msys_bin+"\\make.exe install"
+                self.msys_home = self.parser.get('COMPILER', 'MSYS_HOME')
+                cmd = self.msys_home + "/mingw64/bin/mingw32-make.exe install"
             else:
                 cmd = " make install"
             print("Running Make Install")
