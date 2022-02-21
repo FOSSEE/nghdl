@@ -21,6 +21,7 @@
 ngspice="ngspice-nghdl"
 ghdl="ghdl-0.37"
 verilator="verilator-4.210"
+llvm_version="9"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -49,8 +50,8 @@ function installDependency
     echo "Installing GNAT..........................................."
     sudo apt install -y gnat
 
-	echo "Installing LLVM-8........................................."
-    sudo apt install -y llvm-8
+	echo "Installing LLVM-${llvm_version}........................................"
+    sudo apt install -y llvm-${llvm_version} llvm-${llvm_version}-dev
 
     echo "Installing Clang.........................................."
     sudo apt-get install -y clang
@@ -96,21 +97,22 @@ function installGHDL
     echo "Configuring $ghdl build as per requirements"
     chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    sudo ./configure --with-llvm-config=/usr/bin/llvm-config-8
+    ./configure --with-llvm-config=/usr/bin/llvm-config-${llvm_version}
     echo "Building the install file for $ghdl LLVM"
-    sudo make
+    make
     sudo make install
 
-    set +e 		# Temporary disable exit on error
-    trap "" ERR # Do not trap on error of any command
+    # set +e 		# Temporary disable exit on error
+    # trap "" ERR # Do not trap on error of any command
     
-    echo "Removing unused part of $ghdl LLVM"
-    sudo rm -rf ../$ghdl
+    # echo "Removing unused part of $ghdl LLVM"
+    # sudo rm -rf ../$ghdl
     
-    set -e 		# Re-enable exit on error
-    trap error_exit ERR
+    # set -e 		# Re-enable exit on error
+    # trap error_exit ERR
 
     echo "GHDL installed successfully"
+    cd ../
     
 }
 
@@ -278,12 +280,24 @@ if [ $option == "--install" ];then
 
 elif [ $option == "--uninstall" ];then
     sudo rm -rf $HOME/ngspice-nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
+
+    echo "Removing GHDL......................"
+    cd $ghdl/
+    sudo make uninstall
+    cd ../
+    sudo rm -rf $ghdl/
+    # sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
+
+    echo "Removing Verilator................."
+    cd $verilator/
+    sudo make uninstall
+    cd ../
+    sudo rm -rf $verilator/
+
     echo "Removing libxaw7-dev..............."
     sudo apt purge -y libxaw7-dev
-    echo "Removing GHDL......................"
-    sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
     echo "Removing LLVM......................"
-    sudo apt-get purge -y llvm-8
+    sudo apt-get purge -y llvm-${llvm_version} llvm-${llvm_version}-dev
     echo "Removing GNAT......................"
     sudo apt purge -y gnat
 else 
