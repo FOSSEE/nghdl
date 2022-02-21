@@ -1,11 +1,15 @@
 import os.path
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 
 
 class Appconfig:
-    home = os.path.expanduser("~")
+    if os.name == 'nt':
+        home = os.path.join('library', 'config')
+    else:
+        home = os.path.expanduser('~')
+
     # Reading all variables from eSim config.ini
-    parser_esim = SafeConfigParser()
+    parser_esim = ConfigParser()
     parser_esim.read(os.path.join(home, os.path.join('.esim', 'config.ini')))
     try:
         src_home = parser_esim.get('eSim', 'eSim_HOME')
@@ -16,7 +20,7 @@ class Appconfig:
     esimFlag = 0
 
     # Reading all variables from nghdl config.ini
-    parser_nghdl = SafeConfigParser()
+    parser_nghdl = ConfigParser()
     parser_nghdl.read(os.path.join(home, os.path.join('.nghdl', 'config.ini')))
 
     kicad_lib_template = {
