@@ -1,13 +1,13 @@
 #!/bin/bash 
-#===============================================================================
+#==========================================================
 #          FILE: install-nghdl.sh
 # 
 #         USAGE: ./install-nghdl.sh --install
 #                 			OR
 #                ./install-nghdl.sh --uninstall
 # 
-#   DESCRIPTION: Installation script for Ngspice and GHDL simulators (NGHDL)
-#
+#   DESCRIPTION: Installation script for Ngspice, GHDL 
+#                and Verilator simulators (NGHDL)
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
@@ -15,11 +15,12 @@
 #        AUTHOR: Fahim Khan, Rahul Paknikar, Sumanto Kar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Tuesday 11 November 2021 15:56
-#===============================================================================
+#      REVISION: Tuesday 02 February 2022 01:35
+#==========================================================
 
 ngspice="ngspice-nghdl"
 ghdl="ghdl-0.37"
+verilator="verilator-4.210"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -70,6 +71,23 @@ function installDependency
     sudo apt install -y libxaw7-dev
 
 
+    echo "Installing $verilator dependencies........................"
+    if [[ -n "$(which apt-get 2> /dev/null)" ]]
+    then
+    # Ubuntu
+        sudo apt-get install make autoconf g++ flex bison
+    else [[ -n "$(which yum 2> /dev/null)" ]]
+    # Ubuntu
+        sudo yum install make autoconf flex bison which -y
+        sudo yum groupinstall 'Development Tools'  -y
+    fi
+
+}
+
+
+function installGHDL
+{   
+
     echo "Installing $ghdl LLVM................................."
     tar -xJf $ghdl.tar.xz
     echo "$ghdl successfully extracted"
@@ -94,6 +112,34 @@ function installDependency
 
     echo "GHDL installed successfully"
     
+}
+
+
+function installVerilator
+{   
+    
+    echo "Installing $verilator......................."
+    tar -xJf $verilator.tar.xz
+    echo "$verilator successfully extracted"
+    echo "Changing directory to $verilator installation"
+    cd $verilator
+    echo "Configuring $verilator build as per requirements"
+    chmod +x configure
+    ./configure
+    make -j$(nproc)
+    sudo make install
+    echo "Removing the unessential verilator files........"
+    rm -r docs
+    rm -r examples
+    rm -r include
+    rm -r test_regress
+    rm -r bin
+    ls -1 | grep -E -v 'config.status|configure.ac|Makefile.in|verilator.1|configure|Makefile|src|verilator.pc' | xargs rm -f
+    #sudo rm -v -r'!("config.status"|"configure.ac"|"Makefile.in"|"verilator.1"|"configure"|"Makefile"|"src"|"verilator.pc")'
+
+    echo "Verilator installed successfully"
+    cd ../
+
 }
 
 
@@ -224,6 +270,8 @@ if [ $option == "--install" ];then
         echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
         exit 0
     fi
+    installGHDL
+    installVerilator
     installNgspice
     createConfigFile
     createSoftLink
