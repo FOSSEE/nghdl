@@ -62,7 +62,7 @@ function installDependency
     sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
 
     # Specific dependency for nvidia graphic cards
-    echo "Installing graphics dependency for ngspice souce build"
+    echo "Installing graphics dependency for Ngspice source build"
     echo "Installing libxaw7........................................"
     sudo apt install -y libxaw7
 
@@ -163,11 +163,11 @@ function createConfigFile
     else
         mkdir $config_dir && touch $config_dir/$config_file
     fi
-    
-    echo "[NGSPICE]" >> $config_dir/$config_file
-    echo "NGSPICE_HOME = $HOME/$ngspice" >> $config_dir/$config_file
-    echo "DIGITAL_MODEL = %(NGSPICE_HOME)s/src/xspice/icm/ghdl" >> $config_dir/$config_file
-    echo "RELEASE = %(NGSPICE_HOME)s/release" >> $config_dir/$config_file
+
+    echo "[NGHDL]" >> $config_dir/$config_file
+    echo "NGHDL_HOME = $HOME/$nghdl" >> $config_dir/$config_file
+    echo "DIGITAL_MODEL = %(NGHDL_HOME)s/src/xspice/icm" >> $config_dir/$config_file
+    echo "RELEASE = %(NGHDL_HOME)s/release" >> $config_dir/$config_file
     echo "[SRC]" >> $config_dir/$config_file
     echo "SRC_HOME = $src_dir" >> $config_dir/$config_file
     echo "LICENSE = %(SRC_HOME)s/LICENSE" >> $config_dir/$config_file
