@@ -95,33 +95,37 @@ Section "nghdl-src"
     Delete "$EXEDIR\nghdl-src.7z"
 SectionEnd
 
-Section "nghdl-mingw"
+Section "msys2"
     SetOutPath $INSTDIR
-    Nsis7z::ExtractWithDetails "$EXEDIR\mingw64.7z" "Extracting MinGW %s..."
+    Nsis7z::ExtractWithDetails "$EXEDIR\MSYS.7z" "Extracting MSYS2 %s..."
     EnVar::SetHKLM
-    EnVar::AddValue "Path" "$INSTDIR\mingw64\bin"
-    Pop $0
-    DetailPrint "EnVar::AddValue returned=|$0|"
-    Delete "$EXEDIR\mingw64.7z"
-SectionEnd
-
-Section "nghdl-msys"
-    SetOutPath $INSTDIR\mingw64
-    Nsis7z::ExtractWithDetails "$EXEDIR\MSYS.7z" "Extracting MSYS %s..."
-    EnVar::SetHKLM
-    EnVar::AddValue "Path" "$INSTDIR\mingw64\msys\bin"
+    EnVar::AddValue "Path" "$INSTDIR\MSYS\usr\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
     Delete "$EXEDIR\MSYS.7z"
 SectionEnd
 
-Section "nghdl-GHDL"
-    SetOutPath $INSTDIR\mingw64
-    Nsis7z::ExtractWithDetails "$EXEDIR\ghdl.7z" "Extracting GHDL %s..."
+Section "mingw64"
+    SetOutPath $INSTDIR\MSYS
+    Nsis7z::ExtractWithDetails "$EXEDIR\mingw64.7z" "Extracting MinGW %s..."
     EnVar::SetHKLM
-    EnVar::AddValue "Path" "$INSTDIR\mingw64\GHDL\bin"
+    EnVar::AddValue "Path" "$INSTDIR\MSYS\mingw64\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
+    Delete "$EXEDIR\mingw64.7z"
+SectionEnd
+
+Section "ghdl"
+    SetOutPath $INSTDIR
+    Nsis7z::ExtractWithDetails "$EXEDIR\ghdl.7z" "Extracting GHDL %s..."
+    ;EnVar::SetHKLM
+    ;EnVar::AddValue "Path" "$INSTDIR\mingw64\GHDL\bin"
+    ;Pop $0
+    ;DetailPrint "EnVar::AddValue returned=|$0|"
+    CopyFiles "$INSTDIR\GHDL\bin\*" "$INSTDIR\MSYS\mingw64\bin\"
+    CopyFiles "$INSTDIR\GHDL\include\*" "$INSTDIR\MSYS\mingw64\include\"
+    CopyFiles "$INSTDIR\GHDL\lib\*" "$INSTDIR\MSYS\mingw64\lib\"
+    RMDir /r "$INSTDIR\GHDL"
     Delete "$EXEDIR\ghdl.7z"
 SectionEnd
 
@@ -141,7 +145,7 @@ SectionEnd
 
 Section "envar-refresh"	
 	ReadEnvStr $R0 "PATH"
-	StrCpy $R0 "$R0;$INSTDIR\eSim\nghdl\src;$INSTDIR\mingw64\bin;$INSTDIR\mingw64\msys\bin;$INSTDIR\mingw64\GHDL\bin;"
+	StrCpy $R0 "$R0;$INSTDIR\eSim\nghdl\src;$INSTDIR\MSYS\mingw64\bin;$INSTDIR\MSYS\usr\bin;"
 	System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("PATH", R0).r0'
 SectionEnd
 
@@ -152,7 +156,7 @@ Section "nghdl-installNgspice"
 
     ;CopyFiles $INSTDIR\eSim\nghdl\src\outitf.c $INSTDIR\ngspice-nghdl\src\frontend
 
-    CopyFiles $INSTDIR\mingw64\x86_64-w64-mingw32\lib\libws2_32.a $INSTDIR\eSim\nghdl\src\ghdlserver
+    CopyFiles "$INSTDIR\MSYS\mingw64\x86_64-w64-mingw32\lib\libws2_32.a" "$INSTDIR\eSim\nghdl\src\ghdlserver"
 
     SetOutPath $INSTDIR\ngspice-nghdl
     CreateDirectory $INSTDIR\ngspice-nghdl\release
