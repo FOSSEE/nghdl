@@ -77,71 +77,90 @@ Section "nghdl-loadsource"
     SetOutPath $EXEDIR
     
     File "ghdl.7z"
+    File "verilator.7z"
     File "mingw64.7z"
     File "MSYS.7z"
-    File "nghdl-src.7z"
-    File "ngspice-nghdl.7z"
+    File "nghdl.7z"
+    File "nghdl-simulator.7z"
 SectionEnd
 
-Section "nghdl-src"
+Section "nghdl"
     SetOutPath $INSTDIR
-    Nsis7z::ExtractWithDetails "$EXEDIR\nghdl-src.7z" "Extracting NGHDL %s..."
+    Nsis7z::ExtractWithDetails "$EXEDIR\nghdl.7z" "Extracting NGHDL %s..."
     EnVar::SetHKLM
     DetailPrint "EnVar::SetHKLM"
     EnVar::AddValue "Path" "$INSTDIR\eSim\nghdl\src"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
-    Delete "$EXEDIR\nghdl-src.7z"
+    Delete "$EXEDIR\nghdl.7z"
 SectionEnd
 
-Section "nghdl-mingw"
+Section "msys2"
     SetOutPath $INSTDIR
-    Nsis7z::ExtractWithDetails "$EXEDIR\mingw64.7z" "Extracting MinGW %s..."
+    Nsis7z::ExtractWithDetails "$EXEDIR\MSYS.7z" "Extracting MSYS2 %s..."
     EnVar::SetHKLM
-    EnVar::AddValue "Path" "$INSTDIR\mingw64\bin"
-    Pop $0
-    DetailPrint "EnVar::AddValue returned=|$0|"
-    Delete "$EXEDIR\mingw64.7z"
-SectionEnd
-
-Section "nghdl-msys"
-    SetOutPath $INSTDIR\mingw64
-    Nsis7z::ExtractWithDetails "$EXEDIR\MSYS.7z" "Extracting MSYS %s..."
-    EnVar::SetHKLM
-    EnVar::AddValue "Path" "$INSTDIR\mingw64\msys\bin"
+    EnVar::AddValue "Path" "$INSTDIR\MSYS\usr\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
     Delete "$EXEDIR\MSYS.7z"
 SectionEnd
 
-Section "nghdl-GHDL"
-    SetOutPath $INSTDIR\mingw64
-    Nsis7z::ExtractWithDetails "$EXEDIR\ghdl.7z" "Extracting GHDL %s..."
+Section "mingw64"
+    SetOutPath $INSTDIR\MSYS
+    Nsis7z::ExtractWithDetails "$EXEDIR\mingw64.7z" "Extracting MinGW %s..."
     EnVar::SetHKLM
-    EnVar::AddValue "Path" "$INSTDIR\mingw64\GHDL\bin"
+    EnVar::AddValue "Path" "$INSTDIR\MSYS\mingw64\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
+    Delete "$EXEDIR\mingw64.7z"
+SectionEnd
+
+Section "ghdl"
+    SetOutPath $INSTDIR
+    Nsis7z::ExtractWithDetails "$EXEDIR\ghdl.7z" "Extracting GHDL %s..."
+    ;EnVar::SetHKLM
+    ;EnVar::AddValue "Path" "$INSTDIR\mingw64\GHDL\bin"
+    ;Pop $0
+    ;DetailPrint "EnVar::AddValue returned=|$0|"
+    CopyFiles "$INSTDIR\GHDL\bin\*" "$INSTDIR\MSYS\mingw64\bin\"
+    CopyFiles "$INSTDIR\GHDL\include\*" "$INSTDIR\MSYS\mingw64\include\"
+    CopyFiles "$INSTDIR\GHDL\lib\*" "$INSTDIR\MSYS\mingw64\lib\"
+    RMDir /r "$INSTDIR\GHDL"
     Delete "$EXEDIR\ghdl.7z"
+SectionEnd
+
+Section "verilator"
+    SetOutPath $INSTDIR
+    Nsis7z::ExtractWithDetails "$EXEDIR\verilator.7z" "Extracting Verilator %s..."
+    CopyFiles "$INSTDIR\verilator\bin\*" "$INSTDIR\MSYS\mingw64\bin\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\bin\*" "$INSTDIR\MSYS\mingw64\bin\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\include\*" "$INSTDIR\MSYS\mingw64\include\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\examples\*" "$INSTDIR\MSYS\mingw64\examples\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\verilator-config.cmake" "$INSTDIR\MSYS\mingw64\"
+    CopyFiles "$INSTDIR\verilator\share\verilator\verilator-config-version.cmake" "$INSTDIR\MSYS\mingw64\"
+    CopyFiles "$INSTDIR\verilator\share\pkgconfig" "$INSTDIR\MSYS\mingw64\"
+    RMDir /r "$INSTDIR\verilator"
+    Delete "$EXEDIR\verilator.7z"
 SectionEnd
 
 Section "envar-refresh"	
 	ReadEnvStr $R0 "PATH"
-	StrCpy $R0 "$R0;$INSTDIR\eSim\nghdl\src;$INSTDIR\mingw64\bin;$INSTDIR\mingw64\msys\bin;$INSTDIR\mingw64\GHDL\bin;"
+	StrCpy $R0 "$R0;$INSTDIR\eSim\nghdl\src;$INSTDIR\MSYS\mingw64\bin;$INSTDIR\MSYS\usr\bin;"
 	System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("PATH", R0).r0'
 SectionEnd
 
 
-Section "nghdl-installNgspice"
+Section "install-nghdl-simulator"
     SetOutPath $INSTDIR
-    Nsis7z::ExtractWithDetails "$EXEDIR\ngspice-nghdl.7z" "Extracting Ngspice %s..."
+    Nsis7z::ExtractWithDetails "$EXEDIR\nghdl-simulator.7z" "Extracting NGHDL Simulator %s..."
 
-    ;CopyFiles $INSTDIR\eSim\nghdl\src\outitf.c $INSTDIR\ngspice-nghdl\src\frontend
+    ;CopyFiles $INSTDIR\eSim\nghdl\src\outitf.c $INSTDIR\nghdl-simulator\src\frontend
 
-    CopyFiles $INSTDIR\mingw64\x86_64-w64-mingw32\lib\libws2_32.a $INSTDIR\eSim\nghdl\src\ghdlserver
+    CopyFiles "$INSTDIR\MSYS\mingw64\x86_64-w64-mingw32\lib\libws2_32.a" "$INSTDIR\eSim\nghdl\src\ghdlserver"
 
-    SetOutPath $INSTDIR\ngspice-nghdl
-    CreateDirectory $INSTDIR\ngspice-nghdl\release
-    SetOutPath $INSTDIR\ngspice-nghdl\release
+    SetOutPath $INSTDIR\nghdl-simulator
+    CreateDirectory $INSTDIR\nghdl-simulator\release
+    SetOutPath $INSTDIR\nghdl-simulator\release
 
     Var /GLOBAL shellpath
     Var /GLOBAL shellpath1
@@ -153,20 +172,20 @@ Section "nghdl-installNgspice"
 
     ${StrRep} '$shellpath1' '$shellpath' '\' '/'
 
-    ;FileOpen $0  "$INSTDIR\ngspice-nghdl\release\installngspice.sh" w
-    ;FileWrite $0 `../configure --with-wingui --enable-xspice --disable-debug --prefix=$shellpath1/ngspice-nghdl/install_dir --exec-prefix=$shellpath1/ngspice-nghdl/install_dir &&$\n`
+    ;FileOpen $0  "$INSTDIR\nghdl-simulator\release\installngspice.sh" w
+    ;FileWrite $0 `../configure --with-wingui --enable-xspice --disable-debug --prefix=$shellpath1/nghdl-simulator/install_dir --exec-prefix=$shellpath1/nghdl-simulator/install_dir &&$\n`
     ;FileWrite $0 `make -j$cpucores &&$\n`
     ;FileWrite $0 `make install$\n`
     ;FileClose $0
 
     ;nsExec::ExecToLog "$INSTDIR\mingw64\msys\bin\bash.exe installngspice.sh"
-    ;Delete $INSTDIR\ngspice-nghdl\release\installngspice.sh
-    Delete "$EXEDIR\ngspice-nghdl.7z"
+    ;Delete $INSTDIR\nghdl-simulator\release\installngspice.sh
+    Delete "$EXEDIR\nghdl-simulator.7z"
 
     SetOutPath $INSTDIR
 
     EnVar::SetHKLM
-    EnVar::AddValue "Path" "$INSTDIR\ngspice-nghdl\bin"
+    EnVar::AddValue "Path" "$INSTDIR\nghdl-simulator\bin"
     Pop $0
     DetailPrint "EnVar::AddValue returned=|$0|"
 

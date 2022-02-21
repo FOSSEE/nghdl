@@ -1,13 +1,13 @@
 #!/bin/bash 
-#===============================================================================
+#==========================================================
 #          FILE: install-nghdl.sh
 # 
 #         USAGE: ./install-nghdl.sh --install
 #                 			OR
 #                ./install-nghdl.sh --uninstall
 # 
-#   DESCRIPTION: Installation script for Ngspice and GHDL simulators (NGHDL)
-#
+#   DESCRIPTION: Installation script for Ngspice, GHDL 
+#                and Verilator simulators (NGHDL)
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
@@ -15,11 +15,13 @@
 #        AUTHOR: Fahim Khan, Rahul Paknikar, Sumanto Kar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Tuesday 11 November 2021 15:56
-#===============================================================================
+#      REVISION: Tuesday 02 February 2022 01:35
+#==========================================================
 
-ngspice="ngspice-nghdl"
+nghdl="nghdl-simulator"
 ghdl="ghdl-0.37"
+verilator="verilator-4.210"
+llvm_version="9"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -48,8 +50,8 @@ function installDependency
     echo "Installing GNAT..........................................."
     sudo apt install -y gnat
 
-	echo "Installing LLVM-8........................................."
-    sudo apt install -y llvm-8
+	echo "Installing LLVM-${llvm_version}........................................"
+    sudo apt install -y llvm-${llvm_version} llvm-${llvm_version}-dev
 
     echo "Installing Clang.........................................."
     sudo apt-get install -y clang
@@ -70,6 +72,23 @@ function installDependency
     sudo apt install -y libxaw7-dev
 
 
+    echo "Installing $verilator dependencies........................"
+    if [[ -n "$(which apt-get 2> /dev/null)" ]]
+    then
+    # Ubuntu
+        sudo apt-get install make autoconf g++ flex bison
+    else [[ -n "$(which yum 2> /dev/null)" ]]
+    # Ubuntu
+        sudo yum install make autoconf flex bison which -y
+        sudo yum groupinstall 'Development Tools'  -y
+    fi
+
+}
+
+
+function installGHDL
+{   
+
     echo "Installing $ghdl LLVM................................."
     tar -xJf $ghdl.tar.xz
     echo "$ghdl successfully extracted"
@@ -78,59 +97,87 @@ function installDependency
     echo "Configuring $ghdl build as per requirements"
     chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    sudo ./configure --with-llvm-config=/usr/bin/llvm-config-8
+    ./configure --with-llvm-config=/usr/bin/llvm-config-${llvm_version}
     echo "Building the install file for $ghdl LLVM"
-    sudo make
+    make
     sudo make install
 
-    set +e 		# Temporary disable exit on error
-    trap "" ERR # Do not trap on error of any command
+    # set +e 		# Temporary disable exit on error
+    # trap "" ERR # Do not trap on error of any command
     
-    echo "Removing unused part of $ghdl LLVM"
-    sudo rm -rf ../$ghdl
+    # echo "Removing unused part of $ghdl LLVM"
+    # sudo rm -rf ../$ghdl
     
-    set -e 		# Re-enable exit on error
-    trap error_exit ERR
+    # set -e 		# Re-enable exit on error
+    # trap error_exit ERR
 
     echo "GHDL installed successfully"
+    cd ../
     
 }
 
 
-function installNgspice
+function installVerilator
+{   
+    
+    echo "Installing $verilator......................."
+    tar -xJf $verilator.tar.xz
+    echo "$verilator successfully extracted"
+    echo "Changing directory to $verilator installation"
+    cd $verilator
+    echo "Configuring $verilator build as per requirements"
+    chmod +x configure
+    ./configure
+    make -j$(nproc)
+    sudo make install
+    echo "Removing the unessential verilator files........"
+    rm -r docs
+    rm -r examples
+    rm -r include
+    rm -r test_regress
+    rm -r bin
+    ls -1 | grep -E -v 'config.status|configure.ac|Makefile.in|verilator.1|configure|Makefile|src|verilator.pc' | xargs rm -f
+    #sudo rm -v -r'!("config.status"|"configure.ac"|"Makefile.in"|"verilator.1"|"configure"|"Makefile"|"src"|"verilator.pc")'
+
+    echo "Verilator installed successfully"
+    cd ../
+
+}
+
+
+function installNGHDL
 {
 
-    echo "Installing Ngspice........................................"
+    echo "Installing NGHDL........................................"
 
-    # Extracting Ngspice to Home Directory
+    # Extracting NGHDL to Home Directory
     cd $src_dir
-    tar -xJf $ngspice.tar.xz -C $HOME 
-    
-    echo "Ngspice extracted sucessfully to $HOME"
-    # Change to ngspice-nghdl directory
-    cd $HOME/$ngspice
+    tar -xJf $nghdl-source.tar.xz -C $HOME
+    mv $HOME/$nghdl-source $HOME/$nghdl
+
+    echo "NGHDL extracted sucessfully to $HOME"
+    # Change to nghdl directory
+    cd $HOME/$nghdl
     # Make local install directory
     mkdir -p install_dir
     # Make release directory for build
     mkdir -p release
     # Change to release directory
     cd release
-    echo "Configuring Ngspice........."
+    echo "Configuring NGHDL..........."
     sleep 2
     
     chmod +x ../configure
-    ../configure --enable-xspice --disable-debug  --prefix=$HOME/$ngspice/install_dir/ --exec-prefix=$HOME/$ngspice/install_dir/
+    ../configure --enable-xspice --disable-debug  --prefix=$HOME/$nghdl/install_dir/ --exec-prefix=$HOME/$nghdl/install_dir/
             
     # Adding patch to Ngspice base code
-    cp $src_dir/src/outitf.c $HOME/$ngspice/src/frontend
-    cp $src_dir/src/verilated.o $HOME/$ngspice/release/src/xspice/icm/
+    # cp $src_dir/src/outitf.c $HOME/$nghdl/src/frontend
 
     make -j$(nproc)
     make install
 
     # Make it executable
-    sudo chmod 755 $HOME/$ngspice/install_dir/bin/ngspice
-    sudo chmod 777 -R $HOME/$ngspice/
+    sudo chmod 755 $HOME/$nghdl/install_dir/bin/ngspice
     
     set +e 		# Temporary disable exit on error
     trap "" ERR # Do not trap on error of any command
@@ -138,7 +185,7 @@ function installNgspice
     echo "Removing previously installed Ngspice (if any)"    
     sudo apt-get purge -y ngspice
 
-    echo "Ngspice installed sucessfully"
+    echo "NGHDL installed sucessfully"
     echo "Adding softlink for the installed Ngspice"
 
     # Add symlink to the path
@@ -147,15 +194,15 @@ function installNgspice
     set -e 		# Re-enable exit on error
     trap error_exit ERR
 
-    sudo ln -sf $HOME/$ngspice/install_dir/bin/ngspice /usr/bin/ngspice
-    echo "Added softlink for Ngspice..."
+    sudo ln -sf $HOME/$nghdl/install_dir/bin/ngspice /usr/bin/ngspice
+    echo "Added softlink for Ngspice....."
 
 }
 
 
 function createConfigFile
 {
-    
+
     # Creating config.ini file and adding configuration information
     # Check if config file is present
     if [ -d $config_dir ];then
@@ -188,7 +235,7 @@ function createSoftLink
     fi
     
     sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
-    echo "Added softlink for NGHDL..."
+    echo "Added softlink for NGHDL....."
 
     cd $pwd
 
@@ -224,18 +271,32 @@ if [ $option == "--install" ];then
         echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
         exit 0
     fi
-    installNgspice
+    installGHDL
+    installVerilator
+    installNGHDL
     createConfigFile
     createSoftLink
 
 elif [ $option == "--uninstall" ];then
-    sudo rm -rf $HOME/ngspice-nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
+    sudo rm -rf $HOME/$nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
+
+    echo "Removing GHDL......................"
+    cd $ghdl/
+    sudo make uninstall
+    cd ../
+    sudo rm -rf $ghdl/
+    # sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
+
+    echo "Removing Verilator................."
+    cd $verilator/
+    sudo make uninstall
+    cd ../
+    sudo rm -rf $verilator/
+
     echo "Removing libxaw7-dev..............."
     sudo apt purge -y libxaw7-dev
-    echo "Removing GHDL......................"
-    sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
     echo "Removing LLVM......................"
-    sudo apt-get purge -y llvm-8
+    sudo apt-get purge -y llvm-${llvm_version} llvm-${llvm_version}-dev
     echo "Removing GNAT......................"
     sudo apt purge -y gnat
 else 
