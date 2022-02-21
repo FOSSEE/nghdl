@@ -1,6 +1,6 @@
 # Changes for Ngspice version upgrade
 
-1. Download the source code for the new Ngspice version and rename its top-level directory as `ngspice-nghdl`.
+1. Download the source code for the new Ngspice version and rename its top-level directory as `nghdl-simulator-source`.
 
 2. Manually add the GHDL server close patch (Necessary C headers and `close_server` function at the appropriate location) in the `outitf.c` which comes with the new Ngspice version.
 
@@ -22,7 +22,7 @@
 
 4. Replace the old `outitf.c` at `src` directory of `master` branch of `nghdl` repository with this newly patched version of `outitf.c` file.
 
-5. Similarly, manually add following patch for identification of Mingw and linking of `libws2_32.a` to `makedefs.in` at *`ngspice-nghdl/src/xspice/icm`* **after the line `LIBS = -lm`** (important)
+5. Similarly, manually add following patch for identification of Mingw and linking of `libws2_32.a` to `makedefs.in` at *`nghdl-simulator-source/src/xspice/icm`* **after the line `LIBS = -lm`** (important)
     ```make
         ISMINGW = $(shell uname | grep -c "MINGW64")
         ifeq ($(ISMINGW), 1)
@@ -40,7 +40,7 @@
         endif
     ```
 
-6. Add patch for linking `libws2_32.a` in Windows OS at `Makefile.in` at *`ngspice-nghdl/src/`* by modifying the line:
+6. Add patch for linking `libws2_32.a` in Windows OS at `Makefile.in` at *`nghdl-simulator-source/src/`* by modifying the line:
     ```make
         @WINGUI_TRUE@am__append_19 = -lpsapi -lShlwapi 
     ```
@@ -49,7 +49,7 @@
         @WINGUI_TRUE@am__append_19 = -lpsapi -lShlwapi -lws2_32
     ```
 
-7. Add GHDL codemodel to the spinit.in file at *`ngspice-nghdl/src/`* as an addition to the section:
+7. Add GHDL codemodel to the spinit.in file at *`nghdl-simulator-source/src/`* as an addition to the section:
     ```make
         * The other codemodels
     ```
@@ -57,7 +57,7 @@
     ```make
         @XSPICEINIT@ codemodel @pkglibdir@/ghdl.cm
     ```
-    and in `GNUmakefile.in` at *`ngspice-nghdl/src/xspice/icm`* by replacing the line:
+    and in `GNUmakefile.in` at *`nghdl-simulator-source/src/xspice/icm`* by replacing the line:
     ```make
         CMDIRS = spice2poly digital analog xtradev xtraevt table
     ```
@@ -68,7 +68,7 @@
 
 8. Create a **`ghdl`** and **`Ngveri`** directories at the location *`ngspice-nghdl/src/xspice/icm/`*, each with two empty files named `modpath.lst` and `udnpath.lst`
 
-    > Note: For Ubuntu OS, now compress this new version of Ngspice to `ngspice-nghdl.tar.xz` file and replace the existing older tar file at the `master` branch of this repository.
+    > Note: For Ubuntu OS, now compress this new version of Ngspice to `nghdl-simulator-source.tar.xz` file and replace the existing older tar file at the `master` branch of this repository.
 
 
 ## Following procedures are specific only to Windows OS:
@@ -79,16 +79,16 @@
         $ mkdir release
         $ mkdir install_dir
         $ cd release
-        $ ../configure --with-wingui --enable-xspice --disable-debug --prefix=<absolute_path>/ngspice-nghdl/install_dir --exec-prefix=<absolute_path>/ngspice-nghdl/install_dir
-        $ make
+        $ ../configure --with-wingui --enable-xspice --disable-debug --prefix=<absolute_path>/nghdl-simulator-source/install_dir --exec-prefix=<absolute_path>/nghdl-simulator-source/install_dir
+        $ make -j4
         $ make install
     ```
     > Note: MSYS + MinGW environment must be setup before building Ngspice. Refer this [documentation](Windows/MinGW+MSYS.md) for the same.
 
 10. Move the generated ghdl code model from `ngspice-nghdl/release/src/xspice/icm/ghdl.cm` to the `ngspice-nghdl/lib/ngspice/` directory.
 
-11. Download Ngspice which is readily available to be used directly on Windows OS. Now, intelligently merge this downloaded version with the built version (from step 10) except the `ngspice-nghdl/bin` directory.
+11. Download Ngspice which is readily available to be used directly on Windows OS. Now, intelligently merge this downloaded version with the built version (from step 10).
 
-12. Extract the `ngspice-nghdl.7z` from `Windows/sources/` directory of `installers` branch of this repository. Make the directory structure of the merged version (from step 11) similar to that of this extacted older version.
+12. Extract the `nghdl-simulator.7z` from `Windows/sources/` directory of `installers` branch of this repository. Make the directory structure of the merged version (from step 11) similar to that of this extacted older version.
 
-13. Now, compress this new structured version of Ngspice to a `.7z` format and replace the existing older `ngspice-nghdl.7z` at `Windows/sources/` directory of `installers` branch of this repository.
+13. Now, compress this new structured version of Ngspice to a `.7z` format and replace the existing older `nghdl-simulator.7z` at `Windows/sources/` directory of `installers` branch of this repository.
