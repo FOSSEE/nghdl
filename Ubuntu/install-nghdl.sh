@@ -54,7 +54,7 @@ function installDependency
     sudo apt install -y llvm-${llvm_version} llvm-${llvm_version}-dev
 
     echo "Installing Clang.........................................."
-    sudo apt-get install -y clang
+    sudo apt install -y clang
 
     echo "Installing Zlib1g-dev....................................."
     sudo apt install -y zlib1g-dev
@@ -72,11 +72,11 @@ function installDependency
     sudo apt install -y libxaw7-dev
 
 
-    echo "Installing $verilator dependencies........................"
-    if [[ -n "$(which apt-get 2> /dev/null)" ]]
+    echo "Installing dependencies for $verilator...................."
+    if [[ -n "$(which apt 2> /dev/null)" ]]
     then
     # Ubuntu
-        sudo apt-get install make autoconf g++ flex bison
+        sudo apt install -y make autoconf g++ flex bison
     else [[ -n "$(which yum 2> /dev/null)" ]]
     # Ubuntu
         sudo yum install make autoconf flex bison which -y
