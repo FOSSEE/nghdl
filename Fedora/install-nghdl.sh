@@ -93,7 +93,7 @@ function installDependency
     # it is a dependency for nghdl so it makes sense to
     # keep it here as well.
     echo "Installing PyQt5......................................"
-    sudfo dnf install -y python3-qt5
+    sudo dnf install -y python3-qt5
 }
 
 
