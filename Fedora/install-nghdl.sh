@@ -66,10 +66,10 @@ function installDependency
 
     # Specific dependency for nvidia graphic cards
     echo "Installing graphics dependency for Ngspice source build"
-    echo "Installing libxaw7........................................"
+    echo "Installing libXaw........................................"
     sudo dnf install -y libXaw
 
-    echo "Installing libxaw7-dev...................................."
+    echo "installing libXaw-dev...................................."
     sudo dnf install -y libXaw-devel
 
     echo "Installing dependencies for $verilator...................."
@@ -88,6 +88,12 @@ function installDependency
         sudo dnf install make autoconf flex bison which -y
         sudo dnf groupinstall 'Development Tools'  -y
     fi
+
+    # Although PyQt5 is installed in the main eSim script,
+    # it is a dependency for nghdl so it makes sense to
+    # keep it here as well.
+    echo "Installing PyQt5......................................"
+    sudfo dnf install -y python3-qt5
 }
 
 
