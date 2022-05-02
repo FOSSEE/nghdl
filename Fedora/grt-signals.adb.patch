@@ -1,0 +1,11 @@
+--- grt-signals.adb	2020-02-29 02:55:18.000000000 +0530
++++ grt-signals.adb_fixed	2022-04-30 21:13:51.614954480 +0530
+@@ -551,7 +551,7 @@
+       Proc := Get_Current_Process;
+       for I in 0 .. Sig.S.Nbr_Drivers - 1 loop
+          if Sig.S.Drivers (I).Proc = Proc then
+-            return Sig.S.Drivers (I)'Access;
++             return Sig.S.Drivers (I)'Unrestricted_Access;
+          end if;
+       end loop;
+       return null;
