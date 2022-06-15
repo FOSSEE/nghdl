@@ -12,7 +12,8 @@ ghdl -a sock_pkg.vhdl &&
 
 gcc -c tiny85_c.c -o tiny85_c.o &&  
 # Compiles and generates object file of microcontroller C code
-
+ghdl -a Utility_Package.vhdl
+ghdl -a Vhpi_Package.vhdl
 ghdl -a ghdl_access.vhdl attiny_85_nghdl.vhdl &&
 # Compiles and generates object files of VHDL code of helper function and the main model respectively
 
