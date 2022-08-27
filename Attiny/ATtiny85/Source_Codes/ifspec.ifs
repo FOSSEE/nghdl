@@ -1,0 +1,141 @@
+
+        /*
+        SUMMARY: This file is auto generated and it contains the interface
+         specification for the code model. */
+
+        NAME_TABLE:
+        C_Function_Name: cm_attiny_85_nghdl
+        Spice_Model_Name: attiny_85_nghdl
+        Description: "Model generated from ghdl code attiny_85_nghdl.vhdl" 
+
+
+PORT_TABLE:
+Port_Name:	VCC
+Description:	"input port VCC"
+Direction:	in
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	GND
+Description:	"input port GND"
+Direction:	in
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	clk
+Description:	"input port clk"
+Direction:	in
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	PB2
+Description:	"input port PB2"
+Direction:	in
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	PB3
+Description:	"input port PB3"
+Direction:	in
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	PB4
+Description:	"input port PB4"
+Direction:	in
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	PB5
+Description:	"input port PB5"
+Direction:	in
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	PB0
+Description:	"output port PB0"
+Direction:	out
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+PORT_TABLE:
+Port_Name:	PB1
+Description:	"output port PB1"
+Direction:	out
+Default_Type:	d
+Allowed_Types:	[d]
+Vector:	yes
+Vector_Bounds:	[1 1]
+Null_Allowed:	no
+
+
+
+
+
+        PARAMETER_TABLE:
+        Parameter_Name:     instance_id                  input_load
+        Description:        "instance_id"                "input load value (F)"
+        Data_Type:          real                         real
+        Default_Value:      0                            1.0e-12
+        Limits:             -                            -
+        Vector:              no                          no
+        Vector_Bounds:       -                           -
+        Null_Allowed:       yes                          yes
+
+        PARAMETER_TABLE:
+        Parameter_Name:     rise_delay                  fall_delay
+        Description:        "rise delay"                "fall delay"
+        Data_Type:          real                        real
+        Default_Value:      1.0e-9                      1.0e-9
+        Limits:             [1e-12 -]                   [1e-12 -]
+        Vector:              no                          no
+        Vector_Bounds:       -                           -
+        Null_Allowed:       yes                         yes
+	
+        PARAMETER_TABLE:
+        Parameter_Name:     hex_path
+        Description:        "Path of your hex file"                
+        Data_Type:          string                        
+        Default_Value:      "/home/"                                        
+        Vector:              no                          
+        Vector_Bounds:       -                           
+        Null_Allowed:       yes
+
+        STATIC_VAR_TABLE:
+
+        Static_Var_Name:    my_ip
+        Data_Type:          pointer
+        Description:        "connect to ghdlserver through this ip"
+
+        

@@ -1,7 +1,7 @@
 --	This helper function was written by Ashutosh Jha for ATtiny series of microcontrollers
 --	This codes facilitates exchange of functions and variables betweent the VHDL and C models
---	Latest edit(AJ) - 3:27 AM, 4/3/2020
---      This was modified by SUMANTO KAR for ATtiny85 microcontroller
+--	This VHDL Code was modified by SUMANTO KAR and VATSAL PATEL for ATtiny85 microcontroller
+-- 	Latest edit - 12:16 PM, 01/07/2021
 
 package ghdl_access is
 
@@ -43,6 +43,10 @@ procedure output(f : integer);
 procedure MapToRam(f : integer);
 	attribute foreign of MapToRam :
         	procedure is "VHPIDIRECT MapToRam";
+
+procedure MapToHex(s : character);
+	attribute foreign of MapToHex :
+        	procedure is "VHPIDIRECT MapToHex";
   
 procedure input(f : integer);
 	attribute foreign of input :
@@ -103,6 +107,11 @@ package body ghdl_access is
 	begin
 		assert false report "VHPI" severity failure;
 	end MapToRam;
+
+	procedure MapToHex(s : character) is
+	begin
+		assert false report "VHPI" severity failure;
+	end MapToHex;
 
 	procedure input(f : integer) is
 	begin
