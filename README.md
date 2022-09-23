@@ -40,7 +40,7 @@ GHDL's foreign language interface is used for this inter-process communication.
 ## Pre-requisites
 * [GHDL (LLVM - v0.37)](http://ghdl.free.fr/)
 * [Verilator (v4.210)](https://www.veripool.org/verilator/)
-* [Ngspice (v35+)](http://ngspice.sourceforge.net/)
+* [Ngspice (v35+)](https://ngspice.sourceforge.io/)
 
 
 ## How to install?
