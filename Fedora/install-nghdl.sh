@@ -21,7 +21,6 @@
 
 nghdl="nghdl-simulator"
 ghdl="ghdl-0.37"
-verilator="verilator-4.210"
 llvm_version="9.0"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
@@ -72,7 +71,7 @@ function installDependency
     echo "installing libXaw-dev...................................."
     sudo dnf install -y libXaw-devel
 
-    echo "Installing dependencies for $verilator...................."
+    echo "Installing dependencies for verilator...................."
     if [[ -n "$(which apt 2> /dev/null)" ]]
     then
     # Ubuntu
@@ -94,6 +93,8 @@ function installDependency
     # keep it here as well.
     echo "Installing PyQt5......................................"
     sudo dnf install -y python3-qt5
+    
+    sudo dnf install -y git
 }
 
 
@@ -107,6 +108,7 @@ function installGHDL
     cd $ghdl/
     echo "Patching file for Fedora"
     patch -u src/grt/grt-signals.adb -i ../grt-signals.adb.patch 
+    patch -u configure -i ../configure.patch
     echo "Configuring $ghdl build as per requirements"
     chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
@@ -131,27 +133,15 @@ function installGHDL
 
 
 function installVerilator
-{   
-    
-    echo "Installing $verilator......................."
-    tar -xJf $verilator.tar.xz
-    echo "$verilator successfully extracted"
-    echo "Changing directory to $verilator installation"
-    cd $verilator
-    echo "Configuring $verilator build as per requirements"
-    chmod +x configure
+{   	
+    echo "Installing Verilator......................."
+    git clone https://github.com/verilator/verilator
+    cd verilator
+    git checkout stable
+    autoconf
     ./configure
     make -j$(nproc)
     sudo make install
-    echo "Removing the unessential verilator files........"
-    rm -r docs
-    rm -r examples
-    rm -r include
-    rm -r test_regress
-    rm -r bin
-    ls -1 | grep -E -v 'config.status|configure.ac|Makefile.in|verilator.1|configure|Makefile|src|verilator.pc' | xargs rm -f
-    #sudo rm -v -r'!("config.status"|"configure.ac"|"Makefile.in"|"verilator.1"|"configure"|"Makefile"|"src"|"verilator.pc")'
-
     echo "Verilator installed successfully"
     cd ../
 
@@ -301,10 +291,10 @@ elif [ $option == "--uninstall" ];then
     # sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
 
     echo "Removing Verilator................."
-    cd $verilator/
+    cd verilator/
     sudo make uninstall
     cd ../
-    sudo rm -rf $verilator/
+    sudo rm -rf verilator
 
     echo "Removing libxaw7-dev..............."
     sudo dnf erase -y libXaw-devel
