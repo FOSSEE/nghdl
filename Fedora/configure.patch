@@ -1,0 +1,11 @@
+--- ghdl-0.37/configure	2020-02-29 02:55:18.000000000 +0530
++++ configure	2022-06-19 02:51:59.227579404 +0530
+@@ -41,7 +41,7 @@
+ llvm_be=llvm
+ build=
+ build_mode=
+-enable_werror=true
++enable_werror=false
+ enable_checks=true
+ enable_openieee=unknown
+ enable_libghdl=true
