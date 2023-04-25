@@ -1,0 +1,9 @@
+VCC in 1
+GND in 1
+clk in 1
+PB0 out 1
+PB1 out 1
+PB2 in 1
+PB3 in 1
+PB4 in 1
+PB5 in 1

@@ -1,8 +1,8 @@
 -- Basic peripheral VHDL Code for ATtiny series of microcontrollers by ASHUTOSH JHA
 
--- This VHDL Code was modified by SUMANTO KAR for ATtiny85 microcontroller
--- Latest edit - 12:16 PM, 19/6/2020
--- NOTE :- The function MapToRam and output are linked to the C code of ATTINY85
+-- This VHDL Code was modified by SUMANTO KAR and VATSAL PATEL for ATtiny85 microcontroller
+-- Latest edit - 12:16 PM, 01/07/2021
+-- NOTE :- The function MapToRam, MapToHex and output are linked to the C code of ATTINY85
 -- by "ghdl_access.vhdl" file 
 
 
@@ -14,6 +14,7 @@ library work;
 use work.ghdl_access.all;
 
 entity attiny_85_nghdl is
+generic( hex_path : string );
 port(VCC : in std_logic;
      GND : in std_logic;
      clk : in std_logic;
@@ -28,6 +29,15 @@ end attiny_85_nghdl;
 architecture bhv of attiny_85_nghdl is
 signal PINB_Data : integer;
 begin
+process
+begin
+report "Hex path in attiny 85 in VHDL" & integer'image(hex_path'length);
+for item in 1 to hex_path'length loop 
+	MapToHex(hex_path(item));
+	end loop;
+wait;
+end process;
+
 MapToRam(1);
 	process(clk)
 	begin

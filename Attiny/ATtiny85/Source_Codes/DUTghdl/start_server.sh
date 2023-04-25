@@ -1,0 +1,31 @@
+#!/bin/bash
+
+###This server run ghdl testebench for infinite time till ngspice send END signal to stop it
+
+cd ~/nghdl-simulator/src/xspice/icm/ghdl/attiny_85_nghdl/DUTghdl/
+chmod 775 sock_pkg_create.sh &&
+./sock_pkg_create.sh $1 $2 &&
+ghdl -a sock_pkg.vhdl &&
+
+### The following lines (till line 23) are added by Ashutosh Jha
+### Date - 3/3/2020
+
+gcc -c tiny85_c.c -o tiny85_c.o &&  
+# Compiles and generates object file of microcontroller C code
+
+ghdl -i *.vhdl &&
+ghdl -a *.vhdl &&
+
+ghdl -a ghdl_access.vhdl attiny_85_nghdl.vhdl &&
+# Compiles and generates object files of VHDL code of helper function and the main model respectively
+
+mv attiny_85_nghdl.o attiny_85_nghdl1.o &&
+ld -r -o attiny_85_nghdl.o tiny85_c.o attiny_85_nghdl1.o &&
+rm attiny_85_nghdl1.o &&
+# The object files of main VHDL and microcontroller C code need to be linked.
+# The above three commands do that
+echo $3
+ghdl -a attiny_85_nghdl_tb.vhdl  &&
+ghdl -e -Wl,ghdlserver.o attiny_85_nghdl_tb &&
+./attiny_85_nghdl_tb -ghex_path_tb=$3
+
