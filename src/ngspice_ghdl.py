@@ -320,7 +320,7 @@ class Mainwindow(QtWidgets.QWidget):
             if not self.errorFlag:
                 print('Creating library files................................')
                 schematicLib = AutoSchematic(self, self.modelname)
-                schematicLib.createKicadLibrary()
+                schematicLib.createKicadSymbol()
             else:
                 QtWidgets.QMessageBox.critical(
                     self, 'Error', '''Cannot create Schematic Library of ''' +
