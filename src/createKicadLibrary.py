@@ -11,19 +11,20 @@ class AutoSchematic(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         self.parent = parent
         self.modelname = modelname.split('.')[0]
-        self.template = Appconfig.kicad_lib_template.copy()
+        self.template = Appconfig.kicad_sym_template.copy()
         self.xml_loc = Appconfig.xml_loc
         self.lib_loc = Appconfig.lib_loc
         if os.name == 'nt':
             eSim_src = Appconfig.src_home
             inst_dir = eSim_src.replace('\\eSim', '')
-            self.kicad_nghdl_lib = \
-                inst_dir + '/KiCad/share/kicad/library/eSim_Nghdl.lib'
+            self.kicad_nghdl_sym = \
+                inst_dir + '/KiCad/share/kicad/symbols/eSim_Nghdl.kicad_sym'
         else:
-            self.kicad_nghdl_lib = '/usr/share/kicad/library/eSim_Nghdl.lib'
+            self.kicad_nghdl_sym = \
+                '/usr/share/kicad/symbols/eSim_Nghdl.kicad_sym'
         self.parser = Appconfig.parser_nghdl
 
-    def createKicadLibrary(self):
+    def createKicadSymbol(self):
         xmlFound = None
         for root, dirs, files in os.walk(self.xml_loc):
             if (str(self.modelname) + '.xml') in files:
@@ -32,7 +33,7 @@ class AutoSchematic(QtWidgets.QWidget):
         if xmlFound is None:
             self.getPortInformation()
             self.createXML()
-            self.createLib()
+            self.createSym()
         elif (xmlFound == os.path.join(self.xml_loc, 'Nghdl')):
             print('Library already exists...')
             ret = QtWidgets.QMessageBox.warning(
@@ -46,8 +47,8 @@ class AutoSchematic(QtWidgets.QWidget):
                 print("Overwriting existing libraries")
                 self.getPortInformation()
                 self.createXML()
-                self.removeOldLibrary()     # Removes the exisitng library
-                self.createLib()
+                self.removeOldLibrary()     # Removes the existng library
+                self.createSym()
             else:
                 print("Exiting Nghdl")
                 quit()
@@ -56,19 +57,25 @@ class AutoSchematic(QtWidgets.QWidget):
             ret = QtWidgets.QMessageBox.critical(
                 self.parent, "Error", '''<b>A standard library already ''' +
                 '''exists with this name.</b><br/><b>Please change the ''' +
-                '''name of your vhdl file and upload it again</b>''',
+                '''name of your vhdl file and upload it again.</b>''',
                 QtWidgets.QMessageBox.Ok
             )
 
             # quit()
 
     def getPortInformation(self):
+        '''
+            getting the port information here
+        '''
         portInformation = PortInfo(self)
         portInformation.getPortInfo()
         self.portInfo = portInformation.bit_list
         self.input_length = portInformation.input_len
 
     def createXML(self):
+        '''
+            creating the XML files in eSim /library/modelParamXML/Nghdl
+        '''
         cwd = os.getcwd()
         xmlDestination = os.path.join(self.xml_loc, 'Nghdl')
         self.splitText = ""
@@ -100,8 +107,10 @@ class AutoSchematic(QtWidgets.QWidget):
         print("Leaving the directory ", xmlDestination)
         os.chdir(cwd)
 
-    # Calculates the maximum between input and output ports
     def findBlockSize(self):
+        '''
+            Calculates the maximum between input and output ports
+        '''
         ind = self.input_length
         return max(
             self.char_sum(self.portInfo[:ind]),
@@ -112,50 +121,66 @@ class AutoSchematic(QtWidgets.QWidget):
         return sum([int(x) for x in ls])
 
     def removeOldLibrary(self):
+        '''
+            removing the old library
+        '''
         cwd = os.getcwd()
         os.chdir(self.lib_loc)
         print("Changing directory to ", self.lib_loc)
-        f = open(self.kicad_nghdl_lib)
-        lines = f.readlines()
-        f.close()
+        sym_file = open(self.kicad_nghdl_sym)
+        lines = sym_file.readlines()
+        sym_file.close()
 
         output = []
         line_reading_flag = False
 
         for line in lines:
-            if line.startswith("DEF"):
-                if line.split()[1] == self.modelname:
+            if line.startswith("(symbol"):      # Eeschema template start
+                if line.split()[1] == f"\"{self.modelname}\"":
                     line_reading_flag = True
             if not line_reading_flag:
                 output.append(line)
-            if line.startswith("ENDDEF"):
+            if line.startswith("))"):           # Eeschema template end
                 line_reading_flag = False
 
-        f = open(self.kicad_nghdl_lib, 'w')
+        sym_file = open(self.kicad_nghdl_sym, 'w')
         for line in output:
-            f.write(line)
-
+            sym_file.write(line)
+        sym_file.close()
         os.chdir(cwd)
         print("Leaving directory, ", self.lib_loc)
 
-    def createLib(self):
-        self.dist_port = 100         # Distance between two ports
-        self.inc_size = 100          # Increment size of a block
+    def createSym(self):
+        self.dist_port = 2.54         # Distance between two ports (mil)
+        self.inc_size = 2.54          # Increment size of a block (mil)
         cwd = os.getcwd()
         os.chdir(self.lib_loc)
         print("Changing directory to ", self.lib_loc)
 
-        lib_file = open(self.kicad_nghdl_lib, "a")
+        # Removing ")" from "eSim_Nghdl.kicad_sym"
+        file = open(self.kicad_nghdl_sym, "r")
+        content_file = file.read()
+        new_content_file = content_file[:-1]
+        file.close()
+        file = open(self.kicad_nghdl_sym, "w")
+        file.write(new_content_file)
+        file.close()
+
+        # Appending new schematic block
+        sym_file = open(self.kicad_nghdl_sym, "a")
         line1 = self.template["start_def"]
         line1 = line1.split()
         line1 = [w.replace('comp_name', self.modelname) for w in line1]
         self.template["start_def"] = ' '.join(line1)
-        if os.stat(self.kicad_nghdl_lib).st_size == 0:
-            lib_file.write("EESchema-LIBRARY Version 2.3" + "\n\n")
-        # lib_file.write("#encoding utf-8"+ "\n"+ "#"+ "\n" +
-        # "#test_compo" + "\n"+ "#"+ "\n")
-        lib_file.write(
-            self.template["start_def"] + "\n" + self.template["U_field"]+"\n"
+
+        if os.stat(self.kicad_nghdl_sym).st_size == 0:
+            sym_file.write(
+                "(kicad_symbol_lib (version 20211014) " +
+                "(generator kicad_symbol_editor)" + "\n\n"
+            )  # Eeschema starter code
+
+        sym_file.write(
+            self.template["start_def"] + "\n" + self.template["U_field"] + "\n"
         )
 
         line3 = self.template["comp_name_field"]
@@ -163,7 +188,7 @@ class AutoSchematic(QtWidgets.QWidget):
         line3 = [w.replace('comp_name', self.modelname) for w in line3]
         self.template["comp_name_field"] = ' '.join(line3)
 
-        lib_file.write(self.template["comp_name_field"] + "\n")
+        sym_file.write(self.template["comp_name_field"] + "\n")
 
         line4 = self.template["blank_field"]
         line4_1 = line4[0]
@@ -176,18 +201,24 @@ class AutoSchematic(QtWidgets.QWidget):
         line4[1] = ' '.join(line4_2)
         self.template["blank_qoutes"] = line4
 
-        lib_file.write(
-            line4[0] + "\n" + line4[1] + "\n" +
-            self.template["start_draw"] + "\n"
-        )
+        sym_file.write(line4[0] + "\n" + line4[1] + "\n")
 
         draw_pos = self.template["draw_pos"]
         draw_pos = draw_pos.split()
-        draw_pos[4] = str(
-            int(draw_pos[4]) - self.findBlockSize() * self.inc_size)
+
+        draw_pos = \
+            [w.replace('comp_name', f"{self.modelname}_0_1") for w in draw_pos]
+        draw_pos[8] = str(
+            float(draw_pos[8]) + float(self.findBlockSize() * self.inc_size)
+        )
+        draw_pos_rec = draw_pos[8]
+
         self.template["draw_pos"] = ' '.join(draw_pos)
 
-        lib_file.write(self.template["draw_pos"]+"\n")
+        sym_file.write(
+            self.template["draw_pos"] + "\n" + self.template["start_draw"] +
+            " \"" + f"{self.modelname}_1_1\"" + "\n"
+        )
 
         input_port = self.template["input_port"]
         input_port = input_port.split()
@@ -196,50 +227,55 @@ class AutoSchematic(QtWidgets.QWidget):
         inputs = self.portInfo[0: self.input_length]
         outputs = self.portInfo[self.input_length:]
 
-        print("INPUTS AND OUTPUTS ")
-        print(inputs)
-        print(outputs)
-
         inputs = self.char_sum(inputs)
         outputs = self.char_sum(outputs)
 
-        total = inputs+outputs
+        total = inputs + outputs
 
         port_list = []
 
+        # Set input & output port
+        input_port[4] = draw_pos_rec
+        output_port[4] = draw_pos_rec
+
         for i in range(total):
             if (i < inputs):
-                input_port[1] = "in" + str(i + 1)
-                input_port[2] = str(i + 1)
-                input_port[4] = str(int(input_port[4]) - self.dist_port)
+                input_port[9] = f"\"in{str(i + 1)}\""
+                input_port[13] = f"\"{str(i + 1)}\""
+                input_port[4] = \
+                    str(float(input_port[4]) - float(self.dist_port))
                 input_list = ' '.join(input_port)
                 port_list.append(input_list)
 
             else:
-                output_port[1] = "out" + str(i - inputs + 1)
-                output_port[2] = str(i + 1)
-                output_port[4] = str(int(output_port[4]) - self.dist_port)
+                output_port[9] = f"\"out{str(i - inputs + 1)}\""
+                output_port[13] = f"\"{str(i + 1)}\""
+                output_port[4] = \
+                    str(float(output_port[4]) - float(self.dist_port))
                 output_list = ' '.join(output_port)
                 port_list.append(output_list)
 
         for ports in port_list:
-            lib_file.write(ports+"\n")
-        lib_file.write(
-            self.template["end_draw"] + "\n" +
-            self.template["end_def"] + "\n\n\n"
+            sym_file.write(ports + "\n")
+        sym_file.write(
+            self.template["end_draw"] + "\n\n" + ")"
         )
-
+        sym_file.close()
         os.chdir(cwd)
+
         print('Leaving directory, ', self.lib_loc)
         QtWidgets.QMessageBox.information(
-            self.parent, "Library added",
-            '''Library details for this model is added to the ''' +
-            '''<b>eSim_Nghdl.lib</b> in the KiCad shared directory''',
+            self.parent, "Symbol Added",
+            '''Symbol details for this model is added to the \'''' +
+            '''<b>eSim_Nghdl.kicad_sym</b>\' in the KiCad shared directory.''',
             QtWidgets.QMessageBox.Ok
         )
 
 
 class PortInfo:
+    '''
+        The class contains port information
+    '''
     def __init__(self, model):
         self.modelname = model.modelname
         self.model_loc = os.path.join(
