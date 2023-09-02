@@ -129,6 +129,7 @@ class AutoSchematic(QtWidgets.QWidget):
         print("Changing directory to ", self.lib_loc)
         sym_file = open(self.kicad_nghdl_sym)
         lines = sym_file.readlines()
+        lines = lines[0:-2]
         sym_file.close()
 
         output = []
@@ -160,7 +161,7 @@ class AutoSchematic(QtWidgets.QWidget):
         # Removing ")" from "eSim_Nghdl.kicad_sym"
         file = open(self.kicad_nghdl_sym, "r")
         content_file = file.read()
-        new_content_file = content_file[:-1]
+        new_content_file = content_file[:-2]
         file.close()
         file = open(self.kicad_nghdl_sym, "w")
         file.write(new_content_file)
