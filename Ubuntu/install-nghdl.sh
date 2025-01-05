@@ -15,13 +15,12 @@
 #        AUTHOR: Fahim Khan, Rahul Paknikar, Sumanto Kar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Tuesday 02 February 2022 01:35
+#      REVISION: Tuesday 31 December 2024 21:38
 #==========================================================
 
 nghdl="nghdl-simulator"
-ghdl="ghdl-0.37"
+ghdl="ghdl-4.1.0"
 verilator="verilator-4.210"
-llvm_version="9"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -49,9 +48,13 @@ function installDependency
     
     echo "Installing GNAT..........................................."
     sudo apt install -y gnat
+    
+    # It will remove older versions of llvm if any 
+    echo "Removing older LLVM........................................"
+    sudo apt remove -y llvm llvm-dev
 
-	echo "Installing LLVM-${llvm_version}........................................"
-    sudo apt install -y llvm-${llvm_version} llvm-${llvm_version}-dev
+    echo "Installing LLVM........................................"
+    sudo apt install -y llvm llvm-dev
 
     echo "Installing Clang.........................................."
     sudo apt install -y clang
@@ -86,20 +89,21 @@ function installDependency
 }
 
 
+
 function installGHDL
 {   
 
     echo "Installing $ghdl LLVM................................."
-    tar -xJf $ghdl.tar.xz
+    tar xvf $ghdl.tar.gz
     echo "$ghdl successfully extracted"
     echo "Changing directory to $ghdl installation"
     cd $ghdl/
     echo "Configuring $ghdl build as per requirements"
     chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    ./configure --with-llvm-config=/usr/bin/llvm-config-${llvm_version}
+    ./configure --with-llvm-config=/usr/bin/llvm-config
     echo "Building the install file for $ghdl LLVM"
-    make
+    make -j$(nproc)
     sudo make install
 
     # set +e 		# Temporary disable exit on error
@@ -121,7 +125,7 @@ function installVerilator
 {   
     
     echo "Installing $verilator......................."
-    tar -xJf $verilator.tar.xz
+    tar -xvf $verilator.tar.xz
     echo "$verilator successfully extracted"
     echo "Changing directory to $verilator installation"
     cd $verilator
@@ -271,6 +275,7 @@ if [ $option == "--install" ];then
         echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
         exit 0
     fi
+   
     installGHDL
     installVerilator
     installNGHDL
