@@ -15,12 +15,13 @@
 #        AUTHOR: Fahim Khan, Rahul Paknikar, Sumanto Kar
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Tuesday 31 December 2024 21:38
+#      REVISION: Tuesday 02 February 2022 01:35
 #==========================================================
 
 nghdl="nghdl-simulator"
-ghdl="ghdl-4.1.0"
+ghdl="ghdl-gha-ubuntu-22.04-llvm"
 verilator="verilator-4.210"
+llvm_version="15"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -48,13 +49,9 @@ function installDependency
     
     echo "Installing GNAT..........................................."
     sudo apt install -y gnat
-    
-    # It will remove older versions of llvm if any 
-    echo "Removing older LLVM........................................"
-    sudo apt remove -y llvm llvm-dev
 
-    echo "Installing LLVM........................................"
-    sudo apt install -y llvm llvm-dev
+    echo "Installing LLVM-${llvm_version}........................................"
+    sudo apt install -y llvm-${llvm_version} llvm-${llvm_version}-dev
 
     echo "Installing Clang.........................................."
     sudo apt install -y clang
@@ -89,22 +86,39 @@ function installDependency
 }
 
 
-
 function installGHDL
 {   
+    
+    # Create a directory for the version
+    mkdir -p "$ghdl"
+
+    # Navigate to the new directory
+    cd "$ghdl" || exit
+
+    echo "Downloading $ghdl..."
+    wget https://github.com/ghdl/ghdl/releases/download/v4.1.0/$ghdl.tgz
+
+    if [ ! -f "$ghdl.tgz" ]; then
+        echo "Error: Could not download $ghdl.tgz"
+        exit 1
+    fi
 
     echo "Installing $ghdl LLVM................................."
-    tar xvf $ghdl.tar.gz
+    tar -xzf $ghdl.tgz
+    #tar -xJf $ghdl.tar.xz
     echo "$ghdl successfully extracted"
     echo "Changing directory to $ghdl installation"
-    cd $ghdl/
+    #cd $ghdl/
     echo "Configuring $ghdl build as per requirements"
-    chmod +x configure
+    #chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    ./configure --with-llvm-config=/usr/bin/llvm-config
+    #./configure --with-llvm-config=/usr/bin/llvm-config-${llvm_version}
     echo "Building the install file for $ghdl LLVM"
-    make -j$(nproc)
-    sudo make install
+    #make
+    #sudo make install
+    sudo cp bin/* /usr/local/bin/       # Copy binaries to /usr/local/bin
+    sudo cp -r include/* /usr/local/include/  # Copy header files to /usr/local/include
+    sudo cp -r lib/* /usr/local/lib/      # Copy library files to /usr/local/lib
 
     # set +e 		# Temporary disable exit on error
     # trap "" ERR # Do not trap on error of any command
@@ -125,8 +139,9 @@ function installVerilator
 {   
     
     echo "Installing $verilator......................."
-    tar -xvf $verilator.tar.xz
+    tar -xJf $verilator.tar.xz
     echo "$verilator successfully extracted"
+    sed -i '/#include <algorithm>/a #include <memory>' ./verilator-4.210/src/V3Const.cpp
     echo "Changing directory to $verilator installation"
     cd $verilator
     echo "Configuring $verilator build as per requirements"
@@ -275,7 +290,6 @@ if [ $option == "--install" ];then
         echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
         exit 0
     fi
-   
     installGHDL
     installVerilator
     installNGHDL
