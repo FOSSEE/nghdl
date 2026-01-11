@@ -1063,7 +1063,8 @@ class ModelGeneration:
         self.digital_home = self.parser.get('NGHDL', 'DIGITAL_MODEL')
         self.digital_home = os.path.join(self.digital_home, "ghdl")
 
-        start_server = open('start_server.sh', 'w')
+        # Force Unix line endings (LF) to ensure compatibility with bash on WSL/Linux
+        start_server = open('start_server.sh', 'w', newline='\n')
 
         start_server.write("#!/bin/bash\n\n")
         start_server.write(
@@ -1114,7 +1115,8 @@ class ModelGeneration:
 
         # ########### Creating and writing in sock_pkg_create.sh ########### #
 
-        sock_pkg_create = open('sock_pkg_create.sh', 'w')
+        # Force Unix line endings (LF) to ensure compatibility with bash on WSL/Linux
+        sock_pkg_create = open('sock_pkg_create.sh', 'w', newline='\n')
 
         sock_pkg_create.write("#!/bin/bash\n\n")
         sock_pkg_create.write(
