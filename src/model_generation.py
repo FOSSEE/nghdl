@@ -1063,7 +1063,8 @@ class ModelGeneration:
         self.digital_home = self.parser.get('NGHDL', 'DIGITAL_MODEL')
         self.digital_home = os.path.join(self.digital_home, "ghdl")
 
-        start_server = open('start_server.sh', 'w')
+        # Force Unix line endings (LF) to ensure compatibility with bash on WSL/Linux
+        start_server = open('start_server.sh', 'w', newline='\n')
 
         start_server.write("#!/bin/bash\n\n")
         start_server.write(
@@ -1082,7 +1083,10 @@ class ModelGeneration:
 
         start_server.write("chmod 775 sock_pkg_create.sh &&\n")
         start_server.write("./sock_pkg_create.sh $1 $2 &&\n")
-        start_server.write("ghdl -i *.vhdl &&\n")
+        # Compile VHDL files in correct dependency order to avoid "sock_pkg has not been analyzed" errors
+        start_server.write("ghdl -a sock_pkg.vhdl &&\n")
+        start_server.write("ghdl -a Utility_Package.vhdl &&\n")
+        start_server.write("ghdl -a Vhpi_Package.vhdl &&\n")
         start_server.write("ghdl -a *.vhdl &&\n")
         start_server.write("ghdl -a " + self.fname + " &&\n")
         start_server.write(
@@ -1114,7 +1118,8 @@ class ModelGeneration:
 
         # ########### Creating and writing in sock_pkg_create.sh ########### #
 
-        sock_pkg_create = open('sock_pkg_create.sh', 'w')
+        # Force Unix line endings (LF) to ensure compatibility with bash on WSL/Linux
+        sock_pkg_create = open('sock_pkg_create.sh', 'w', newline='\n')
 
         sock_pkg_create.write("#!/bin/bash\n\n")
         sock_pkg_create.write(
