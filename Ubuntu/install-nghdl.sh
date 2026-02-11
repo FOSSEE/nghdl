@@ -13,6 +13,8 @@
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar, Sumanto Kar
+#       MENTORS: Sumanto Kar, Varad Patil, Shanti Priya K, Aditya M
+#       INTERNS: Akshay Rukade, Haripriyan R
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
 #      REVISION: Tuesday 31 December 2024 21:38
