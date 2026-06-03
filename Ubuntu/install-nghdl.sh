@@ -13,6 +13,8 @@
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Fahim Khan, Rahul Paknikar, Sumanto Kar
+#       MENTORS: Sumanto Kar, Varad Patil, Shanti Priya K, Aditya M
+#       INTERNS: Akshay Rukade, Haripriyan R
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
 #      REVISION: Tuesday 31 December 2024 21:38
@@ -85,6 +87,22 @@ function installDependency
         sudo yum install make autoconf flex bison which -y
         sudo yum groupinstall 'Development Tools'  -y
     fi
+
+    echo "Installing dependencies for ngspice (with OSDI)..........."
+
+    sudo apt update
+    sudo apt install -y \
+        build-essential \
+        autoconf \
+        automake \
+        libtool \
+        flex \
+        bison \
+        libreadline-dev \
+        libncurses5-dev \
+        libxaw7 \
+        libxaw7-dev \
+        libx11-dev
 
 }
 
@@ -172,7 +190,13 @@ function installNGHDL
     sleep 2
     
     chmod +x ../configure
-    ../configure --enable-xspice --disable-debug  --prefix=$HOME/$nghdl/install_dir/ --exec-prefix=$HOME/$nghdl/install_dir/
+    ../configure \
+        --enable-osdi \
+        --enable-xspice \
+        --enable-openmp \
+        --disable-debug \
+        --prefix=$HOME/$nghdl/install_dir \
+        --exec-prefix=$HOME/$nghdl/install_dir
             
     # Adding patch to Ngspice base code
     # cp $src_dir/src/outitf.c $HOME/$nghdl/src/frontend
