@@ -1,0 +1,62 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DH_VERBOSE = 1
+
+%:
+	dh $@
+
+# Skip dh_usrlocal because we are installing files in /usr/local/bin
+override_dh_usrlocal:
+	@echo "Skipping dh_usrlocal - installing files directly in /usr/local"
+
+override_dh_dwz:
+	@echo "Skipping dwz compression"
+
+override_dh_auto_configure:
+	@echo "Manual build in progress..."
+
+override_dh_auto_build:
+	# GHDL
+	rm -rf ghdl-4.1.0
+	tar xzf ghdl-4.1.0.tar.gz
+	cd ghdl-4.1.0 && ./configure --with-llvm-config=/usr/bin/llvm-config --prefix=/usr
+	cd ghdl-4.1.0 && $(MAKE) -j2
+
+	# Verilator
+	rm -rf verilator-4.210
+	tar xJf verilator-4.210.tar.xz
+	cd verilator-4.210 && ./configure --prefix=/usr
+	cd verilator-4.210 && $(MAKE) -j2
+
+	# NGHDL
+	rm -rf nghdl
+	tar xJf nghdl-simulator-source.tar.xz
+	mv nghdl-simulator-source nghdl
+	cd nghdl && mkdir -p release install_dir
+	cd nghdl/release && ../configure --enable-xspice --disable-debug \
+		--prefix=/usr/local --exec-prefix=/usr/local
+	cd nghdl/release && $(MAKE) -j2
+
+override_dh_auto_install:
+	@echo "=== Installing GHDL ==="
+	cd ghdl-4.1.0 && $(MAKE) install DESTDIR=$(CURDIR)/debian/nghdl
+
+	@echo "=== Installing Verilator ==="
+	cd verilator-4.210 && $(MAKE) install DESTDIR=$(CURDIR)/debian/nghdl
+
+	@echo "=== Installing NGHDL ==="
+	cd nghdl/release && $(MAKE) install DESTDIR=$(CURDIR)/debian/nghdl
+
+	# Copy full NGHDL source tree to /usr/local/share
+	mkdir -p $(CURDIR)/debian/nghdl/usr/local/share/nghdl
+	cp -a nghdl $(CURDIR)/debian/nghdl/usr/local/share/nghdl/
+
+	# Install binaries
+	install -Dm755 src/ngspice_ghdl.py $(CURDIR)/debian/nghdl/usr/local/bin/nghdl
+	install -Dm755 nghdl/install_dir/bin/ngspice $(CURDIR)/debian/nghdl/usr/local/bin/ngspice 2>/dev/null || \
+	install -Dm755 nghdl/release/src/ngspice $(CURDIR)/debian/nghdl/usr/local/bin/ngspice
+
+	# Install Python modules
+	mkdir -p $(CURDIR)/debian/nghdl/usr/lib/python3/dist-packages
+	install -Dm644 src/*.py $(CURDIR)/debian/nghdl/usr/lib/python3/dist-packages/

@@ -1,0 +1,2 @@
+# link options for shared libraries
+-Wl,-u,ghdl_main

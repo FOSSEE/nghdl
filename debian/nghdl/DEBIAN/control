@@ -1,0 +1,12 @@
+Package: nghdl
+Version: 1.0.0-1
+Architecture: amd64
+Maintainer: Sumanto Kar <sumantokar@iitb.ac.in>
+Installed-Size: 329362
+Depends: libc6 (>= 2.38), libfftw3-double3 (>= 3.3.10), libfontconfig1 (>= 2.12.6), libgcc-s1 (>= 4.2), libgnat-13 (>= 13.3.0), libllvm18, libstdc++6 (>= 13.1), libx11-6, libxaw7 (>= 2:1.0.14), libxft2 (>> 2.1.1), libxt6t64
+Section: electronics
+Priority: optional
+Homepage: https://esim.fossee.in
+Description: NGHDL Simulator (Ngspice + GHDL + Verilator)
+ NGHDL integrates Ngspice (with XSPICE), GHDL and Verilator for mixed-signal
+ and digital simulation, primarily used with eSim.

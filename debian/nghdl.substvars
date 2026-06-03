@@ -1,0 +1,4 @@
+perl:Depends=perl:any
+shlibs:Depends=libc6 (>= 2.38), libfftw3-double3 (>= 3.3.10), libfontconfig1 (>= 2.12.6), libgcc-s1 (>= 4.2), libgnat-13 (>= 13.3.0), libllvm18, libstdc++6 (>= 13.1), libx11-6, libxaw7 (>= 2:1.0.14), libxft2 (>> 2.1.1), libxt6t64
+misc:Depends=
+misc:Pre-Depends=

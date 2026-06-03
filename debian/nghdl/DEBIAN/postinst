@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        echo "=== NGHDL Post Installation ==="
+
+        mkdir -p /etc/nghdl
+
+        cat > /etc/nghdl/config.ini << 'CONFIG_EOF'
+[NGHDL]
+NGHDL_HOME = /usr/local/share/nghdl/nghdl
+DIGITAL_MODEL = /usr/local/share/nghdl/nghdl/src/xspice/icm
+RELEASE = /usr/local/share/nghdl/nghdl/release
+
+[SRC]
+SRC_HOME = /usr/local/share/nghdl/nghdl
+LICENSE = /usr/share/doc/nghdl/LICENSE
+CONFIG_EOF
+
+        chmod +x /usr/bin/nghdl /usr/bin/ngspice 2>/dev/null || true
+
+        echo "NGHDL has been installed successfully in /usr/local/share/nghdl"
+    ;;
+esac
+
+exit 0

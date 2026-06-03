@@ -1,0 +1,6 @@
+nghdl (1.0.0-1) unstable; urgency=medium
+
+  * Initial release of NGHDL with proper Debian packaging
+  * Includes GHDL 4.1.0 + Verilator 4.210 + NGHDL
+
+ -- Sumanto Kar <your.email@example.com>  Sat, 23 May 2026 16:00:00 +0530
