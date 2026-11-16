@@ -64,9 +64,12 @@ function installDependency
     echo "Installing Zlib1g-dev....................................."
     sudo apt install -y zlib1g-dev
   
-    # Specific dependency for canberra-gtk modules
     echo "Installing Gtk Canberra modules..........................."
-    sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
+    sudo apt install -y libcanberra-gtk3-module
+    # Install GTK2 module only if an available candidate exists
+    if apt-cache policy libcanberra-gtk-module | grep -q 'Candidate: [^()]'; then
+    sudo apt install -y libcanberra-gtk-module
+    fi
 
     # Specific dependency for nvidia graphic cards
     echo "Installing graphics dependency for Ngspice source build"
