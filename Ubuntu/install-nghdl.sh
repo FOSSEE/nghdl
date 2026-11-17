@@ -51,12 +51,18 @@ function installDependency
     echo "Installing GNAT..........................................."
     sudo apt install -y gnat
     
-    # It will remove older versions of llvm if any 
-    echo "Removing older LLVM........................................"
-    sudo apt remove -y llvm llvm-dev
-
-    echo "Installing LLVM........................................"
-    sudo apt install -y llvm llvm-dev
+    source /etc/os-release
+    # Ubuntu 25.04 provides LLVM 20, which is incompatible with GHDL 4.1.0
+    if [[ "$VERSION_ID" == "25.04" ]]; then
+        echo "Installing LLVM 18..."
+        sudo apt install -y llvm-18 llvm-18-dev
+        LLVM_CONFIG=/usr/bin/llvm-config-18
+    else
+        echo "Installing LLVM..."
+        sudo apt remove -y llvm llvm-dev
+        sudo apt install -y llvm llvm-dev
+        LLVM_CONFIG=/usr/bin/llvm-config
+    fi
 
     echo "Installing Clang.........................................."
     sudo apt install -y clang
@@ -122,7 +128,7 @@ function installGHDL
     echo "Configuring $ghdl build as per requirements"
     chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    ./configure --with-llvm-config=/usr/bin/llvm-config
+    ./configure --with-llvm-config="$LLVM_CONFIG"
     echo "Building the install file for $ghdl LLVM"
     make -j$(nproc)
     sudo make install
