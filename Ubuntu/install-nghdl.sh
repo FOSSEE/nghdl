@@ -69,6 +69,10 @@ function installDependency
     sudo apt install -y llvm-${llvm_version} llvm-${llvm_version}-dev
 
     echo "Installing Clang ${llvm_version}........................................"
+    # NOTE (verified on Ubuntu 25.04): clang-${llvm_version} already ships the
+    # versioned C++ driver as /usr/bin/clang++-${llvm_version}; no extra package
+    # is needed. The unversioned /usr/bin/clang++ is LLVM 20's, so installGHDL()
+    # must pass CXX=clang++-${llvm_version} (see there).
     sudo apt install -y clang-${llvm_version}
 
     echo "Installing Zlib1g-dev....................................."
@@ -140,7 +144,9 @@ function installGHDL
     # belongs to the system default LLVM, 20.x on Ubuntu 25.04).
     ./configure --with-llvm-config=/usr/bin/llvm-config-${llvm_version}
     echo "Building the install file for $ghdl LLVM"
-    make -j$(nproc)
+    # FIX (verified on Ubuntu 25.04): build with the matching versioned C++
+    # compiler. The unversioned clang++ is LLVM 20's and would mix toolchains.
+    make -j$(nproc) CXX=clang++-${llvm_version}
     sudo make install
 
     # set +e            # Temporary disable exit on error
