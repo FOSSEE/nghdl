@@ -3,7 +3,7 @@
 #          FILE: install-nghdl.sh
 # 
 #         USAGE: ./install-nghdl.sh --install
-#                 			OR
+#                                       OR
 #                ./install-nghdl.sh --uninstall
 # 
 #   DESCRIPTION: Installation script for Ngspice, GHDL 
@@ -23,6 +23,12 @@
 nghdl="nghdl-simulator"
 ghdl="ghdl-4.1.0"
 verilator="verilator-4.210"
+# FIX: GHDL 4.1.0 must be built against LLVM 18 on Ubuntu 25.04 (the
+# default 'llvm' package there is LLVM 20.x, which breaks the GHDL
+# LLVM backend - see ghdl/ghdl#2711). Keep the version in one place:
+# installDependency() installs llvm-${llvm_version} and the uninstall
+# path purges it.
+llvm_version="18"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
@@ -55,18 +61,31 @@ function installDependency
     echo "Removing older LLVM........................................"
     sudo apt remove -y llvm llvm-dev
 
-    echo "Installing LLVM........................................"
-    sudo apt install -y llvm llvm-dev
+    echo "Installing LLVM ${llvm_version} (GHDL 4.1.0 compatible)............"
+    # FIX (Ubuntu 25.04): the unversioned 'llvm llvm-dev' installs
+    # LLVM 20.x on Ubuntu 25.04, whose backend API breaks the GHDL
+    # 4.1.0 LLVM build. Pin the versioned packages instead; llvm-18 is
+    # available in the Ubuntu 25.04 repositories.
+    sudo apt install -y llvm-${llvm_version} llvm-${llvm_version}-dev
 
-    echo "Installing Clang.........................................."
-    sudo apt install -y clang
+    echo "Installing Clang ${llvm_version}........................................"
+    # NOTE (verified on Ubuntu 25.04): clang-${llvm_version} already ships the
+    # versioned C++ driver as /usr/bin/clang++-${llvm_version}; no extra package
+    # is needed. The unversioned /usr/bin/clang++ is LLVM 20's, so installGHDL()
+    # must pass CXX=clang++-${llvm_version} (see there).
+    sudo apt install -y clang-${llvm_version}
 
     echo "Installing Zlib1g-dev....................................."
     sudo apt install -y zlib1g-dev
   
     # Specific dependency for canberra-gtk modules
-    echo "Installing Gtk Canberra modules..........................."
-    sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
+    # FIX (Ubuntu 25.04): 'libcanberra-gtk-module' was removed from the
+    # Ubuntu 25.04 archive (Launchpad bug #2111252 - "Package
+    # 'libcanberra-gtk-module' has no installation candidate"), so this
+    # call aborted the whole NGHDL install under 'set -e'. The GTK3
+    # module is still available and is the one actually used.
+    echo "Installing Gtk Canberra module (GTK3)......................."
+    sudo apt install -y libcanberra-gtk3-module
 
     # Specific dependency for nvidia graphic cards
     echo "Installing graphics dependency for Ngspice source build"
@@ -119,18 +138,24 @@ function installGHDL
     echo "Configuring $ghdl build as per requirements"
     chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    ./configure --with-llvm-config=/usr/bin/llvm-config
+    # FIX (Ubuntu 25.04): point GHDL at the versioned llvm-config that
+    # matches the LLVM installed above (llvm-18 provides
+    # /usr/bin/llvm-config-18; the unversioned /usr/bin/llvm-config
+    # belongs to the system default LLVM, 20.x on Ubuntu 25.04).
+    ./configure --with-llvm-config=/usr/bin/llvm-config-${llvm_version}
     echo "Building the install file for $ghdl LLVM"
-    make -j$(nproc)
+    # FIX (verified on Ubuntu 25.04): build with the matching versioned C++
+    # compiler. The unversioned clang++ is LLVM 20's and would mix toolchains.
+    make -j$(nproc) CXX=clang++-${llvm_version}
     sudo make install
 
-    # set +e 		# Temporary disable exit on error
+    # set +e            # Temporary disable exit on error
     # trap "" ERR # Do not trap on error of any command
     
     # echo "Removing unused part of $ghdl LLVM"
     # sudo rm -rf ../$ghdl
     
-    # set -e 		# Re-enable exit on error
+    # set -e            # Re-enable exit on error
     # trap error_exit ERR
 
     echo "GHDL installed successfully"
@@ -207,7 +232,7 @@ function installNGHDL
     # Make it executable
     sudo chmod 755 $HOME/$nghdl/install_dir/bin/ngspice
     
-    set +e 		# Temporary disable exit on error
+    set +e              # Temporary disable exit on error
     trap "" ERR # Do not trap on error of any command
 
     echo "Removing previously installed Ngspice (if any)"    
@@ -219,7 +244,7 @@ function installNGHDL
     # Add symlink to the path
     sudo rm /usr/bin/ngspice
 
-    set -e 		# Re-enable exit on error
+    set -e              # Re-enable exit on error
     trap error_exit ERR
 
     sudo ln -sf $HOME/$nghdl/install_dir/bin/ngspice /usr/bin/ngspice
@@ -325,7 +350,10 @@ elif [ $option == "--uninstall" ];then
     echo "Removing libxaw7-dev..............."
     sudo apt purge -y libxaw7-dev
     echo "Removing LLVM......................"
-    sudo apt-get purge -y llvm-${llvm_version} llvm-${llvm_version}-dev
+    # FIX: ${llvm_version} was never defined before, so this purged
+    # empty package names; it now removes the llvm-18 packages that
+    # installDependency() actually installs.
+    sudo apt-get purge -y llvm-${llvm_version} llvm-${llvm_version}-dev clang-${llvm_version}
     echo "Removing GNAT......................"
     sudo apt purge -y gnat
 else 
