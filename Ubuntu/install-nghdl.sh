@@ -274,7 +274,7 @@ function createSoftLink
     sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
     echo "Added softlink for NGHDL....."
 
-    cd $pwd
+    cd "$src_dir"
 
 }
 
