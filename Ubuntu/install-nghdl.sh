@@ -306,7 +306,7 @@ if [ $option == "--install" ];then
     installDependency
     if [ $? -ne 0 ];then
         echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
-        exit 0
+        exit 1
     fi
    
     installGHDL
