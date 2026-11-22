@@ -17,7 +17,7 @@
 #       INTERNS: Akshay Rukade, Haripriyan R
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Tuesday 31 December 2024 21:38
+#      REVISION: Sunday 22 November 2026 16:16
 #==========================================================
 
 nghdl="nghdl-simulator"
@@ -43,6 +43,8 @@ error_exit() {
 
 function installDependency
 {
+
+    sudo apt update
 
     echo "Installing dependencies for $ghdl LLVM................"
 
@@ -91,7 +93,6 @@ function installDependency
 
     echo "Installing dependencies for ngspice (with OSDI)..........."
 
-    sudo apt update
     sudo apt install -y \
         build-essential \
         autoconf \
@@ -206,7 +207,7 @@ function installNGHDL
     make install
 
     # Make it executable
-    sudo chmod 755 $HOME/$nghdl/install_dir/bin/ngspice
+    sudo chmod 755 "$HOME/$nghdl/install_dir/bin/ngspice"
     
     set +e 		# Temporary disable exit on error
     trap "" ERR # Do not trap on error of any command
@@ -234,19 +235,18 @@ function createConfigFile
 
     # Creating config.ini file and adding configuration information
     # Check if config file is present
-    if [ -d $config_dir ];then
-        rm $config_dir/$config_file && touch $config_dir/$config_file
-    else
-        mkdir $config_dir && touch $config_dir/$config_file
-    fi
+    mkdir -p "$config_dir"
+    rm -f "$config_dir/$config_file"
 
-    echo "[NGHDL]" >> $config_dir/$config_file
-    echo "NGHDL_HOME = $HOME/$nghdl" >> $config_dir/$config_file
-    echo "DIGITAL_MODEL = %(NGHDL_HOME)s/src/xspice/icm" >> $config_dir/$config_file
-    echo "RELEASE = %(NGHDL_HOME)s/release" >> $config_dir/$config_file
-    echo "[SRC]" >> $config_dir/$config_file
-    echo "SRC_HOME = $src_dir" >> $config_dir/$config_file
-    echo "LICENSE = %(SRC_HOME)s/LICENSE" >> $config_dir/$config_file
+    {
+        echo "[NGHDL]"
+        echo "NGHDL_HOME = $HOME/$nghdl"
+        echo "DIGITAL_MODEL = %(NGHDL_HOME)s/src/xspice/icm"
+        echo "RELEASE = %(NGHDL_HOME)s/release"
+        echo "[SRC]"
+        echo "SRC_HOME = $src_dir"
+        echo "LICENSE = %(SRC_HOME)s/LICENSE"
+    } > "$config_dir/$config_file"
 
 }
 
@@ -282,6 +282,7 @@ if [ "$#" -eq 1 ];then
 else
     echo "USAGE : "
     echo "./install-nghdl.sh --install"
+    echo "./install-nghdl.sh --uninstall"
     exit 1;
 fi
 
@@ -349,4 +350,5 @@ else
     echo "Please select the proper operation."
     echo "--install"
     echo "--uninstall"
+    exit 1
 fi
