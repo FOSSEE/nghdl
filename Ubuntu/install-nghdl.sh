@@ -26,6 +26,7 @@ verilator="verilator-4.210"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
+source /etc/os-release
 
 # Will be used to take backup of any file
 sysdate="$(date)"
@@ -51,7 +52,6 @@ function installDependency
     echo "Installing GNAT..........................................."
     sudo apt install -y gnat
     
-    source /etc/os-release
     # Ubuntu 25.04 provides LLVM 20, which is incompatible with GHDL 4.1.0
     if [[ "$VERSION_ID" == "25.04" ]]; then
         echo "Installing LLVM 18..."
@@ -286,7 +286,7 @@ else
 fi
 
 ## Checking flags
-if [ $option == "--install" ];then
+if [[ "$option" == "--install" ]];then
     
     set -e  # Set exit option immediately on error
     set -E  # inherit ERR trap by shell functions
@@ -302,29 +302,50 @@ if [ $option == "--install" ];then
     createConfigFile
     createSoftLink
 
-elif [ $option == "--uninstall" ];then
-    sudo rm -rf $HOME/$nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
+elif [[ "$option" == "--uninstall" ]]; then
 
-    echo "Removing GHDL......................"
-    cd $ghdl/
-    sudo make uninstall
-    cd ../
-    sudo rm -rf $ghdl/
-    # sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
+    echo "Removing NGHDL..."
+    sudo rm -rf "$HOME/$nghdl" "$HOME/.nghdl"
+    sudo rm -f /usr/share/kicad/library/eSim_Nghdl.lib
+    sudo rm -f /usr/local/bin/nghdl /usr/bin/ngspice
 
-    echo "Removing Verilator................."
-    cd $verilator/
-    sudo make uninstall
-    cd ../
-    sudo rm -rf $verilator/
+    echo -n "Do you also want to remove system-wide GHDL, Verilator and their dependencies? (y/n): "
+    read -r removeSystem
 
-    echo "Removing libxaw7-dev..............."
-    sudo apt purge -y libxaw7-dev
-    echo "Removing LLVM......................"
-    sudo apt-get purge -y llvm-${llvm_version} llvm-${llvm_version}-dev
-    echo "Removing GNAT......................"
-    sudo apt purge -y gnat
-else 
+    if [[ "$removeSystem" == "y" || "$removeSystem" == "Y" ]]; then
+
+        echo "Removing GHDL..."
+        cd "$ghdl"
+        sudo make uninstall
+        cd ..
+
+        echo "Removing Verilator..."
+        cd "$verilator"
+        sudo make uninstall
+        cd ..
+
+        sudo rm -rf "$ghdl" "$verilator"
+
+        echo "Removing libxaw7-dev..."
+        sudo apt purge -y libxaw7-dev
+
+        echo "Removing LLVM..."
+        if [[ "$VERSION_ID" == "25.04" ]]; then
+            sudo apt-get purge -y llvm-18 llvm-18-dev
+        else
+            sudo apt-get purge -y llvm llvm-dev
+        fi
+
+        echo "Removing GNAT..."
+        sudo apt purge -y gnat
+
+    else
+        echo "Keeping system-wide GHDL, Verilator, LLVM, GNAT and libxaw7-dev."
+    fi
+
+    echo "NGHDL uninstalled successfully."
+
+else
     echo "Please select the proper operation."
     echo "--install"
     echo "--uninstall"
