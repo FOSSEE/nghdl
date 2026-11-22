@@ -296,11 +296,6 @@ if [ $option == "--install" ];then
     
     #Calling functions
     installDependency
-    if [ $? -ne 0 ];then
-        echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
-        exit 1
-    fi
-   
     installGHDL
     installVerilator
     installNGHDL
