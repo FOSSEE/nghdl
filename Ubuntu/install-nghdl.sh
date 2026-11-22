@@ -74,7 +74,7 @@ function installDependency
     sudo apt install -y libcanberra-gtk3-module
     # Install GTK2 module only if an available candidate exists
     if apt-cache policy libcanberra-gtk-module | grep -q 'Candidate: [^()]'; then
-    sudo apt install -y libcanberra-gtk-module
+        sudo apt install -y libcanberra-gtk-module
     fi
 
     # Specific dependency for nvidia graphic cards
@@ -87,15 +87,7 @@ function installDependency
 
 
     echo "Installing dependencies for $verilator...................."
-    if [[ -n "$(which apt 2> /dev/null)" ]]
-    then
-    # Ubuntu
-        sudo apt install -y make autoconf g++ flex bison
-    else [[ -n "$(which yum 2> /dev/null)" ]]
-    # Ubuntu
-        sudo yum install make autoconf flex bison which -y
-        sudo yum groupinstall 'Development Tools'  -y
-    fi
+    sudo apt install -y make autoconf g++ flex bison
 
     echo "Installing dependencies for ngspice (with OSDI)..........."
 
