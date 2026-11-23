@@ -17,7 +17,7 @@
 #       INTERNS: Akshay Rukade, Haripriyan R
 #  ORGANIZATION: eSim, FOSSEE group at IIT Bombay
 #       CREATED: Tuesday 02 December 2014 17:01
-#      REVISION: Tuesday 31 December 2024 21:38
+#      REVISION: Sunday 22 November 2026 16:16
 #==========================================================
 
 nghdl="nghdl-simulator"
@@ -26,6 +26,7 @@ verilator="verilator-4.210"
 config_dir="$HOME/.nghdl"
 config_file="config.ini"
 src_dir=`pwd`
+source /etc/os-release
 
 # Will be used to take backup of any file
 sysdate="$(date)"
@@ -43,6 +44,8 @@ error_exit() {
 function installDependency
 {
 
+    sudo apt update
+
     echo "Installing dependencies for $ghdl LLVM................"
 
     echo "Installing Make..........................................."
@@ -51,12 +54,17 @@ function installDependency
     echo "Installing GNAT..........................................."
     sudo apt install -y gnat
     
-    # It will remove older versions of llvm if any 
-    echo "Removing older LLVM........................................"
-    sudo apt remove -y llvm llvm-dev
-
-    echo "Installing LLVM........................................"
-    sudo apt install -y llvm llvm-dev
+    # Ubuntu 25.04 provides LLVM 20, which is incompatible with GHDL 4.1.0
+    if [[ "$VERSION_ID" == "25.04" ]]; then
+        echo "Installing LLVM 18..."
+        sudo apt install -y llvm-18 llvm-18-dev
+        LLVM_CONFIG=/usr/bin/llvm-config-18
+    else
+        echo "Installing LLVM..."
+        sudo apt remove -y llvm llvm-dev
+        sudo apt install -y llvm llvm-dev
+        LLVM_CONFIG=/usr/bin/llvm-config
+    fi
 
     echo "Installing Clang.........................................."
     sudo apt install -y clang
@@ -64,9 +72,12 @@ function installDependency
     echo "Installing Zlib1g-dev....................................."
     sudo apt install -y zlib1g-dev
   
-    # Specific dependency for canberra-gtk modules
     echo "Installing Gtk Canberra modules..........................."
-    sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
+    sudo apt install -y libcanberra-gtk3-module
+    # Install GTK2 module only if an available candidate exists
+    if apt-cache policy libcanberra-gtk-module | grep -q 'Candidate: [^()]'; then
+        sudo apt install -y libcanberra-gtk-module
+    fi
 
     # Specific dependency for nvidia graphic cards
     echo "Installing graphics dependency for Ngspice source build"
@@ -78,19 +89,10 @@ function installDependency
 
 
     echo "Installing dependencies for $verilator...................."
-    if [[ -n "$(which apt 2> /dev/null)" ]]
-    then
-    # Ubuntu
-        sudo apt install -y make autoconf g++ flex bison
-    else [[ -n "$(which yum 2> /dev/null)" ]]
-    # Ubuntu
-        sudo yum install make autoconf flex bison which -y
-        sudo yum groupinstall 'Development Tools'  -y
-    fi
+    sudo apt install -y make autoconf g++ flex bison
 
     echo "Installing dependencies for ngspice (with OSDI)..........."
 
-    sudo apt update
     sudo apt install -y \
         build-essential \
         autoconf \
@@ -119,7 +121,7 @@ function installGHDL
     echo "Configuring $ghdl build as per requirements"
     chmod +x configure
     # Other configure flags can be found at - https://github.com/ghdl/ghdl/blob/master/configure
-    ./configure --with-llvm-config=/usr/bin/llvm-config
+    ./configure --with-llvm-config="$LLVM_CONFIG"
     echo "Building the install file for $ghdl LLVM"
     make -j$(nproc)
     sudo make install
@@ -205,7 +207,7 @@ function installNGHDL
     make install
 
     # Make it executable
-    sudo chmod 755 $HOME/$nghdl/install_dir/bin/ngspice
+    sudo chmod 755 "$HOME/$nghdl/install_dir/bin/ngspice"
     
     set +e 		# Temporary disable exit on error
     trap "" ERR # Do not trap on error of any command
@@ -233,19 +235,18 @@ function createConfigFile
 
     # Creating config.ini file and adding configuration information
     # Check if config file is present
-    if [ -d $config_dir ];then
-        rm $config_dir/$config_file && touch $config_dir/$config_file
-    else
-        mkdir $config_dir && touch $config_dir/$config_file
-    fi
+    mkdir -p "$config_dir"
+    rm -f "$config_dir/$config_file"
 
-    echo "[NGHDL]" >> $config_dir/$config_file
-    echo "NGHDL_HOME = $HOME/$nghdl" >> $config_dir/$config_file
-    echo "DIGITAL_MODEL = %(NGHDL_HOME)s/src/xspice/icm" >> $config_dir/$config_file
-    echo "RELEASE = %(NGHDL_HOME)s/release" >> $config_dir/$config_file
-    echo "[SRC]" >> $config_dir/$config_file
-    echo "SRC_HOME = $src_dir" >> $config_dir/$config_file
-    echo "LICENSE = %(SRC_HOME)s/LICENSE" >> $config_dir/$config_file
+    {
+        echo "[NGHDL]"
+        echo "NGHDL_HOME = $HOME/$nghdl"
+        echo "DIGITAL_MODEL = %(NGHDL_HOME)s/src/xspice/icm"
+        echo "RELEASE = %(NGHDL_HOME)s/release"
+        echo "[SRC]"
+        echo "SRC_HOME = $src_dir"
+        echo "LICENSE = %(SRC_HOME)s/LICENSE"
+    } > "$config_dir/$config_file"
 
 }
 
@@ -265,7 +266,7 @@ function createSoftLink
     sudo ln -sf $src_dir/src/ngspice_ghdl.py nghdl
     echo "Added softlink for NGHDL....."
 
-    cd $pwd
+    cd "$src_dir"
 
 }
 
@@ -281,11 +282,12 @@ if [ "$#" -eq 1 ];then
 else
     echo "USAGE : "
     echo "./install-nghdl.sh --install"
+    echo "./install-nghdl.sh --uninstall"
     exit 1;
 fi
 
 ## Checking flags
-if [ $option == "--install" ];then
+if [[ "$option" == "--install" ]];then
     
     set -e  # Set exit option immediately on error
     set -E  # inherit ERR trap by shell functions
@@ -295,41 +297,58 @@ if [ $option == "--install" ];then
     
     #Calling functions
     installDependency
-    if [ $? -ne 0 ];then
-        echo -e "\n\n\nERROR: Unable to install required packages. Please check your internet connection.\n\n"
-        exit 0
-    fi
-   
     installGHDL
     installVerilator
     installNGHDL
     createConfigFile
     createSoftLink
 
-elif [ $option == "--uninstall" ];then
-    sudo rm -rf $HOME/$nghdl $HOME/.nghdl /usr/share/kicad/library/eSim_Nghdl.lib /usr/local/bin/nghdl /usr/bin/ngspice
+elif [[ "$option" == "--uninstall" ]]; then
 
-    echo "Removing GHDL......................"
-    cd $ghdl/
-    sudo make uninstall
-    cd ../
-    sudo rm -rf $ghdl/
-    # sudo rm -rf /usr/local/bin/ghdl /usr/local/bin/ghdl1-llvm /usr/local/lib/ghdl /usr/local/lib/libghdlvpi.so /usr/local/include/vpi_user.h
+    echo "Removing NGHDL..."
+    sudo rm -rf "$HOME/$nghdl" "$HOME/.nghdl"
+    sudo rm -f /usr/share/kicad/library/eSim_Nghdl.lib
+    sudo rm -f /usr/local/bin/nghdl /usr/bin/ngspice
 
-    echo "Removing Verilator................."
-    cd $verilator/
-    sudo make uninstall
-    cd ../
-    sudo rm -rf $verilator/
+    echo -n "Do you also want to remove system-wide GHDL, Verilator and their dependencies? (y/n): "
+    read -r removeSystem
 
-    echo "Removing libxaw7-dev..............."
-    sudo apt purge -y libxaw7-dev
-    echo "Removing LLVM......................"
-    sudo apt-get purge -y llvm-${llvm_version} llvm-${llvm_version}-dev
-    echo "Removing GNAT......................"
-    sudo apt purge -y gnat
-else 
+    if [[ "$removeSystem" == "y" || "$removeSystem" == "Y" ]]; then
+
+        echo "Removing GHDL..."
+        cd "$ghdl"
+        sudo make uninstall
+        cd ..
+
+        echo "Removing Verilator..."
+        cd "$verilator"
+        sudo make uninstall
+        cd ..
+
+        sudo rm -rf "$ghdl" "$verilator"
+
+        echo "Removing libxaw7-dev..."
+        sudo apt purge -y libxaw7-dev
+
+        echo "Removing LLVM..."
+        if [[ "$VERSION_ID" == "25.04" ]]; then
+            sudo apt-get purge -y llvm-18 llvm-18-dev
+        else
+            sudo apt-get purge -y llvm llvm-dev
+        fi
+
+        echo "Removing GNAT..."
+        sudo apt purge -y gnat
+
+    else
+        echo "Keeping system-wide GHDL, Verilator, LLVM, GNAT and libxaw7-dev."
+    fi
+
+    echo "NGHDL uninstalled successfully."
+
+else
     echo "Please select the proper operation."
     echo "--install"
     echo "--uninstall"
+    exit 1
 fi
